@@ -5,7 +5,7 @@ There will be some limited customization of PIDs in a json file, but probably no
 
 ##BOM
 1. Raspberry Pi 3
-2. Raspi UPS Hat
+2. ~~Raspi UPS Hat~~
 3. Waveshare 7 inch LCD
 4. ScanTool OBD MX
 

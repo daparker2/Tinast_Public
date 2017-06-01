@@ -16,12 +16,19 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
+    using MetroLog;
+    using MetroLog.Targets;
 
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private ILogger log;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -30,6 +37,16 @@
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            // change the config...
+            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Info, LogLevel.Fatal, new StreamingFileTarget());
+            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new TraceTarget());
+
+            // setup the global crash handler...
+            GlobalCrashHandler.Configure();
+
+            this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
+            this.log.Info("Starting application");
         }
 
         /// <summary>
@@ -74,6 +91,7 @@
                     // parameter
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
+
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
@@ -86,6 +104,7 @@
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
+            this.log.Error("Failed to navigate to page " + e.SourcePageType.FullName);
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 

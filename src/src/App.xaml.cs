@@ -16,6 +16,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
+    using Config;
     using MetroLog;
     using MetroLog.Targets;
 
@@ -30,6 +31,11 @@
         private ILogger log;
 
         /// <summary>
+        /// The display configuration
+        /// </summary>
+        private DisplayConfiguration config;
+
+        /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
@@ -40,12 +46,12 @@
 
             // change the config...
             LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Info, LogLevel.Fatal, new StreamingFileTarget());
-            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Trace, LogLevel.Fatal, new TraceTarget());
 
             // setup the global crash handler...
             GlobalCrashHandler.Configure();
 
             this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
+            this.UnhandledException += UnhandledExceptionHandler;
             this.log.Info("Starting application");
         }
 
@@ -54,7 +60,7 @@
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -63,6 +69,11 @@
             }
 #endif
             Frame rootFrame = Window.Current.Content as Frame;
+
+            if (this.config == null)
+            {
+                this.config = await DisplayConfiguration.Load();
+            }
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -98,11 +109,23 @@
         }
 
         /// <summary>
+        /// The app specific unhandled exception handler.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="UnhandledExceptionEventArgs"/> instance containing the event data.</param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            this.log.Error("Unhandled exception in app", e.Exception);
+            e.Handled = false;
+        }
+
+        /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             this.log.Error("Failed to navigate to page " + e.SourcePageType.FullName);
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
@@ -115,11 +138,22 @@
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
-            deferral.Complete();
+            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
+            try
+            {
+                //TODO: Save application state and stop any background activity
+
+                if (this.config != null)
+                {
+                    await this.config.Save();
+                }
+            }
+            finally
+            {
+                deferral.Complete();
+            }
         }
     }
 }

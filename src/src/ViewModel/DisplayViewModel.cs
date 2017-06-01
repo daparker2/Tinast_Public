@@ -43,7 +43,6 @@ namespace DP.Tinast.ViewModel
             this.driver = driver;
         }
 
-
         /// <summary>
         /// Called when a set of properties change on the view model.
         /// </summary>

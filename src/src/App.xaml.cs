@@ -148,7 +148,15 @@
                 {
                     while (this.driver.Resumed)
                     {
-                        await this.viewModel.Tick();
+                        try
+                        {
+                            await this.viewModel.Tick();
+                        }
+                        catch (IOException ex)
+                        {
+                            this.log.Error("Tick update error", ex);
+                            continue;
+                        }
                     }
                 });
             }

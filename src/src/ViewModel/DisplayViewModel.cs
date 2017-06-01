@@ -232,7 +232,7 @@ namespace DP.Tinast.ViewModel
         public async Task Tick()
         {
             List<string> propertiesChanged = new List<string>();
-            if (!this.driver.Resumed || !this.driver.TryConnect(30000))
+            if (!this.driver.Resumed || !await this.driver.TryConnect())
             {
                 if (!this.Obd2Connecting)
                 {

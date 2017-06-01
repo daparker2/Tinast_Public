@@ -1,5 +1,6 @@
 ﻿namespace DP.Tinast
 {
+    using Microsoft.HockeyApp;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -75,6 +76,7 @@
 
             this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
             this.UnhandledException += UnhandledExceptionHandler;
+            HockeyClient.Current.Configure("97e8a58ba9a74a2bb9a8b8d46a464b7b");
             this.log.Info("Starting application");
         }
 
@@ -141,7 +143,7 @@
                 // Ensure the current window is active
                 rootFrame.DataContext = this.viewModel;
                 Window.Current.Activate();
-                await this.driver.Resume();
+                this.driver.Resume();
                 this.tickTask = Task.Run(async () =>
                 {
                     while (this.driver.Resumed)
@@ -194,7 +196,7 @@
             {
                 if (this.driver != null)
                 {
-                    await this.driver.Suspend();
+                    this.driver.Suspend();
                     await this.tickTask;
                 }
 

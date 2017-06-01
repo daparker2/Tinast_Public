@@ -23,9 +23,8 @@ namespace DP.Tinast.Interfaces
         /// <summary>
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
-        /// <param name="timeoutMilliseconds">The timeout in milliseconds.</param>
         /// <returns>True if the connection was established.</returns>
-        bool TryConnect(int timeoutMilliseconds);
+        Task<bool> TryConnect();
 
         /// <summary>
         /// Gets the afr %.

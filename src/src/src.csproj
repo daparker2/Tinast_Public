@@ -98,7 +98,7 @@
     <Compile Include="Config\DisplayConfiguration.cs" />
     <Compile Include="Config\PidType.cs" />
     <Compile Include="Elm327\Elm327Driver.cs" />
-    <Compile Include="Interfaces\IElm327Driver.cs" />
+    <Compile Include="Interfaces\IDisplayDriver.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

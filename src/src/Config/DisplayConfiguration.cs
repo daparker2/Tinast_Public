@@ -34,11 +34,7 @@
         /// <value>
         /// The type of the boost pid.
         /// </value>
-        public PidType BoostPidType
-        {
-            get;
-            set;
-        }
+        public PidType BoostPidType { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the afr pid.
@@ -46,11 +42,7 @@
         /// <value>
         /// The type of the afr pid.
         /// </value>
-        public PidType AfrPidType
-        {
-            get;
-            set;
-        }
+        public PidType AfrPidType { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the oil temp pid.
@@ -58,11 +50,7 @@
         /// <value>
         /// The type of the oil temp pid.
         /// </value>
-        public PidType OilTempPidType
-        {
-            get;
-            set;
-        }
+        public PidType OilTempPidType { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the coolant temp pid.
@@ -70,11 +58,7 @@
         /// <value>
         /// The type of the coolant temp pid.
         /// </value>
-        public PidType CoolantTempPidType
-        {
-            get;
-            set;
-        }
+        public PidType CoolantTempPidType { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the intake temp pid.
@@ -82,11 +66,63 @@
         /// <value>
         /// The type of the intake temp pid.
         /// </value>
-        public PidType IntakeTempPidType
-        {
-            get;
-            set;
-        }
+        public PidType IntakeTempPidType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum idle load.
+        /// </summary>
+        /// <value>
+        /// The maximum idle load.
+        /// </value>
+        public double MaxIdleLoad { get; set; } = 5;
+
+        /// <summary>
+        /// Gets or sets the oil temp minimum.
+        /// </summary>
+        /// <value>
+        /// The oil temp minimum.
+        /// </value>
+        public double OilTempMin { get; set; } = 160;
+
+        /// <summary>
+        /// Gets or sets the oil temp maximum.
+        /// </summary>
+        /// <value>
+        /// The oil temp maximum.
+        /// </value>
+        public double OilTempMax { get; set; } = 240;
+
+        /// <summary>
+        /// Gets or sets the coolant temp minimum.
+        /// </summary>
+        /// <value>
+        /// The coolant temp minimum.
+        /// </value>
+        public double CoolantTempMin { get; set; } = 160;
+
+        /// <summary>
+        /// Gets or sets the coolant temp maximum.
+        /// </summary>
+        /// <value>
+        /// The coolant temp maximum.
+        /// </value>
+        public double CoolantTempMax { get; set; } = 240;
+
+        /// <summary>
+        /// Gets or sets the intake temp minimum.
+        /// </summary>
+        /// <value>
+        /// The intake temp minimum.
+        /// </value>
+        public double IntakeTempMin { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the intake temp maximum.
+        /// </summary>
+        /// <value>
+        /// The intake temp maximum.
+        /// </value>
+        public double IntakeTempMax { get; set; } = 170;
 
         /// <summary>
         /// Saves this configuration file.
@@ -99,13 +135,8 @@
             StorageFile file = await appFolder.CreateFileAsync(FileName, CreationCollisionOption.ReplaceExisting);
 
             this.log.Info("Saving config to '{0}'", file.Path);
-            using (IRandomAccessStream fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-            using (IOutputStream outputStream = fileStream.GetOutputStreamAt(0))
-            using (DataWriter dataWriter = new DataWriter(outputStream))
-            {
-                dataWriter.WriteString(json);
-                this.log.Info("Config saved.");
-            }
+            await FileIO.WriteTextAsync(file, json);
+            this.log.Info("Config saved.");
         }
 
         /// <summary>

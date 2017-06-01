@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.Foundation;
@@ -17,13 +18,15 @@
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
     using Config;
+    using Elm327;
     using MetroLog;
     using MetroLog.Targets;
+    using ViewModel;
 
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    sealed partial class App : Application, IDisposable
     {
         /// <summary>
         /// The logger.
@@ -34,6 +37,26 @@
         /// The display configuration
         /// </summary>
         private DisplayConfiguration config;
+
+        /// <summary>
+        /// The ELM 327 driver
+        /// </summary>
+        private Elm327Driver driver;
+
+        /// <summary>
+        /// The view model
+        /// </summary>
+        private DisplayViewModel viewModel;
+
+        /// <summary>
+        /// The viewmodel tick task
+        /// </summary>
+        private Task tickTask;
+
+        /// <summary>
+        /// The disposed value
+        /// </summary>
+        private bool disposed = false;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -56,6 +79,14 @@
         }
 
         /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
@@ -75,19 +106,23 @@
                 this.config = await DisplayConfiguration.Load();
             }
 
+            if (this.driver == null)
+            {
+                this.driver = new Elm327Driver(this.config);
+            }
+
+            if (this.viewModel == null)
+            {
+                this.viewModel = new DisplayViewModel(this.driver, this.config);
+            }
+
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-
                 rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
@@ -104,7 +139,16 @@
                 }
 
                 // Ensure the current window is active
+                rootFrame.DataContext = this.viewModel;
                 Window.Current.Activate();
+                await this.driver.Resume();
+                this.tickTask = Task.Run(async () =>
+                {
+                    while (this.driver.Resumed)
+                    {
+                        await this.viewModel.Tick();
+                    }
+                });
             }
         }
 
@@ -114,9 +158,14 @@
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="UnhandledExceptionEventArgs"/> instance containing the event data.</param>
         /// <exception cref="NotImplementedException"></exception>
-        private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private async void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
             this.log.Error("Unhandled exception in app", e.Exception);
+            if (this.viewModel != null)
+            {
+                await this.viewModel.Fault();
+            }
+
             e.Handled = false;
         }
 
@@ -143,7 +192,11 @@
             SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                //TODO: Save application state and stop any background activity
+                if (this.driver != null)
+                {
+                    await this.driver.Suspend();
+                    await this.tickTask;
+                }
 
                 if (this.config != null)
                 {
@@ -153,6 +206,27 @@
             finally
             {
                 deferral.Complete();
+            }
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        private void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                this.disposed = true;
+
+                if (disposing)
+                {
+                    if (this.driver != null)
+                    {
+                        this.driver.Dispose();
+                        this.driver = null;
+                    }
+                }
             }
         }
     }

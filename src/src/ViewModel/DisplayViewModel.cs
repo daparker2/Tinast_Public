@@ -63,11 +63,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         /// The engine load.
         /// </value>
-        public double EngineLoad
-        {
-            get;
-            set;
-        }
+        public int EngineLoad { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the engine is in an idle load state.
@@ -75,11 +71,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if engine is in an idle load state; otherwise, <c>false</c>.
         /// </value>
-        public bool IdleLoad
-        {
-            get;
-            set;
-        }
+        public bool IdleLoad { get; set; }
 
         /// <summary>
         /// Gets or sets the engine coolant temp.
@@ -87,11 +79,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         /// The engine coolant temp.
         /// </value>
-        public double EngineCoolantTemp
-        {
-            get;
-            set;
-        }
+        public int EngineCoolantTemp { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the coolant temperature warning is active.
@@ -99,11 +87,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if coolant temperature warning; otherwise, <c>false</c>.
         /// </value>
-        public bool CoolantTempWarn
-        {
-            get;
-            set;
-        }
+        public bool CoolantTempWarn { get; set; }
 
         /// <summary>
         /// Gets or sets the engine oil temp.
@@ -111,11 +95,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         /// The engine oil temp.
         /// </value>
-        public double EngineOilTemp
-        {
-            get;
-            set;
-        }
+        public int EngineOilTemp { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the oil temperature warning is active.
@@ -123,11 +103,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if oil temperature warning; otherwise, <c>false</c>.
         /// </value>
-        public bool OilTempWarn
-        {
-            get;
-            set;
-        }
+        public bool OilTempWarn { get; set; }
 
         /// <summary>
         /// Gets or sets the engine intake temp.
@@ -135,11 +111,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         /// The engine intake temp.
         /// </value>
-        public double EngineIntakeTemp
-        {
-            get;
-            set;
-        }
+        public int EngineIntakeTemp { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the intake temperature warning is active.
@@ -147,11 +119,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if intake temperature warning; otherwise, <c>false</c>.
         /// </value>
-        public bool IntakeTempWarn
-        {
-            get;
-            set;
-        }
+        public bool IntakeTempWarn { get; set; }
 
         /// <summary>
         /// Gets or sets the engine boost.
@@ -159,11 +127,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         /// The engine boost.
         /// </value>
-        public double EngineBoost
-        {
-            get;
-            set;
-        }
+        public int EngineBoost { get; set; }
 
         /// <summary>
         /// Gets or sets the engine AFR.
@@ -171,11 +135,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         /// The engine AFR.
         /// </value>
-        public double EngineAfr
-        {
-            get;
-            set;
-        }
+        public double EngineAfr { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the AFR warning is active.
@@ -183,11 +143,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if the AFR warning is active; otherwise, <c>false</c>.
         /// </value>
-        public bool AfrTooLean
-        {
-            get;
-            set;
-        }
+        public bool AfrTooLean { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the AFR warning is active.
@@ -195,11 +151,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if the AFR warning is active; otherwise, <c>false</c>.
         /// </value>
-        public bool AfrTooRich
-        {
-            get;
-            set;
-        }
+        public bool AfrTooRich { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="DisplayViewModel"/> is faulted.
@@ -207,11 +159,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if faulted; otherwise, <c>false</c>.
         /// </value>
-        public bool Faulted
-        {
-            get;
-            set;
-        }
+        public bool Faulted { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the OBD2 driver is connecting.
@@ -219,11 +167,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if the OBD2 driver is connecting; otherwise, <c>false</c>.
         /// </value>
-        public bool Obd2Connecting
-        {
-            get;
-            set;
-        }
+        public bool Obd2Connecting { get; set; }
 
         /// <summary>
         /// Ticks an update of the display view model.
@@ -231,161 +175,66 @@ namespace DP.Tinast.ViewModel
         /// <returns>A task object.</returns>
         public async Task Tick()
         {
-            List<string> propertiesChanged = new List<string>();
-            if (!this.driver.Resumed || !await this.driver.TryConnect())
+            List<string> propertiesChanged = new List<string>(20);
+            bool propertyChanged;
+            if (!this.driver.Resumed || !this.driver.Connected)
             {
-                if (!this.Obd2Connecting)
-                {
-                    propertiesChanged.Add("Obd2Connecting");
-                    this.Obd2Connecting = true;
-                    this.log.Warn("OBD2 connecting.");
-                }
+                Task<bool> connectTask = this.driver.TryConnect();
+                this.Obd2Connecting = this.SetProperty(propertiesChanged, "Obd2Connecting", this.Obd2Connecting, true, out propertyChanged);
+                await this.OnPropertyChanged(propertiesChanged.ToArray());
+                await connectTask;
             }
-            else
-            {
-                if (this.ticks % 100 == 0)
-                {
-                    this.log.Info("State: AFR={0]; Boost={1}; Oil Temp: {3}; Coolant Temp: {4}; Intake Temp: {5}; Load: {6}",
-                        this.EngineAfr, this.EngineBoost, this.EngineOilTemp, this.EngineCoolantTemp, this.EngineIntakeTemp, this.EngineLoad);
-                }
 
-                if (this.Obd2Connecting)
-                {
-                    propertiesChanged.Add("Obd2Connecting");
-                    this.Obd2Connecting = false;
-                    this.log.Info("OBD2 connected.");
-                }
+            propertiesChanged.Clear();
+
+            if (this.driver.Resumed && this.driver.Connected)
+            {
+                this.Obd2Connecting = this.SetProperty(propertiesChanged, "Obd2Connecting", this.Obd2Connecting, false, out propertyChanged);
 
                 if (this.ticks % 8 == 0)
                 {
-                    this.EngineOilTemp = await this.driver.GetOilTemp();
-                    propertiesChanged.Add("EngineOilTemp");
-                    if (this.EngineOilTemp >= this.config.OilTempMin && this.EngineOilTemp >= this.config.OilTempMax)
+                    this.EngineOilTemp = this.SetProperty(propertiesChanged, "EngineOilTemp", this.EngineOilTemp, await this.driver.GetOilTemp(), out propertyChanged);
+                    if (propertyChanged)
                     {
-                        if (this.OilTempWarn)
-                        {
-                            this.OilTempWarn = false;
-                            propertiesChanged.Add("OilTempWarn");
-                            this.log.Info("Oil temperature normal.");
-                        }
-                    }
-                    else
-                    {
-                        if (!this.OilTempWarn)
-                        {
-                            this.OilTempWarn = true;
-                            propertiesChanged.Add("OilTempWarn");
-                            this.log.Warn("Oil temperature warning.");
-                        }
+                        this.OilTempWarn = this.SetProperty(propertiesChanged, "OilTempWarn", this.OilTempWarn, !(this.EngineOilTemp >= this.config.OilTempMin && this.EngineOilTemp <= this.config.OilTempMax), out propertyChanged);
                     }
 
-                    this.EngineCoolantTemp = await this.driver.GetCoolantTemp();
-                    propertiesChanged.Add("EngineCoolantTemp");
-                    if (this.EngineCoolantTemp >= this.config.CoolantTempMin && this.EngineCoolantTemp >= this.config.CoolantTempMax)
+                    this.EngineCoolantTemp = this.SetProperty(propertiesChanged, "EngineCoolantTemp", this.EngineCoolantTemp, await this.driver.GetCoolantTemp(), out propertyChanged);
+                    if (propertyChanged)
                     {
-                        if (this.CoolantTempWarn)
-                        {
-                            this.CoolantTempWarn = false;
-                            propertiesChanged.Add("CoolantTempWarn");
-                            this.log.Debug("Coolant temperature normal.");
-                        }
-                    }
-                    else
-                    {
-                        if (!this.CoolantTempWarn)
-                        {
-                            this.CoolantTempWarn = true;
-                            propertiesChanged.Add("CoolantTempWarn");
-                            this.log.Warn("Coolant temperature warning.");
-                        }
+                        this.CoolantTempWarn = this.SetProperty(propertiesChanged, "CoolantTempWarn", this.CoolantTempWarn, !(this.EngineCoolantTemp >= this.config.CoolantTempMin && this.EngineCoolantTemp <= this.config.CoolantTempMax), out propertyChanged);
                     }
 
-                    this.EngineIntakeTemp = await this.driver.GetIntakeTemp();
-                    propertiesChanged.Add("EngineIntakeTemp");
-                    if (this.EngineIntakeTemp >= this.config.IntakeTempMin && this.EngineIntakeTemp >= this.config.IntakeTempMax)
+                    this.EngineIntakeTemp = this.SetProperty(propertiesChanged, "EngineIntakeTemp", this.EngineIntakeTemp, await this.driver.GetIntakeTemp(), out propertyChanged);
+                    if (propertyChanged)
                     {
-                        if (this.IntakeTempWarn)
-                        {
-                            this.IntakeTempWarn = false;
-                            propertiesChanged.Add("IntakeTempWarn");
-                            this.log.Debug("Intake temperature normal.");
-                        }
-                    }
-                    else
-                    {
-                        if (!this.IntakeTempWarn)
-                        {
-                            this.IntakeTempWarn = true;
-                            propertiesChanged.Add("IntakeTempWarn");
-                            this.log.Warn("Intake temperature warning.");
-                        }
+                        this.IntakeTempWarn = this.SetProperty(propertiesChanged, "IntakeTempWarn", this.IntakeTempWarn, !(this.EngineIntakeTemp >= this.config.IntakeTempMin && this.EngineIntakeTemp <= this.config.IntakeTempMax), out propertyChanged);
                     }
                 }
 
                 if (this.ticks % 2 == 0)
                 {
-                    this.EngineLoad = await this.driver.GetLoad();
-                    propertiesChanged.Add("EngineLoad");
-
-                    if (this.EngineLoad < this.config.MaxIdleLoad)
-                    { 
-                        if (!this.IdleLoad)
-                        {
-                            this.IdleLoad = true;
-                            this.log.Info("Engine idle.");
-                            propertiesChanged.Add("IdleLoad");
-                        }
-                    }
-                    else
+                    this.EngineLoad = this.SetProperty(propertiesChanged, "EngineLoad", this.EngineLoad, await this.driver.GetLoad(), out propertyChanged);
+                    if (propertyChanged)
                     {
-                        if (this.IdleLoad)
-                        {
-                            this.IdleLoad = false;
-                            this.log.Info("Engine under load.");
-                            propertiesChanged.Add("IdleLoad");
-                        }
+                        this.IdleLoad = this.SetProperty(propertiesChanged, "IdleLoad", this.IdleLoad, this.EngineLoad < this.config.MaxIdleLoad, out propertyChanged);
                     }
                 }
 
                 // Always get the boost and AFR.
-                this.EngineBoost = await this.driver.GetBoost();
-                propertiesChanged.Add("EngineBoost");
-
-                this.EngineAfr = await this.driver.GetAfr();
-                propertiesChanged.Add("EngineAfr");
-
-                if (this.EngineAfr > 12 && this.EngineAfr < 16)
+                this.EngineBoost = this.SetProperty(propertiesChanged, "EngineBoost", this.EngineBoost, await this.driver.GetBoost(), out propertyChanged);
+                this.EngineAfr = this.SetProperty(propertiesChanged, "EngineAfr", this.EngineAfr, await this.driver.GetAfr(), out propertyChanged);
+                if (propertyChanged)
                 {
-                    if (this.AfrTooLean || this.AfrTooRich)
+                    this.AfrTooLean = this.SetProperty(propertiesChanged, "AfrTooLean", this.AfrTooLean, this.EngineAfr > 16, out propertyChanged);
+                    if (!propertyChanged)
                     {
-                        this.AfrTooRich = this.AfrTooLean = false;
-                        propertiesChanged.Add("AfrTooLean");
-                        propertiesChanged.Add("AfrTooRich");
-                        this.log.Info("AFR normal.");
+                        this.AfrTooRich = this.SetProperty(propertiesChanged, "AfrTooRich", this.AfrTooRich, this.EngineAfr < 12, out propertyChanged);
                     }
                 }
-                else if (!this.IdleLoad && this.EngineAfr <= 12)
-                {
-                    if (!this.AfrTooRich)
-                    {
-                        this.AfrTooRich = true;
-                        propertiesChanged.Add("AfrTooRich");
-                        this.log.Warn("AFR too rich");
-                    }
-                }
-                else if (!this.IdleLoad && this.EngineAfr >= 16)
-                {
-                    if (!this.AfrTooLean)
-                    {
-                        this.AfrTooLean = true;
-                        propertiesChanged.Add("AfrTooLean");
-                        this.log.Warn("AFR too lean");
-                    }
-                }
-
-                ++this.ticks;
             }
 
+            ++this.ticks;
             await this.OnPropertyChanged(propertiesChanged.ToArray());
         }
 
@@ -408,11 +257,36 @@ namespace DP.Tinast.ViewModel
         {
             await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                foreach (string propertyName in properties)
+                if (this.PropertyChanged != null)
                 {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                    foreach (string propertyName in properties)
+                    {
+                        this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                    }
                 }
             });
+        }
+
+        /// <summary>
+        /// Sets the property.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="propertiesChanged">The properties changed.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="propertyValue">The property value.</param>
+        /// <param name="newValue">The new value.</param>
+        /// <returns></returns>
+        private T SetProperty<T>(List<string> propertiesChanged, string propertyName, T propertyValue, T newValue, out bool propertyChanged) where T : struct
+        {
+            propertyChanged = false;
+            if (!propertyValue.Equals(newValue))
+            {
+                propertiesChanged.Add(propertyName);
+                propertyChanged = true;
+                return newValue;
+            }
+
+            return propertyValue;
         }
     }
 }

@@ -21,6 +21,14 @@ namespace DP.Tinast.Interfaces
         bool Resumed { get; }
 
         /// <summary>
+        /// Gets a value indicating whether this <see cref="IDisplayDriver"/> is connected.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if connected; otherwise, <c>false</c>.
+        /// </value>
+        bool Connected { get; }
+
+        /// <summary>
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
         /// <returns>True if the connection was established.</returns>
@@ -36,30 +44,30 @@ namespace DP.Tinast.Interfaces
         /// Gets the boost in psi.
         /// </summary>
         /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<double> GetBoost();
+        Task<int> GetBoost();
 
         /// <summary>
         /// Gets the load in %.
         /// </summary>
         /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<double> GetLoad();
+        Task<int> GetLoad();
 
         /// <summary>
         /// Gets the oil temp in F.
         /// </summary>
         /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<double> GetOilTemp();
+        Task<int> GetOilTemp();
 
         /// <summary>
         /// Gets the coolant temp in F.
         /// </summary>
         /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<double> GetCoolantTemp();
+        Task<int> GetCoolantTemp();
 
         /// <summary>
         /// Gets the intake temp in F.
         /// </summary>
         /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<double> GetIntakeTemp();
+        Task<int> GetIntakeTemp();
     }
 }

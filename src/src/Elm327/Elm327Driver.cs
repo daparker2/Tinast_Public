@@ -269,7 +269,7 @@
                 {
                     if (cPids > 0)
                     {
-                        await UpdatePidResult(sb, cPids);
+                        await this.UpdatePidResult(sb.ToString());
                         cPids = 0;
                     }
 
@@ -284,7 +284,7 @@
 
                 if (cPids == this.config.MaxPidsAtOnce)
                 {
-                    await UpdatePidResult(sb, cPids);
+                    await this.UpdatePidResult(sb.ToString());
                     cPids = 0;
                     mode = 0;
                 }
@@ -292,23 +292,10 @@
 
             if (cPids > 0)
             {
-                await UpdatePidResult(sb, cPids);
+                await this.UpdatePidResult(sb.ToString());
             }
 
             return this.result;
-        }
-
-        /// <summary>
-        /// Updates the <see cref="PidResult"/> object.
-        /// </summary>
-        /// <param name="sb">The string buffer.</param>
-        /// <param name="cPids">The count of PIDs.</param>
-        /// <returns></returns>
-        private async Task UpdatePidResult(StringBuilder sb, int cPids)
-        {
-            char e = (char)((int)'0' + cPids);
-            sb.Append(e);
-            await this.UpdatePidResult(sb.ToString());
         }
 
         /// <summary>

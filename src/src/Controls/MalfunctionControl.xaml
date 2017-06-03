@@ -8,5 +8,7 @@
     mc:Ignorable="d"
     d:DesignHeight="90"
     d:DesignWidth="90">
-    <Image x:Name="lamp" Visibility="Collapsed" />
+    <Border Width="90" Height="90" Canvas.Left="625" Canvas.Top="495" BorderThickness="3" BorderBrush="Pink">
+        <Image x:Name="lamp" Visibility="Collapsed" Width="88" Height="88" />
+    </Border>
 </UserControl>

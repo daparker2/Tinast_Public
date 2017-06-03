@@ -16,25 +16,13 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Canvas Background="Red" Margin="3,3,3,3" Grid.Row="0" Grid.Column="0">
-            <Controls:BoostControl x:Name="boostGauge" Canvas.Top="0" Canvas.Left="0" Width="1018" Height="594"/>
-            <Border Width="315" Height="335" Canvas.Left="125" Canvas.Top="225" BorderThickness="3" BorderBrush="Pink">
-                <Controls:AfrControl x:Name="afrGauge" />
-            </Border>
-            <Border Width="90" Height="90" Canvas.Left="625" Canvas.Top="495" BorderThickness="3" BorderBrush="Pink">
-                <Controls:MalfunctionControl x:Name="obd2ConnectingMil" />
-            </Border>
-            <Border Width="380" Height="80" Canvas.Left="625" Canvas.Top="225" BorderThickness="3" BorderBrush="Pink">
-                <Controls:TemperatureControl x:Name="oilTemp" />
-            </Border>
-            <Border Width="380" Height="80" Canvas.Left="625" Canvas.Top="315" BorderThickness="3" BorderBrush="Pink">
-                <Controls:TemperatureControl x:Name="coolantTemp" />
-            </Border>
-            <Border Width="380" Height="80" Canvas.Left="625" Canvas.Top="405" BorderThickness="3" BorderBrush="Pink">
-                <Controls:TemperatureControl x:Name="intakeTemp" />
-            </Border>
-            <Border Width="90" Height="90" Canvas.Left="785" Canvas.Top="495" BorderThickness="3" BorderBrush="Pink">
-                <Controls:MalfunctionControl x:Name="faultMil" />
-            </Border>
+            <Controls:BoostControl Canvas.Top="0" Canvas.Left="0" x:Name="boostGauge" />
+            <Controls:AfrControl Canvas.Left="145" Canvas.Top="225" x:Name="afrGauge" />
+            <Controls:TemperatureControl Canvas.Left="625" Canvas.Top="225" x:Name="oilTemp" />
+            <Controls:TemperatureControl Canvas.Left="625" Canvas.Top="315" x:Name="coolantTemp" />
+            <Controls:TemperatureControl Canvas.Left="625" Canvas.Top="405" x:Name="intakeTemp" />
+            <Controls:MalfunctionControl Canvas.Left="625" Canvas.Top="495" x:Name="obd2ConnectingMil" Malfunctioning="{Binding ObdConnecting}" LampSource="Assets/obd2connecting.png" />
+            <Controls:MalfunctionControl Canvas.Left="785" Canvas.Top="495" x:Name="faultMil" Malfunctioning="{Binding Faulted}" LampSource="Assets/fault.png" />
         </Canvas>
     </Grid>
 </Page>

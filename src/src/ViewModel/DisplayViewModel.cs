@@ -21,6 +21,11 @@ namespace DP.Tinast.ViewModel
     class DisplayViewModel : INotifyPropertyChanged
     {
         /// <summary>
+        /// The last update
+        /// </summary>
+        private Task lastUpdate = null;
+
+        /// <summary>
         /// The logger.
         /// </summary>
         private ILogger log = LogManagerFactory.DefaultLogManager.GetLogger<DisplayViewModel>();
@@ -59,7 +64,6 @@ namespace DP.Tinast.ViewModel
         {
             this.driver = driver;
             this.config = config;
-            this.Obd2Connecting = true;
         }
 
         /// <summary>
@@ -172,7 +176,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         ///   <c>true</c> if the OBD2 driver is connecting; otherwise, <c>false</c>.
         /// </value>
-        public bool Obd2Connecting { get; set; }
+        public bool Obd2Connecting { get; set; } = true;
 
         /// <summary>
         /// Ticks an update of the display view model.
@@ -182,9 +186,6 @@ namespace DP.Tinast.ViewModel
         {
             if (await this.ShouldTick())
             {
-                bool propertyChanged;
-                this.Obd2Connecting = this.SetProperty(propertiesChanged, "Obd2Connecting", this.Obd2Connecting, false, out propertyChanged);
-
                 // So basically, we want to share the bus time between boost+AFR (which always get updated every tick)
                 // and every other tick update one of the other 4 things: oil temp, coolant temp, intake temp, engine load
                 // This is to try and keep the frame-rate for boost and AFR as high as possible.
@@ -213,52 +214,58 @@ namespace DP.Tinast.ViewModel
                 }
 
                 PidResult result = await this.driver.GetPidResult(request);
-                this.EngineBoost = this.SetProperty(propertiesChanged, "EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
-                this.EngineAfr = this.SetProperty(propertiesChanged, "EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
+                if (this.lastUpdate != null)
+                {
+                    await this.lastUpdate;
+                    this.lastUpdate = null;
+                }
+
+                bool propertyChanged;
+                this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
+                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
                 if (propertyChanged)
                 {
-                    this.AfrTooLean = this.SetProperty(propertiesChanged, "AfrTooLean", this.AfrTooLean, this.EngineAfr > 16, out propertyChanged);
+                    this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, this.EngineAfr > 16, out propertyChanged);
                     if (!propertyChanged)
                     {
-                        this.AfrTooRich = this.SetProperty(propertiesChanged, "AfrTooRich", this.AfrTooRich, this.EngineAfr < 12, out propertyChanged);
+                        this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, this.EngineAfr < 12, out propertyChanged);
                     }
                 }
 
                 if (request.HasFlag(PidRequest.OilTemp))
                 {
-                    this.EngineOilTemp = this.SetProperty(propertiesChanged, "EngineOilTemp", this.EngineOilTemp, result.OilTemp, out propertyChanged);
+                    this.EngineOilTemp = this.SetProperty("EngineOilTemp", this.EngineOilTemp, result.OilTemp, out propertyChanged);
                     if (propertyChanged)
                     {
-                        this.OilTempWarn = this.SetProperty(propertiesChanged, "OilTempWarn", this.OilTempWarn, !(this.EngineOilTemp >= this.config.OilTempMin && this.EngineOilTemp <= this.config.OilTempMax), out propertyChanged);
+                        this.OilTempWarn = this.SetProperty("OilTempWarn", this.OilTempWarn, !(this.EngineOilTemp >= this.config.OilTempMin && this.EngineOilTemp <= this.config.OilTempMax), out propertyChanged);
                     }
                 }
                 else if (request.HasFlag(PidRequest.CoolantTemp))
                 {
-                    this.EngineCoolantTemp = this.SetProperty(propertiesChanged, "EngineCoolantTemp", this.EngineCoolantTemp, result.CoolantTemp, out propertyChanged);
+                    this.EngineCoolantTemp = this.SetProperty("EngineCoolantTemp", this.EngineCoolantTemp, result.CoolantTemp, out propertyChanged);
                     if (propertyChanged)
                     {
-                        this.CoolantTempWarn = this.SetProperty(propertiesChanged, "CoolantTempWarn", this.CoolantTempWarn, !(this.EngineCoolantTemp >= this.config.CoolantTempMin && this.EngineCoolantTemp <= this.config.CoolantTempMax), out propertyChanged);
+                        this.CoolantTempWarn = this.SetProperty("CoolantTempWarn", this.CoolantTempWarn, !(this.EngineCoolantTemp >= this.config.CoolantTempMin && this.EngineCoolantTemp <= this.config.CoolantTempMax), out propertyChanged);
                     }
                 }
                 else if (request.HasFlag(PidRequest.IntakeTemp))
                 {
-                    this.EngineIntakeTemp = this.SetProperty(propertiesChanged, "EngineIntakeTemp", this.EngineIntakeTemp, result.IntakeTemp, out propertyChanged);
+                    this.EngineIntakeTemp = this.SetProperty("EngineIntakeTemp", this.EngineIntakeTemp, result.IntakeTemp, out propertyChanged);
                     if (propertyChanged)
                     {
-                        this.IntakeTempWarn = this.SetProperty(propertiesChanged, "IntakeTempWarn", this.IntakeTempWarn, !(this.EngineIntakeTemp >= this.config.IntakeTempMin && this.EngineIntakeTemp <= this.config.IntakeTempMax), out propertyChanged);
+                        this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, !(this.EngineIntakeTemp >= this.config.IntakeTempMin && this.EngineIntakeTemp <= this.config.IntakeTempMax), out propertyChanged);
                     }
                 }
                 else if (request.HasFlag(PidRequest.Load))
                 {
-                    this.EngineLoad = this.SetProperty(propertiesChanged, "EngineLoad", this.EngineLoad, result.Load, out propertyChanged);
+                    this.EngineLoad = this.SetProperty("EngineLoad", this.EngineLoad, result.Load, out propertyChanged);
                     if (propertyChanged)
                     {
-                        this.IdleLoad = this.SetProperty(propertiesChanged, "IdleLoad", this.IdleLoad, this.EngineLoad < this.config.MaxIdleLoad, out propertyChanged);
+                        this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, this.EngineLoad < this.config.MaxIdleLoad, out propertyChanged);
                     }
                 }
 
-                await this.OnPropertyChanged(this.propertiesChanged);
-                this.propertiesChanged.Clear();
+                this.lastUpdate = this.OnPropertiesChanged();
             }
         }
 
@@ -270,12 +277,17 @@ namespace DP.Tinast.ViewModel
         {
             if (!this.driver.Resumed || !this.driver.Connected)
             {
-                bool propertyChanged;
                 Task<bool> connectTask = this.driver.TryConnect();
-                this.Obd2Connecting = this.SetProperty(propertiesChanged, "Obd2Connecting", this.Obd2Connecting, true, out propertyChanged);
-                await this.OnPropertyChanged(propertiesChanged);
-                propertiesChanged.Clear();
-                return await connectTask;
+                if (this.lastUpdate != null)
+                {
+                    await this.lastUpdate;
+                    this.lastUpdate = null;
+                }
+
+                bool propertyChanged;
+                this.Obd2Connecting = this.SetProperty("Obd2Connecting", await connectTask, true, out propertyChanged);
+                this.lastUpdate = this.OnPropertiesChanged();
+                return this.Obd2Connecting;
             }
 
             return true;
@@ -287,44 +299,55 @@ namespace DP.Tinast.ViewModel
         /// <returns>A task object.</returns>
         public async Task Fault()
         {
-            this.Faulted = true;
-            await this.OnPropertyChanged(new string[] { "Faulted" });
+            if (!this.Faulted)
+            {
+                if (this.lastUpdate != null)
+                {
+                    await this.lastUpdate;
+                    this.lastUpdate = null;
+                }
+
+                bool propertyChanged;
+                this.Faulted = this.SetProperty("Faulted", this.Faulted, true, out propertyChanged);
+                this.lastUpdate = this.OnPropertiesChanged();
+                await this.lastUpdate;
+            }
         }
 
         /// <summary>
         /// Called when a set of properties change on the view model.
         /// </summary>
-        /// <param name="properties">The properties.</param>
         /// <returns>A task object.</returns>
-        protected virtual async Task OnPropertyChanged(IEnumerable<string> properties)
+        protected virtual Task OnPropertiesChanged()
         {
-            await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            return CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if (this.PropertyChanged != null)
+                if (this.PropertyChanged != null && this.propertiesChanged.Count > 0)
                 {
-                    foreach (string propertyName in properties)
+                    foreach (string propertyName in this.propertiesChanged)
                     {
                         this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
                     }
                 }
-            });
+
+                this.propertiesChanged.Clear();
+            }).AsTask();
         }
 
         /// <summary>
         /// Sets the property.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="propertiesChanged">The properties changed.</param>
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="propertyValue">The property value.</param>
         /// <param name="newValue">The new value.</param>
         /// <returns></returns>
-        private T SetProperty<T>(List<string> propertiesChanged, string propertyName, T propertyValue, T newValue, out bool propertyChanged) where T : struct
+        private T SetProperty<T>(string propertyName, T propertyValue, T newValue, out bool propertyChanged) where T : struct
         {
             propertyChanged = false;
             if (!propertyValue.Equals(newValue))
             {
-                propertiesChanged.Add(propertyName);
+                this.propertiesChanged.Add(propertyName);
                 propertyChanged = true;
                 return newValue;
             }

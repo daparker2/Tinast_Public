@@ -25,6 +25,26 @@
     public sealed partial class MalfunctionControl : UserControl
     {
         /// <summary>
+        /// The lamp source property
+        /// </summary>
+        public static readonly DependencyProperty LampSourceProperty = DependencyProperty.Register("LampSource", typeof(ImageSource), typeof(MalfunctionControl), new PropertyMetadata(default(ImageSource)));
+
+        /// <summary>
+        /// The lamp source property
+        /// </summary>
+        public static readonly DependencyProperty MalfunctioningProperty = DependencyProperty.Register("Malfunctioning", typeof(bool), typeof(MalfunctionControl), new PropertyMetadata(default(bool)));
+
+        /// <summary>
+        /// The lamp source property
+        /// </summary>
+        public static readonly DependencyProperty OnIntervalProperty = DependencyProperty.Register("OnInterval", typeof(int), typeof(MalfunctionControl), new PropertyMetadata(400));
+
+        /// <summary>
+        /// The lamp source property
+        /// </summary>
+        public static readonly DependencyProperty OffIntervalProperty = DependencyProperty.Register("OffInterval", typeof(int), typeof(MalfunctionControl), new PropertyMetadata(600));
+
+        /// <summary>
         /// The on timer
         /// </summary>
         private DispatcherTimer onTimer;
@@ -33,13 +53,14 @@
         /// The off timer
         /// </summary>
         private DispatcherTimer offTimer;
-
-        /// <summary>
+        
+                /// <summary>
         /// Gets or sets the malfunction indicator.
         /// </summary>
         /// <value>
         /// The malfunction indicator.
         /// </value>
+        [DesignerCategory("MalfunctionControl")]
         [Description("The malfunction indicator image source.")]
         public ImageSource LampSource { get; set; }
 
@@ -49,6 +70,7 @@
         /// <value>
         ///   <c>true</c> if the system is malfunctioning, otherwise false.
         /// </value>
+        [DesignerCategory("MalfunctionControl")]
         [Description("Whether the system is malfunctioning.")]
         public bool Malfunctioning { get; set; }
 
@@ -58,6 +80,7 @@
         /// <value>
         /// The on interval.
         /// </value>
+        [DesignerCategory("MalfunctionControl")]
         [Description("The indicator on interval.")]
         public int OnInterval { get; set; } = 400;
 
@@ -67,6 +90,7 @@
         /// <value>
         /// The on interval.
         /// </value>
+        [DesignerCategory("MalfunctionControl")]
         [Description("The indicator off interval.")]
         public int OffInterval { get; set; } = 600;
 
@@ -104,6 +128,7 @@
             this.onTimer.Interval = TimeSpan.FromMilliseconds(this.OnInterval);
             if (this.Malfunctioning)
             {
+                this.lamp.Source = this.LampSource;
                 this.lamp.Visibility = Visibility.Visible;
             }
             else

@@ -35,39 +35,10 @@ namespace DP.Tinast.Interfaces
         Task<bool> TryConnect();
 
         /// <summary>
-        /// Gets the afr %.
+        /// Gets the pid result.
         /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<double> GetAfr();
-
-        /// <summary>
-        /// Gets the boost in psi.
-        /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<int> GetBoost();
-
-        /// <summary>
-        /// Gets the load in %.
-        /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<int> GetLoad();
-
-        /// <summary>
-        /// Gets the oil temp in F.
-        /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<int> GetOilTemp();
-
-        /// <summary>
-        /// Gets the coolant temp in F.
-        /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<int> GetCoolantTemp();
-
-        /// <summary>
-        /// Gets the intake temp in F.
-        /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        Task<int> GetIntakeTemp();
+        /// <param name="request">The request.</param>
+        /// <returns></returns>
+        Task<PidResult> GetPidResult(PidRequest request);
     }
 }

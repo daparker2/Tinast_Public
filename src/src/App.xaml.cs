@@ -3,6 +3,7 @@
     using Microsoft.HockeyApp;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
@@ -29,6 +30,11 @@
     /// </summary>
     sealed partial class App : Application, IDisposable
     {
+        /// <summary>
+        /// The tick timeout
+        /// </summary>
+        const int TickTimeout = 10000;
+
         /// <summary>
         /// The logger.
         /// </summary>
@@ -141,7 +147,7 @@
                 }
 
                 // Ensure the current window is active
-                rootFrame.DataContext = this.viewModel;
+                ((MainPage)rootFrame.Content).DataContext = this.viewModel;
                 Window.Current.Activate();
                 this.driver.Resume();
                 this.tickTask = Task.Run(async () =>
@@ -150,7 +156,23 @@
                     {
                         try
                         {
-                            await this.viewModel.Tick();
+                            Task tick = this.viewModel.Tick();
+                            Task delayTask;
+                            if (Debugger.IsAttached)
+                            {
+                                delayTask = Task.Delay(60000);
+                            }
+                            else
+                            {
+                                delayTask = Task.Delay(TickTimeout);
+                            }
+
+                            Task waited = await Task.WhenAny(tick, delayTask);
+                            if (waited != tick)
+                            {
+                                this.log.Error("Tick timed out.");
+                                this.driver.Disconnect();
+                            }
                         }
                         catch (IOException ex)
                         {

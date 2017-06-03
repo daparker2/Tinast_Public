@@ -45,6 +45,14 @@
         public PidType AfrPidType { get; set; }
 
         /// <summary>
+        /// Gets or sets the type of the load pid.
+        /// </summary>
+        /// <value>
+        /// The type of the load pid.
+        /// </value>
+        public PidType LoadPidType { get; set; }
+
+        /// <summary>
         /// Gets or sets the type of the oil temp pid.
         /// </summary>
         /// <value>
@@ -123,6 +131,22 @@
         /// The intake temp maximum.
         /// </value>
         public double IntakeTempMax { get; set; } = 170;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether aggressive ELM327 timing can be used.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if aggressive ELM327 timing can be used; otherwise, <c>false</c>.
+        /// </value>
+        public bool AggressiveTiming { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the maximum requests allowed at once.
+        /// </summary>
+        /// <value>
+        /// The maximum pid requests allowed at once.
+        /// </value>
+        public int MaxPidsAtOnce { get; set; } = 6;
 
         /// <summary>
         /// Saves this configuration file.

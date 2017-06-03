@@ -19,21 +19,6 @@
     class Elm327Driver : IDisplayDriver, IDisposable
     {
         /// <summary>
-        /// The connect timeout.
-        /// </summary>
-        const int ConnectTimeout = 30000;
-
-        /// <summary>
-        /// The write timeout.
-        /// </summary>
-        const int WriteTimeout = 5000;
-
-        /// <summary>
-        /// The read timeout.
-        /// </summary>
-        const int ReadTimeout = 5000;
-
-        /// <summary>
         /// The logger.
         /// </summary>
         private ILogger log = LogManagerFactory.DefaultLogManager.GetLogger<Elm327Driver>();
@@ -74,9 +59,14 @@
         private bool socketConnected = false;
 
         /// <summary>
-        /// State variables
+        /// The PID result
         /// </summary>
-        private double boost, afr, load, oilTemp, coolantTemp, intakeTemp;
+        private PidResult result = new PidResult();
+
+        /// <summary>
+        /// The PID table
+        /// </summary>
+        private PidTable pt = new PidTable();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Elm327Driver"/> class.
@@ -85,6 +75,65 @@
         public Elm327Driver(DisplayConfiguration config)
         {
             this.config = config;
+
+            if (this.config.MaxPidsAtOnce < 1)
+            {
+                this.config.MaxPidsAtOnce = 1;
+            }
+
+            if (this.config.AfrPidType == PidType.Obd2)
+            {
+                this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 2, (pd) => this.result.Afr = ((double)pd[0] * 256.0 + (double)pd[1]) / 32768.0 * 14.7));
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid AFR pid type");
+            }
+
+            if (this.config.BoostPidType == PidType.Obd2)
+            {
+                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => this.result.Boost = (int)((double)pd[0] * 0.000145037738007)));
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid boost pid type");
+            }
+
+            if (this.config.LoadPidType == PidType.Obd2)
+            {
+                this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) => this.result.Load = pd[0] * 100 / 255));
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid load pid type");
+            }
+
+            if (this.config.OilTempPidType == PidType.Obd2)
+            {
+                this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid AFR pid type");
+            }
+
+            if (this.config.CoolantTempPidType == PidType.Obd2)
+            {
+                this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid AFR pid type");
+            }
+
+            if (this.config.IntakeTempPidType == PidType.Obd2)
+            {
+                this.pt.Add(new PidHandler(0x010f, PidRequest.IntakeTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid AFR pid type");
+            }
         }
 
         /// <summary>
@@ -107,6 +156,30 @@
             {
                 return this.socketConnected;
             }
+        }
+
+        /// <summary>
+        /// Gets the last command.
+        /// </summary>
+        /// <value>
+        /// The last command.
+        /// </value>
+        internal string LastCommand
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the last response.
+        /// </summary>
+        /// <value>
+        /// The last response.
+        /// </value>
+        internal List<string> LastResponse
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -140,168 +213,129 @@
                 }
 
                 this.log.Info("Connecting to {0};{1}", this.service.ConnectionHostName, this.service.ConnectionServiceName);
-                Task connectTask = Task.Run(async () => await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName));
-                Task waited = await Task.WhenAny(connectTask, Task.Delay(ConnectTimeout));
-                if (waited == connectTask)
+                try
                 {
-                    try
-                    {
-                        await connectTask;
-                    }
-                    catch (Exception ex)
-                    {
-                        this.log.Warn("Connect failed", ex);
-                        return false;
-                    }
-
-                    this.reader = new StreamReader(this.socket.InputStream.AsStreamForRead());
-                    this.writer = new StreamWriter(this.socket.OutputStream.AsStreamForWrite());
-
-                    // Get some info about the device we just connected to.
-                    this.log.Trace("Connected to device: {0}", await this.SendCommand("atz"));
-                    while ((await this.SendCommand("atsp0")) != "OK") ;
-
-                    this.log.Info("ELM327 device connected. ECU on.");
-                    this.socketConnected = true;
+                    await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName);
                 }
-                else
+                catch (Exception ex)
                 {
+                    this.log.Warn("Connect failed", ex);
                     if (this.socket != null)
                     {
                         this.socket.Dispose();
                         this.socket = null;
                     }
+
+                    return false;
                 }
+
+                this.reader = new StreamReader(this.socket.InputStream.AsStreamForRead());
+                this.writer = new StreamWriter(this.socket.OutputStream.AsStreamForWrite());
+
+                // Get some info about the device we just connected to.
+                this.log.Trace("Connected to device: {0}", await this.SendCommand("atz"));
+
+                await this.SendCommand("e0");
+                await this.SendCommand("atsp0");
+                if (this.config.AggressiveTiming)
+                {
+                    await this.SendCommand("at2");
+                }
+
+                while (!(await this.SendCommand("atsp0")).Contains("OK")) ;
+
+                this.log.Info("ELM327 device connected. ECU on.");
+                this.socketConnected = true;
             }
 
             return this.socketConnected;
         }
 
         /// <summary>
-        /// Gets the afr %.
+        /// Gets the PID result for the specific PID request from the ECU.
         /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        public async Task<double> GetAfr()
+        /// <param name="request">The PID request.</param>
+        /// <returns>A <see cref="PidResult"/> object.</returns>
+        public async Task<PidResult> GetPidResult(PidRequest request)
         {
-            if (this.Resumed && this.socketConnected)
+            StringBuilder sb = new StringBuilder();
+            int cPids = 0;
+            int mode = 0;
+            foreach (PidHandler ph in this.pt.GetHandlersForRequest(request))
             {
-                if (this.config.AfrPidType == PidType.Obd2)
+                int curPid = ph.Mode;
+                int pidMode = (curPid & 0xFF00) >> 8;
+                if (pidMode != mode)
                 {
-                    int[] pidResult = await this.RunPid("0134", 2);
-                    if (pidResult != null)
+                    if (cPids > 0)
                     {
-                        this.afr = ((double)pidResult[0] * 256.0 + (double)pidResult[1]) / 32768.0 * 14.7;
+                        await UpdatePidResult(sb, cPids);
+                        cPids = 0;
                     }
+
+                    sb.Clear();
+                    sb.AppendFormat("{0:X2}", pidMode);
+                    mode = pidMode;
+                }
+
+                int pidValue = curPid & 0xFF;
+                sb.AppendFormat("{0:X2}", pidValue);
+                ++cPids;
+
+                if (cPids == this.config.MaxPidsAtOnce)
+                {
+                    await UpdatePidResult(sb, cPids);
+                    cPids = 0;
+                    mode = 0;
                 }
             }
 
-            return Math.Round(this.afr, 2);
+            if (cPids > 0)
+            {
+                await UpdatePidResult(sb, cPids);
+            }
+
+            return this.result;
         }
 
         /// <summary>
-        /// Gets the boost in psi.
+        /// Updates the <see cref="PidResult"/> object.
         /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        public async Task<int> GetBoost()
+        /// <param name="sb">The string buffer.</param>
+        /// <param name="cPids">The count of PIDs.</param>
+        /// <returns></returns>
+        private async Task UpdatePidResult(StringBuilder sb, int cPids)
         {
-            if (this.Resumed && this.socketConnected)
-            {
-                if (this.config.AfrPidType == PidType.Obd2)
-                {
-                    int[] pidResult = await this.RunPid("010B", 1);
-                    if (pidResult != null)
-                    {
-                        // kpa -> psi
-                        this.boost = (double)pidResult[0] * 0.000145037738007;
-                    }
-                }
-            }
-
-            return (int)this.boost;
+            char e = (char)((int)'0' + cPids);
+            sb.Append(e);
+            await this.UpdatePidResult(sb.ToString());
         }
 
         /// <summary>
-        /// Gets the load in %.
+        /// Updates the <see cref="PidResult"/> object.
         /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        public async Task<int> GetLoad()
+        /// <param name="pidRequest">The PID request.</param>
+        /// <returns>A PID result.</returns>
+        private async Task UpdatePidResult(string pidRequest)
         {
-            if (this.Resumed && this.socketConnected)
+            List<int> pidResult = await this.RunPid(pidRequest);
+            try
             {
-                if (this.config.AfrPidType == PidType.Obd2)
+                if (pidResult.Count > 0)
                 {
-                    int[] pidResult = await this.RunPid("0104", 1);
-                    if (pidResult != null)
+                    for (int i = 0; i < pidResult.Count; ++i)
                     {
-                        this.load = (double)pidResult[0] * 100.0 / 255.0;
+                        int mode = pidResult[i] - 0x40;
+                        ++i;
+                        PidHandler ph = this.pt.GetHandler((mode << 8) | pidResult[i]);
+                        i += ph.Handle(pidResult, i);
                     }
                 }
             }
-
-            return (int)this.load;
-        }
-
-        /// <summary>
-        /// Gets the oil temp in F.
-        /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        public async Task<int> GetOilTemp()
-        {
-            if (this.Resumed && this.socketConnected)
+            catch (Exception ex)
             {
-                if (this.config.AfrPidType == PidType.Obd2)
-                {
-                    int[] pidResult = await this.RunPid("015C", 1);
-                    if (pidResult != null)
-                    {
-                        this.oilTemp = this.CToF((double)pidResult[0] - 40.0);
-                    }
-                }
+                throw new IOException(string.Format("Failed to get PID result. PID: {0}. Last result:\n{1}", pidRequest, string.Join("\n", this.LastResponse)), ex);
             }
-
-            return (int)this.oilTemp;
-        }
-
-        /// <summary>
-        /// Gets the coolant temp in F.
-        /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        public async Task<int> GetCoolantTemp()
-        {
-            if (this.Resumed && this.socketConnected)
-            {
-                if (this.config.AfrPidType == PidType.Obd2)
-                {
-                    int[] pidResult = await this.RunPid("0105", 1);
-                    if (pidResult != null)
-                    {
-                        this.coolantTemp = this.CToF((double)pidResult[0] - 40.0);
-                    }
-                }
-            }
-
-            return (int)this.coolantTemp;
-        }
-
-        /// <summary>
-        /// Gets the intake temp in F.
-        /// </summary>
-        /// <returns>A <see cref="Task{Double}"/> object.</returns>
-        public async Task<int> GetIntakeTemp()
-        {
-            if (this.Resumed && this.socketConnected)
-            {
-                if (this.config.AfrPidType == PidType.Obd2)
-                {
-                    int[] pidResult = await this.RunPid("010F", 1);
-                    if (pidResult != null)
-                    {
-                        this.intakeTemp = this.CToF((double)pidResult[0] - 40.0);
-                    }
-                }
-            }
-
-            return (int)this.intakeTemp;
         }
 
         /// <summary>
@@ -332,6 +366,31 @@
         }
 
         /// <summary>
+        /// Disconnect the socket.
+        /// </summary>
+        public void Disconnect()
+        {
+            this.socketConnected = false;
+            if (this.reader != null)
+            {
+                this.reader.Dispose();
+                this.reader = null;
+            }
+
+            if (this.writer != null)
+            {
+                this.writer.Dispose();
+                this.writer = null;
+            }
+
+            if (this.socket != null)
+            {
+                this.socket.Dispose();
+                this.socket = null;
+            }
+        }
+
+        /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
@@ -355,54 +414,19 @@
         }
 
         /// <summary>
-        /// Disconnect the socket.
-        /// </summary>
-        private void Disconnect()
-        {
-            this.socketConnected = false;
-            if (this.reader != null)
-            {
-                this.reader.Dispose();
-                this.reader = null;
-            }
-
-            if (this.writer != null)
-            {
-                this.writer.Dispose();
-                this.writer = null;
-            }
-
-            if (this.socket != null)
-            {
-                this.socket.Dispose();
-                this.socket = null;
-            }
-        }
-
-        /// <summary>
         /// Sends the command.
         /// </summary>
         /// <param name="commandString">The command string.</param>
         /// <returns></returns>
-        private async Task<string> SendCommand(string commandString)
+        private async Task<List<string>> SendCommand(string commandString)
         {
             try
             {
-                this.log.Trace("O: {0}", commandString);
-                Task writeTask = Task.Run(async () =>
-                {
-                    await this.writer.WriteAsync(commandString + "\r");
-                    await this.writer.FlushAsync();
-                    await this.socket.OutputStream.FlushAsync();
-                });
-
-                Task waited = await Task.WhenAny(writeTask, Task.Delay(WriteTimeout));
-                if (waited == writeTask)
-                {
-                    return await this.ReadResponse();
-                }
-
-                throw new IOException("ELM327 write timed out.");
+                this.LastCommand = commandString;
+                await this.writer.WriteAsync(commandString);
+                await this.writer.WriteAsync("\r");
+                await this.writer.FlushAsync();
+                return await this.ReadResponse();
             }
             catch (IOException ex)
             {
@@ -416,46 +440,53 @@
         /// Reads a line off the input socket.
         /// </summary>
         /// <returns></returns>
-        private async Task<string> ReadResponse()
+        private async Task<List<string>> ReadResponse()
         {
             try
             {
-                StringBuilder sb = new StringBuilder();
-                char[] buf = new char[1];
+                char[] buf = new char[1 << 8];
+                List<char> cb = new List<char>();
+                List<string> sr = new List<string>();
                 for (;;)
                 {
-                    Task<int> readTask = this.reader.ReadAsync(buf, 0, 1);
-                    Task waited = await Task.WhenAny(readTask, Task.Delay(ReadTimeout));
-                    if (waited != readTask)
+                    int len;
+                    if ((len = await this.reader.ReadAsync(buf, 0, buf.Length)) > 0)
                     {
-                        throw new IOException("ELM327 read timed out.");
-                    }
-                    else if (await readTask == 1)
-                    {
-                        if (buf[0] == '>')
+                        for (int i = 0; i < len; ++i)
                         {
-                            string s = sb.ToString().Trim();
-                            if (s.Contains("STOPPED"))
+                            if (buf[i] == '>')
                             {
-                                throw new IOException("ELM327 device stopped.");
-                            }
-
-                            sb.Clear();
-                            if (!string.IsNullOrEmpty(s))
-                            {
-                                int iResponse = s.LastIndexOf('\r');
-                                if (iResponse >= 0)
+                                int sCur = 0;
+                                while (sCur < cb.Count)
                                 {
-                                    s = s.Substring(iResponse + 1);
+                                    int sEnd = cb.IndexOf('\r', sCur);
+                                    if (sEnd < 0)
+                                    {
+                                        break;
+                                    }
+                                    else if (sEnd > sCur)
+                                    {
+                                        int sLen = sEnd - sCur;
+                                        cb.CopyTo(sCur, buf, 0, sLen);
+                                        string s = new string(buf, 0, sLen);
+                                        if (s.Equals("STOPPED"))
+                                        {
+                                            throw new IOException("ELM327 device stopped.");
+                                        }
+
+                                        sr.Add(s);
+                                    }
+
+                                    sCur = sEnd + 1;
                                 }
 
-                                this.log.Trace("I: {0}", s);
-                                return s;
+                                this.LastResponse = sr;
+                                return sr;
                             }
-                        }
-                        else
-                        {
-                            sb.Append(buf[0]);
+                            else
+                            {
+                                cb.Add(buf[i]);
+                            }
                         }
                     }
                 }
@@ -474,38 +505,62 @@
         /// <param name="pid">The PID string.</param>
         /// <param name="resultCount">The expected result count.</param>
         /// <returns>An array of pid values.</returns>
-        private async Task<int[]> RunPid(string pid, int resultCount)
+        private async Task<List<int>> RunPid(string pid)
         {
-            if (this.Connected)
+            if (this.Resumed && this.socketConnected)
             {
-                string s1 = await this.SendCommand(pid);
-                if (!s1.Equals("UNABLE TO CONNECT") && !s1.Equals("NO DATA"))
+                List<int> pr = new List<int>();
+                List<string> r = await this.SendCommand(pid);
+                if (!r[r.Count - 1].Equals("UNABLE TO CONNECT") && !r[r.Count - 1].Equals("NO DATA"))
                 {
-                    List<int> pidValues = new List<int>();
-                    try
+                    for (int i = 1; i < r.Count; ++i)
                     {
-                        string[] pidResult = s1.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        for (int i = 2; i < pidResult.Length; ++i)
+                        if (r[i].Length > 1)
                         {
-                            pidValues.Add(Convert.ToInt32(pidResult[i], 16));
-                        }
+                            int j = 0;
+                            if (r[i][1] == ':')
+                            {
+                                // This is part of a line segment indicator...?
+                                j = 3;
+                            }
 
-                        if (pidValues.Count != resultCount)
-                        {
-                            return null;
+                            for (; j < r[i].Length; j += 3)
+                            {
+                                pr.Add((this.ToDec(r[i][j]) << 4) | this.ToDec(r[i][j + 1]));
+                            }
                         }
                     }
-                    catch (FormatException ex)
-                    {
-                        this.Disconnect();
-                        throw new IOException("Bad result for PID " + pid, ex);
-                    }
-
-                    return pidValues.ToArray();
                 }
+
+                return pr;
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Convert a character to decimal
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        private int ToDec(char v)
+        {
+            if (v >= '0' && v <= '9')
+            {
+                return v - '0';
+            }
+            else if (v >= 'A' && v <= 'F')
+            {
+                return v - 'A';
+            }
+            else if (v >= 'a' && v <= 'f')
+            {
+                return v - 'a';
+            }
+            else
+            {
+                throw new FormatException("Invalid pid result. Last response: " + string.Join("\n", this.LastResponse));
+            }
         }
 
         /// <summary>

@@ -98,8 +98,24 @@
     </Compile>
     <Compile Include="Config\DisplayConfiguration.cs" />
     <Compile Include="Config\PidType.cs" />
+    <Compile Include="Controls\AfrControl.xaml.cs">
+      <DependentUpon>AfrControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BoostControl.xaml.cs">
+      <DependentUpon>BoostControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MalfunctionControl.xaml.cs">
+      <DependentUpon>MalfunctionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TemperatureControl.xaml.cs">
+      <DependentUpon>TemperatureControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Elm327\PidTable.cs" />
     <Compile Include="Elm327\Elm327Driver.cs" />
+    <Compile Include="Elm327\PidHandler.cs" />
+    <Compile Include="Interfaces\PidRequest.cs" />
     <Compile Include="Interfaces\IDisplayDriver.cs" />
+    <Compile Include="Interfaces\PidResult.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -169,6 +185,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\AfrControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\BoostControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MalfunctionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TemperatureControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

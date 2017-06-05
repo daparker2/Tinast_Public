@@ -21,6 +21,7 @@
     using Windows.UI.Xaml.Navigation;
     using Config;
     using Elm327;
+    using Interfaces;
     using MetroLog;
     using MetroLog.Targets;
     using ViewModel;
@@ -30,11 +31,6 @@
     /// </summary>
     sealed partial class App : Application, IDisposable
     {
-        /// <summary>
-        /// The tick timeout
-        /// </summary>
-        const int TickTimeout = 10000;
-
         /// <summary>
         /// The logger.
         /// </summary>
@@ -51,19 +47,14 @@
         private Elm327Driver driver;
 
         /// <summary>
-        /// The view model
-        /// </summary>
-        private DisplayViewModel viewModel;
-
-        /// <summary>
-        /// The viewmodel tick task
-        /// </summary>
-        private Task tickTask;
-
-        /// <summary>
         /// The disposed value
         /// </summary>
         private bool disposed = false;
+
+        /// <summary>
+        /// Occurs when faulted.
+        /// </summary>
+        public event EventHandler Faulted;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -81,9 +72,36 @@
             GlobalCrashHandler.Configure();
 
             this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
-            this.UnhandledException += UnhandledExceptionHandler;
             HockeyClient.Current.Configure("97e8a58ba9a74a2bb9a8b8d46a464b7b");
             this.log.Info("Starting application");
+        }
+
+        /// <summary>
+        /// Gets the driver.
+        /// </summary>
+        /// <value>
+        /// The driver.
+        /// </value>
+        public IDisplayDriver Driver
+        {
+            get
+            {
+                return this.driver;
+            }
+        }
+
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
+        /// <value>
+        /// The configuration.
+        /// </value>
+        public DisplayConfiguration Config
+        {
+            get
+            {
+                return this.config;
+            }
         }
 
         /// <summary>
@@ -119,11 +137,6 @@
                 this.driver = new Elm327Driver(this.config);
             }
 
-            if (this.viewModel == null)
-            {
-                this.viewModel = new DisplayViewModel(this.driver, this.config);
-            }
-
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
@@ -146,41 +159,7 @@
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
 
-                // Ensure the current window is active
-                ((MainPage)rootFrame.Content).DataContext = this.viewModel;
                 Window.Current.Activate();
-                this.driver.Resume();
-                this.tickTask = Task.Run(async () =>
-                {
-                    while (this.driver.Resumed)
-                    {
-                        try
-                        {
-                            Task tick = this.viewModel.Tick();
-                            Task delayTask;
-                            if (Debugger.IsAttached)
-                            {
-                                delayTask = Task.Delay(60000);
-                            }
-                            else
-                            {
-                                delayTask = Task.Delay(TickTimeout);
-                            }
-
-                            Task waited = await Task.WhenAny(tick, delayTask);
-                            if (waited != tick)
-                            {
-                                this.log.Error("Tick timed out.");
-                                this.driver.Disconnect();
-                            }
-                        }
-                        catch (IOException ex)
-                        {
-                            this.log.Error("Tick update error", ex);
-                            continue;
-                        }
-                    }
-                });
             }
         }
 
@@ -189,16 +168,16 @@
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="UnhandledExceptionEventArgs"/> instance containing the event data.</param>
-        /// <exception cref="NotImplementedException"></exception>
-        private async void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
             this.log.Error("Unhandled exception in app", e.Exception);
-            if (this.viewModel != null)
+            if (this.Faulted != null)
             {
-                await this.viewModel.Fault();
+                this.Faulted(this, new EventArgs());
             }
 
-            e.Handled = false;
+            // So we can show the fault indicator
+            e.Handled = !Debugger.IsAttached;
         }
 
         /// <summary>
@@ -226,8 +205,7 @@
             {
                 if (this.driver != null)
                 {
-                    this.driver.Suspend();
-                    await this.tickTask;
+                    this.driver.Disconnect();
                 }
 
                 if (this.config != null)

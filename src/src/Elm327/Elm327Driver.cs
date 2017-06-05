@@ -16,6 +16,11 @@
     using Interfaces;
     using MetroLog;
 
+    /// <summary>
+    /// Represent the ELM327 driver for the gauge panel
+    /// </summary>
+    /// <seealso cref="DP.Tinast.Interfaces.IDisplayDriver" />
+    /// <seealso cref="System.IDisposable" />
     class Elm327Driver : IDisplayDriver, IDisposable
     {
         /// <summary>
@@ -137,14 +142,6 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="IDisplayDriver"/> is resumed and can execute commands.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if resumed; otherwise, <c>false</c>.
-        /// </value>
-        public bool Resumed { get; private set; }
-
-        /// <summary>
         /// Gets a value indicating whether this <see cref="IDisplayDriver"/> is connected.
         /// </summary>
         /// <value>
@@ -188,7 +185,7 @@
         /// <returns>True if the connection was established.</returns>
         public async Task<bool> TryConnect()
         {
-            if (this.Resumed && !this.socketConnected)
+            if (!this.socketConnected)
             {
                 if (this.service == null)
                 {
@@ -233,7 +230,8 @@
                 this.writer = new StreamWriter(this.socket.OutputStream.AsStreamForWrite());
 
                 // Get some info about the device we just connected to.
-                this.log.Trace("Connected to device: {0}", await this.SendCommand("atz"));
+                string elmDeviceDesc = (await this.SendCommand("atz")).FirstOrDefault();
+                this.log.Trace("Connected to device: {0}", elmDeviceDesc);
 
                 await this.SendCommand("e0");
                 await this.SendCommand("atsp0");
@@ -331,25 +329,6 @@
         public void Dispose()
         {
             Dispose(true);
-        }
-
-        /// <summary>
-        /// Resumes this driver instance.
-        /// </summary>
-        /// <returns></returns>
-        public void Resume()
-        {
-            this.Resumed = true;
-        }
-
-        /// <summary>
-        /// Suspends this driver instance.
-        /// </summary>
-        /// <returns></returns>
-        public void Suspend()
-        {
-            this.Resumed = false;
-            this.Disconnect();
         }
 
         /// <summary>
@@ -494,7 +473,7 @@
         /// <returns>An array of pid values.</returns>
         private async Task<List<int>> RunPid(string pid)
         {
-            if (this.Resumed && this.socketConnected)
+            if (this.socketConnected)
             {
                 List<int> pr = new List<int>();
                 List<string> r = await this.SendCommand(pid);

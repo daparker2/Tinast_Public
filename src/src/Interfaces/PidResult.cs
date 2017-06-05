@@ -10,7 +10,7 @@ namespace DP.Tinast.Interfaces
     /// <summary>
     /// Represent a PID result
     /// </summary>
-    class PidResult
+    public class PidResult
     {
         /// <summary>
         /// Gets or sets the afr.

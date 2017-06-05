@@ -16,7 +16,7 @@
     /// <summary>
     /// Represent display configuration.
     /// </summary>
-    class DisplayConfiguration
+    public class DisplayConfiguration
     {
         /// <summary>
         /// The file name

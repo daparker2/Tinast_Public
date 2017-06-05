@@ -13,7 +13,6 @@
     using Windows.UI.Xaml.Data;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
-    using Windows.UI.Xaml.Navigation;
 
     /// <summary>
     /// The boost gauge goes from the bottom left of the display to the top right of the display. At 0 psi, the gauge is empty. 

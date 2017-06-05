@@ -10,16 +10,8 @@ namespace DP.Tinast.Interfaces
     /// <summary>
     /// Represent an ELM 327 compatible driver interface.
     /// </summary>
-    interface IDisplayDriver
+    public interface IDisplayDriver
     {
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="IDisplayDriver"/> is resumed and can execute commands.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if resumed; otherwise, <c>false</c>.
-        /// </value>
-        bool Resumed { get; }
-
         /// <summary>
         /// Gets a value indicating whether this <see cref="IDisplayDriver"/> is connected.
         /// </summary>
@@ -33,6 +25,11 @@ namespace DP.Tinast.Interfaces
         /// </summary>
         /// <returns>True if the connection was established.</returns>
         Task<bool> TryConnect();
+
+        /// <summary>
+        /// Disconnects from the OBD2 ELM327 interface.
+        /// </summary>
+        void Disconnect();
 
         /// <summary>
         /// Gets the pid result.

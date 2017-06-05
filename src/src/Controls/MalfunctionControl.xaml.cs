@@ -15,6 +15,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
+    using Interfaces;
 
     /// <summary>
     /// If the connection to the scantool is lost, either due to a loss of ECU power or due to a loss of connectivity to the scantool, a CAN connection indicator will begin blinking in the lower right of the display.
@@ -45,16 +46,31 @@
         public static readonly DependencyProperty OffIntervalProperty = DependencyProperty.Register("OffInterval", typeof(int), typeof(MalfunctionControl), new PropertyMetadata(600));
 
         /// <summary>
-        /// The on timer
+        /// The tick count in ms
         /// </summary>
-        private DispatcherTimer onTimer;
+        const int TickInterval = 30;
 
         /// <summary>
-        /// The off timer
+        /// The on timer
         /// </summary>
-        private DispatcherTimer offTimer;
+        private DispatcherTimer timer;
+
+        /// <summary>
+        /// The MIL mode duration
+        /// </summary>
+        private DateTime start = DateTime.Now;
         
-                /// <summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MalfunctionControl"/> class.
+        /// </summary>
+        public MalfunctionControl()
+        {
+            this.InitializeComponent();
+            this.Loaded += MalfunctionControl_Loaded;
+            this.DataContext = this;
+        }
+
+        /// <summary>
         /// Gets or sets the malfunction indicator.
         /// </summary>
         /// <value>
@@ -62,7 +78,17 @@
         /// </value>
         [DesignerCategory("MalfunctionControl")]
         [Description("The malfunction indicator image source.")]
-        public ImageSource LampSource { get; set; }
+        public ImageSource LampSource
+        {
+            get
+            {
+                return (ImageSource)this.GetValue(LampSourceProperty);
+            }
+            set
+            {
+                this.SetValue(LampSourceProperty, value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether the system is malfunctioning.
@@ -72,7 +98,17 @@
         /// </value>
         [DesignerCategory("MalfunctionControl")]
         [Description("Whether the system is malfunctioning.")]
-        public bool Malfunctioning { get; set; }
+        public bool Malfunctioning
+        {
+            get
+            {
+                return (bool)this.GetValue(MalfunctioningProperty);
+            }
+            set
+            {
+                this.SetValue(MalfunctioningProperty, value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the on interval in ms.
@@ -82,7 +118,17 @@
         /// </value>
         [DesignerCategory("MalfunctionControl")]
         [Description("The indicator on interval.")]
-        public int OnInterval { get; set; } = 400;
+        public int OnInterval
+        {
+            get
+            {
+                return (int)this.GetValue(OnIntervalProperty);
+            }
+            set
+            {
+                this.SetValue(OnIntervalProperty, value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the off interval in ms.
@@ -92,15 +138,16 @@
         /// </value>
         [DesignerCategory("MalfunctionControl")]
         [Description("The indicator off interval.")]
-        public int OffInterval { get; set; } = 600;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MalfunctionControl"/> class.
-        /// </summary>
-        public MalfunctionControl()
+        public int OffInterval
         {
-            this.InitializeComponent();
-            this.Loaded += MalfunctionControl_Loaded;
+            get
+            {
+                return (int)this.GetValue(OffIntervalProperty);
+            }
+            set
+            {
+                this.SetValue(OffIntervalProperty, value);
+            }
         }
 
         /// <summary>
@@ -110,12 +157,9 @@
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void MalfunctionControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.onTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(this.OnInterval) };
-            this.onTimer.Tick += OnTimer_Tick;
-            this.offTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(this.OnInterval + this.OffInterval) };
-            this.offTimer.Tick += OffTimer_Tick;
-            this.onTimer.Start();
-            this.offTimer.Start();
+            this.timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
+            this.timer.Tick += Timer_Tick;
+            this.timer.Start();
         }
 
         /// <summary>
@@ -123,29 +167,25 @@
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private void OnTimer_Tick(object sender, object e)
+        private void Timer_Tick(object sender, object e)
         {
-            this.onTimer.Interval = TimeSpan.FromMilliseconds(this.OnInterval);
+            this.timer.Interval = TimeSpan.FromMilliseconds(this.OnInterval);
             if (this.Malfunctioning)
             {
-                this.lamp.Source = this.LampSource;
-                this.lamp.Visibility = Visibility.Visible;
+                DateTime now = DateTime.Now;
+                int duration = (int)(now - this.start).TotalMilliseconds;
+                if (this.lamp.Visibility == Visibility.Visible && duration > this.OnInterval)
+                {
+                    this.lamp.Visibility = Visibility.Collapsed;
+                    this.start = now;
+                }
+                else if (duration > this.OffInterval)
+                {
+                    this.lamp.Visibility = Visibility.Visible;
+                    this.start = now;
+                }
             }
             else
-            {
-                this.lamp.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        /// <summary>
-        /// Called when the of timer ticks.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private void OffTimer_Tick(object sender, object e)
-        {
-            this.offTimer.Interval = TimeSpan.FromMilliseconds(this.OnInterval + this.OffInterval);
-            if (this.Malfunctioning)
             {
                 this.lamp.Visibility = Visibility.Collapsed;
             }

@@ -4,6 +4,7 @@ namespace DP.Tinast.ViewModel
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -21,9 +22,9 @@ namespace DP.Tinast.ViewModel
     class DisplayViewModel : INotifyPropertyChanged
     {
         /// <summary>
-        /// The last update
+        /// Batch up property notifications up to 33 ms before sending them out.
         /// </summary>
-        private Task lastUpdate = null;
+        static readonly TimeSpan TickWindow = TimeSpan.FromMilliseconds(33);
 
         /// <summary>
         /// The logger.
@@ -48,13 +49,18 @@ namespace DP.Tinast.ViewModel
         /// <summary>
         /// The properties changed
         /// </summary>
-        List<string> propertiesChanged = new List<string>();
+        private List<string> propertiesChanged = new List<string>();
+
+        /// <summary>
+        /// The property task
+        /// </summary>
+        private Task propertyTask;
 
         /// <summary>
         /// The property changed event.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="DisplayViewModel"/> class.
         /// </summary>
@@ -163,6 +169,14 @@ namespace DP.Tinast.ViewModel
         public bool AfrTooRich { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether a temperature value is out of range.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if a temperature value is out of range; otherwise, <c>false</c>.
+        /// </value>
+        public bool TempWarning { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether this <see cref="DisplayViewModel"/> is faulted.
         /// </summary>
         /// <value>
@@ -214,12 +228,6 @@ namespace DP.Tinast.ViewModel
                 }
 
                 PidResult result = await this.driver.GetPidResult(request);
-                if (this.lastUpdate != null)
-                {
-                    await this.lastUpdate;
-                    this.lastUpdate = null;
-                }
-
                 bool propertyChanged;
                 this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
                 this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
@@ -265,7 +273,8 @@ namespace DP.Tinast.ViewModel
                     }
                 }
 
-                this.lastUpdate = this.OnPropertiesChanged();
+                this.TempWarning = this.SetProperty("TempWarning", this.TempWarning, this.IntakeTempWarn || this.OilTempWarn || this.CoolantTempWarn, out propertyChanged);
+                await this.OnPropertiesChanged();
             }
         }
 
@@ -275,18 +284,11 @@ namespace DP.Tinast.ViewModel
         /// <returns></returns>
         private async Task<bool> ShouldTick()
         {
-            if (!this.driver.Resumed || !this.driver.Connected)
+            if (!this.driver.Connected)
             {
-                Task<bool> connectTask = this.driver.TryConnect();
-                if (this.lastUpdate != null)
-                {
-                    await this.lastUpdate;
-                    this.lastUpdate = null;
-                }
-
                 bool propertyChanged;
-                this.Obd2Connecting = this.SetProperty("Obd2Connecting", await connectTask, true, out propertyChanged);
-                this.lastUpdate = this.OnPropertiesChanged();
+                this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, !(await this.driver.TryConnect()), out propertyChanged);
+                await this.OnPropertiesChanged();
                 return this.Obd2Connecting;
             }
 
@@ -301,16 +303,9 @@ namespace DP.Tinast.ViewModel
         {
             if (!this.Faulted)
             {
-                if (this.lastUpdate != null)
-                {
-                    await this.lastUpdate;
-                    this.lastUpdate = null;
-                }
-
                 bool propertyChanged;
                 this.Faulted = this.SetProperty("Faulted", this.Faulted, true, out propertyChanged);
-                this.lastUpdate = this.OnPropertiesChanged();
-                await this.lastUpdate;
+                await this.OnPropertiesChanged();
             }
         }
 
@@ -318,19 +313,29 @@ namespace DP.Tinast.ViewModel
         /// Called when a set of properties change on the view model.
         /// </summary>
         /// <returns>A task object.</returns>
-        protected virtual Task OnPropertiesChanged()
+        protected virtual async Task OnPropertiesChanged()
         {
-            return CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            List<string> props = this.propertiesChanged.ToList();
+            this.propertiesChanged.Clear();
+
+            if (this.propertyTask != null)
             {
-                if (this.PropertyChanged != null && this.propertiesChanged.Count > 0)
+                await this.propertyTask;
+                this.propertyTask = null;
+            }
+
+            this.propertyTask = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (props.Count > 0)
                 {
-                    foreach (string propertyName in this.propertiesChanged)
+                    if (this.PropertyChanged != null)
                     {
-                        this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                        foreach (string propertyName in props)
+                        {
+                            this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                        }
                     }
                 }
-
-                this.propertiesChanged.Clear();
             }).AsTask();
         }
 

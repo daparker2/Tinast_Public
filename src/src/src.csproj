@@ -104,12 +104,14 @@
     <Compile Include="Controls\BoostControl.xaml.cs">
       <DependentUpon>BoostControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ColorPalette.cs" />
     <Compile Include="Controls\MalfunctionControl.xaml.cs">
       <DependentUpon>MalfunctionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TemperatureControl.xaml.cs">
       <DependentUpon>TemperatureControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\TemperatureConverter.cs" />
     <Compile Include="Elm327\PidTable.cs" />
     <Compile Include="Elm327\Elm327Driver.cs" />
     <Compile Include="Elm327\PidHandler.cs" />

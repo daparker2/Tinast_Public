@@ -6,7 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    enum PidType
+    public enum PidType
     {
         /// <summary>
         /// The OBD2 spec PID type

@@ -3,6 +3,12 @@ This my car dash panel project. It's for my flashed ECU 2013 Subaru BRZ. It prob
 
 There will be some limited customization of PIDs in a json file, but probably no way to deploy changes there without branching. There might be limited datalogging but we're pretty much a long way from that.
 
+## Update 1: It sort of works
+
+![update1](https://daparker.visualstudio.com/0b16eba6-9218-4f4b-a629-87fe16048574/_api/_versioncontrol/itemContent?repositoryId=7f54c86c-6802-4911-9f5b-9a97bd2317e2&path=%2Fimg%2Fupdate1.jpg&version=GBmaster&contentOnly=true&__v=5 "Update1")
+
+Here's what I have so far.
+
 ##BOM
 1. Raspberry Pi 3
 2. ~~Raspi UPS Hat~~

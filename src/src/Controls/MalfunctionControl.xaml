@@ -9,7 +9,7 @@
     d:DesignHeight="90"
     d:DesignWidth="90"
     x:Name="_this">
-    <Border Width="90" Height="90" Canvas.Left="625" Canvas.Top="495" BorderThickness="3" BorderBrush="Pink">
+    <Border Width="90" Height="90" Canvas.Left="625" Canvas.Top="495" BorderThickness="3" BorderBrush="Transparent">
         <Image x:Name="lamp" Visibility="Collapsed" Width="88" Height="88"  Source="{Binding Path=LampSource, ElementName=_this}"/>
     </Border>
 </UserControl>

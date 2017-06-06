@@ -230,7 +230,7 @@
                 this.writer = new StreamWriter(this.socket.OutputStream.AsStreamForWrite());
 
                 // Get some info about the device we just connected to.
-                string elmDeviceDesc = (await this.SendCommand("atz")).FirstOrDefault();
+                string elmDeviceDesc = (await this.SendCommand("atz"))[1];
                 this.log.Trace("Connected to device: {0}", elmDeviceDesc);
 
                 await this.SendCommand("e0");

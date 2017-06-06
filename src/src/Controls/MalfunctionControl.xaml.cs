@@ -67,6 +67,7 @@
         {
             this.InitializeComponent();
             this.Loaded += MalfunctionControl_Loaded;
+            this.Unloaded += MalfunctionControl_Unloaded;
             this.DataContext = this;
         }
 
@@ -161,6 +162,17 @@
             this.timer.Tick += Timer_Tick;
             this.timer.Start();
         }
+
+        /// <summary>
+        /// Handles the Unloaded event of the MalfunctionControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private void MalfunctionControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.timer.Stop();
+        }
+
 
         /// <summary>
         /// Called when the on timer ticks.

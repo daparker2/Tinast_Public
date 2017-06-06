@@ -56,14 +56,17 @@
         {
             this.InitializeComponent();
             this.Loaded += TemperatureControl_Loaded;
+            this.Unloaded += TemperatureControl_Unloaded;
             this.DataContext = this;
+            this.temp.Foreground = ColorPalette.IndicatorColor;
+            this.text.Foreground = ColorPalette.IndicatorColor;
         }
 
         /// <summary>
         /// Gets or sets the temperature level.
         /// </summary>
         /// <value>
-        /// The malfunction indicator.
+        /// The temperature level.
         /// </value>
         [DesignerCategory("TemperatureControl")]
         [Description("The temperature level.")]
@@ -83,7 +86,7 @@
         /// Gets or sets the warning level.
         /// </summary>
         /// <value>
-        /// The malfunction indicator.
+        /// The warning level.
         /// </value>
         [DesignerCategory("TemperatureControl")]
         [Description("The warning level.")]
@@ -131,6 +134,16 @@
             this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
             this.updateTimer.Tick += UpdateTimer_Tick;
             this.updateTimer.Start();
+        }
+
+        /// <summary>
+        /// Handles the Unloaded event of the TemperatureControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private void TemperatureControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.updateTimer.Stop();
         }
 
         /// <summary>

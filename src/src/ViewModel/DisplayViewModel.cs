@@ -233,11 +233,8 @@ namespace DP.Tinast.ViewModel
                 this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
                 if (propertyChanged)
                 {
-                    this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, this.EngineAfr > 16, out propertyChanged);
-                    if (!propertyChanged)
-                    {
-                        this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, this.EngineAfr < 12, out propertyChanged);
-                    }
+                    this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, this.EngineAfr > 18, out propertyChanged);
+                    this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, this.EngineAfr < 11, out propertyChanged);
                 }
 
                 if (request.HasFlag(PidRequest.OilTemp))

@@ -111,6 +111,7 @@
     <Compile Include="Controls\TemperatureControl.xaml.cs">
       <DependentUpon>TemperatureControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\AfrConverter.cs" />
     <Compile Include="Converters\TemperatureConverter.cs" />
     <Compile Include="Elm327\PidTable.cs" />
     <Compile Include="Elm327\Elm327Driver.cs" />

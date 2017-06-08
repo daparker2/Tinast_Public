@@ -71,7 +71,7 @@
         private DateTime whenChanged = DateTime.Now;
 
         /// <summary>
-        /// The on timer
+        /// The update timer
         /// </summary>
         private DispatcherTimer updateTimer;
 
@@ -86,6 +86,7 @@
             this.DataContext = this;
             this.label.Foreground = ColorPalette.IndicatorColor;
             this.level.Foreground = ColorPalette.IndicatorColor;
+            this.afrOutline.Stroke = ColorPalette.OutlineColor;
             this.allLeds = new Ellipse[]
             {
                 this.led0,
@@ -151,8 +152,8 @@
         /// <value>
         /// The AFR level.
         /// </value>
-        [DesignerCategory("TemperatureControl")]
-        [Description("The temperature level.")]
+        [DesignerCategory("AfrControl")]
+        [Description("The AFR level.")]
         public double Level
         {
             get
@@ -171,7 +172,7 @@
         /// <value>
         /// The too rich property.
         /// </value>
-        [DesignerCategory("TemperatureControl")]
+        [DesignerCategory("AfrControl")]
         [Description("The too rich property.")]
         public bool TooRich
         {
@@ -191,7 +192,7 @@
         /// <value>
         /// The too lean property.
         /// </value>
-        [DesignerCategory("TemperatureControl")]
+        [DesignerCategory("AfrControl")]
         [Description("The too lean property.")]
         public bool TooLean
         {
@@ -211,7 +212,7 @@
         /// <value>
         /// The idle property.
         /// </value>
-        [DesignerCategory("TemperatureControl")]
+        [DesignerCategory("AfrControl")]
         [Description("The idle property.")]
         public bool Idle
         {
@@ -313,7 +314,7 @@
                     this.allLeds[i].Visibility = Visibility.Visible;
                     if (this.warning != shouldWarn)
                     {
-                        this.allLeds[i].Fill = ColorPalette.IndicatorColor;
+                        this.allLeds[i].Fill = ColorPalette.NeedleColor;
                         this.allLeds[i].Stroke = ColorPalette.OutlineColor;
                     }
                     if (shouldWarn)

@@ -16,7 +16,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Canvas Background="Black" Margin="3,3,3,3" Grid.Row="0" Grid.Column="0">
-            <Controls:BoostControl Canvas.Top="0" Canvas.Left="0" x:Name="boostGauge" />
+            <Controls:BoostControl Canvas.Top="0" Canvas.Left="0" x:Name="boostGauge" Level="{Binding ElementName=_this, Path=DataContext.EngineBoost, UpdateSourceTrigger=PropertyChanged}" MinLevel="0" MaxLevel="15" />
             <Controls:AfrControl Canvas.Left="145" Canvas.Top="225" x:Name="afrGauge" Level="{Binding ElementName=_this, Path=DataContext.EngineAfr, UpdateSourceTrigger=PropertyChanged}" TooLean="{Binding ElementName=_this, Path=DataContext.AfrTooLean, UpdateSourceTrigger=PropertyChanged}" TooRich="{Binding ElementName=_this, Path=DataContext.AfrTooRich, UpdateSourceTrigger=PropertyChanged}" Idle="{Binding ElementName=_this, Path=DataContext.IdleLoad, UpdateSourceTrigger=PropertyChanged}" />
             <Controls:TemperatureControl Canvas.Left="625" Canvas.Top="225" x:Name="oilTemp"     Text="    Oil:" Level="{Binding ElementName=_this, Path=DataContext.EngineOilTemp, UpdateSourceTrigger=PropertyChanged}" Warning="{Binding ElementName=_this, Path=DataContext.OilTempWarn, UpdateSourceTrigger=PropertyChanged}" />
             <Controls:TemperatureControl Canvas.Left="625" Canvas.Top="315" x:Name="coolantTemp" Text="Coolant:" Level="{Binding ElementName=_this, Path=DataContext.EngineCoolantTemp, UpdateSourceTrigger=PropertyChanged}" Warning="{Binding ElementName=_this, Path=DataContext.CoolantTempWarn, UpdateSourceTrigger=PropertyChanged}" />

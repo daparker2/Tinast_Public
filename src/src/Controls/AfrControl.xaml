@@ -16,6 +16,7 @@
     </UserControl.Resources>
     <Border Width="315" Height="335" BorderThickness="3" BorderBrush="Transparent">
         <Canvas Width="313" Height="333">
+            <shapes:Ellipse x:Name="afrOutline" Width="320" Height="320" Stroke="White" StrokeThickness="1" Canvas.Top="-3" Canvas.Left="-3"/>
             <shapes:Ellipse x:Name="led0" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="0" Canvas.Left="144" />
             <shapes:Ellipse x:Name="led1" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="2" Canvas.Left="124" />
             <shapes:Ellipse x:Name="led2" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="7" Canvas.Left="105" />
@@ -65,7 +66,7 @@
             <shapes:Ellipse x:Name="led46" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="3" Canvas.Left="184" />
             <shapes:Ellipse x:Name="led47" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="0" Canvas.Left="164" />
             <TextBlock x:Name="level" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=afrConverter}}" FontSize="45" FontFamily="Consolas" FontWeight="Bold" Width="145" Height="52" Canvas.Top="131" Canvas.Left="85" Margin="0,0,0,0" TextAlignment="Center" />
-            <TextBlock x:Name="label" Text="AFR" FontSize="15" FontFamily="Consolas" Width="30" Height="15" Canvas.Top="313" Canvas.Left="143" Margin="0,0,0,0" TextAlignment="Center" />
+            <TextBlock x:Name="label" Text="AFR" FontSize="15" FontFamily="Consolas" Width="30" Height="15" Canvas.Top="318" Canvas.Left="143" Margin="0,0,0,0" TextAlignment="Center" />
         </Canvas>
     </Border>
 </UserControl>

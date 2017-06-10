@@ -84,10 +84,7 @@
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-
-            // change the config...
-            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Info, LogLevel.Fatal, new StreamingFileTarget());
-
+            
             // setup the global crash handler...
             GlobalCrashHandler.Configure();
 

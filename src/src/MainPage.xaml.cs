@@ -53,6 +53,16 @@
         private Task tickTask;
 
         /// <summary>
+        /// The debug task
+        /// </summary>
+        private Task debugTask;
+
+        /// <summary>
+        /// The tick delay
+        /// </summary>
+        private int tickDelay;
+
+        /// <summary>
         /// The loaded
         /// </summary>
         private bool resumed;
@@ -63,6 +73,15 @@
         public MainPage()
         {
             this.InitializeComponent();
+            if (Debugger.IsAttached)
+            {
+                this.tickDelay = 60000;
+            }
+            else
+            {
+                this.tickDelay = TickTimeout;
+            }
+
             this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
             this.viewModel = new DisplayViewModel(((App)Application.Current).Driver, ((App)Application.Current).Config);
             this.boostGauge.MaxLevel = ((App)Application.Current).Config.MaxBoost;
@@ -106,6 +125,12 @@
                 await this.tickTask;
                 this.tickTask = null;
             }
+
+            if (this.debugTask != null)
+            {
+                await this.debugTask;
+                this.debugTask = null;
+            }
         }
 
         /// <summary>
@@ -129,7 +154,9 @@
             if (!this.resumed)
             {
                 this.resumed = true;
-                this.tickTask = Task.Run(this.TickLoopAsync);
+                IDisplayDriver driver = ((App)Application.Current).Driver;
+                this.tickTask = this.TickLoopAsync(driver);
+                this.debugTask = this.DebugLoopAsync(driver);
             }
         }
 
@@ -137,39 +164,52 @@
         /// The async tick loop.
         /// </summary>
         /// <returns></returns>
-        private async Task TickLoopAsync()
+        private Task TickLoopAsync(IDisplayDriver driver)
         {
-            IDisplayDriver driver = ((App)Application.Current).Driver;
-            while (this.resumed)
+            return Task.Run(async () =>
             {
-                int tickDelay;
-                if (Debugger.IsAttached)
+                while (this.resumed)
                 {
-                    tickDelay = 60000;
-                }
-                else
-                {
-                    tickDelay = TickTimeout;
-                }
-
-                try
-                {
-                    Task tick = this.viewModel.Tick();
-                    if (!tick.Wait(tickDelay))
+                    try
                     {
-                        this.log.Error("Tick timed out.");
-                        driver.Disconnect();
+                        Task tick = this.viewModel.Tick();
+                        if (!tick.Wait(tickDelay))
+                        {
+                            this.log.Error("Tick timed out. The last transaction was {0}", await driver.GetLastTransactionInfo());
+                            driver.Disconnect();
+                            continue;
+                        }
+
+                        await tick;
+                    }
+                    catch (IOException ex)
+                    {
+                        this.log.Error(string.Format("Tick update error. The last transaction was {0}", await driver.GetLastTransactionInfo()), ex);
                         continue;
                     }
+                }
+            });
+        }
 
-                    await tick;
-                }
-                catch (IOException ex)
+        /// <summary>
+        /// Periocally samples the driver for the last PID transaction, printing transactions if they have gotten a valid result already.
+        /// </summary>
+        /// <returns></returns>
+        private Task DebugLoopAsync(IDisplayDriver driver)
+        {
+            return Task.Run(async () =>
+            {
+                while (this.resumed)
                 {
-                    this.log.Error("Tick update error", ex);
-                    continue;
+                    Task<PidDebugData> transactionTask = driver.GetLastTransactionInfo();
+                    if (transactionTask.Wait(this.tickDelay))
+                    {
+                        PidDebugData transactionResult = await transactionTask;
+                        this.log.Trace("{0}", transactionResult.ToString().Replace('\n', ','));
+                        await Task.Delay(2000);
+                    }
                 }
-            }
+            });
         }
     }
 }

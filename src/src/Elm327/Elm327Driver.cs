@@ -72,6 +72,11 @@
         private Windows.Storage.Streams.Buffer readBuffer = new Windows.Storage.Streams.Buffer(1 << 12);
 
         /// <summary>
+        /// The debug data task
+        /// </summary>
+        private TaskCompletionSource<PidDebugData> debugDataTask = new TaskCompletionSource<PidDebugData>();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Elm327Driver"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
@@ -154,30 +159,6 @@
         }
 
         /// <summary>
-        /// Gets the last command.
-        /// </summary>
-        /// <value>
-        /// The last command.
-        /// </value>
-        internal string LastCommand
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the last response.
-        /// </summary>
-        /// <value>
-        /// The last response.
-        /// </value>
-        internal List<string> LastResponse
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
         /// <returns>True if the connection was established.</returns>
@@ -205,6 +186,8 @@
                 if (this.socket == null)
                 {
                     this.socket = new StreamSocket();
+                    this.socket.Control.NoDelay = true;
+                    this.socket.Control.SerializeConnectionAttempts = true;
                 }
 
                 this.log.Info("Connecting to {0};{1}", this.service.ConnectionHostName, this.service.ConnectionServiceName);
@@ -314,8 +297,19 @@
             }
             catch (Exception ex)
             {
-                throw new IOException(string.Format("Failed to get PID result. PID: {0}. Last result:\n{1}", pidRequest, string.Join("\n", this.LastResponse)), ex);
+                throw new IOException("Failed to get PID result.", ex);
             }
+        }
+
+        /// <summary>
+        /// Gets the last transaction information, which in most cases will be the command sent to GetPidResultAsync.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="PidDebugData" /> object representing the last transaction.
+        /// </returns>
+        public Task<PidDebugData> GetLastTransactionInfo()
+        {
+            return this.debugDataTask.Task;
         }
 
         /// <summary>
@@ -367,21 +361,32 @@
         /// </summary>
         /// <param name="commandString">The command string.</param>
         /// <returns></returns>
-        private async Task<List<string>> SendCommand(string commandString)
+        private async Task<string[]> SendCommand(string commandString)
         {
+            bool resultSet = false;
             try
             {
-                this.LastCommand = commandString;
+                DateTime start = DateTime.Now;
                 byte[] outBuf = Encoding.ASCII.GetBytes(commandString + "\r");
                 await this.socket.OutputStream.WriteAsync(outBuf.AsBuffer());
                 await this.socket.OutputStream.FlushAsync();
-                return await this.ReadResponse();
+                string[] ret = await this.ReadResponse();
+                resultSet = this.debugDataTask.TrySetResult(new PidDebugData(commandString, ret, DateTime.Now - start));
+                return ret;
             }
             catch (IOException ex)
             {
                 this.log.Warn("Lost socket connection: {0}", ex.Message);
                 this.Disconnect();
+                resultSet = this.debugDataTask.TrySetResult(new PidDebugData(commandString, new string[] { }, TimeSpan.MaxValue));
                 throw;
+            }
+            finally
+            {
+                if (resultSet)
+                {
+                    this.debugDataTask = new TaskCompletionSource<PidDebugData>();
+                }
             }
         }
 
@@ -389,7 +394,7 @@
         /// Reads a line off the input socket.
         /// </summary>
         /// <returns></returns>
-        private async Task<List<string>> ReadResponse()
+        private async Task<string[]> ReadResponse()
         {
             try
             {
@@ -428,8 +433,7 @@
                                 sCur = sEnd + 1;
                             }
 
-                            this.LastResponse = sr;
-                            return sr;
+                            return sr.ToArray();
                         }
                         else
                         {
@@ -457,10 +461,10 @@
             if (this.socketConnected)
             {
                 List<int> pr = new List<int>();
-                List<string> r = await this.SendCommand(pid);
-                if (!r[r.Count - 1].Equals("UNABLE TO CONNECT") && !r[r.Count - 1].Equals("NO DATA"))
+                string[] r = await this.SendCommand(pid);
+                if (!r[r.Length - 1].Equals("UNABLE TO CONNECT") && !r[r.Length - 1].Equals("NO DATA"))
                 {
-                    for (int i = 1; i < r.Count; ++i)
+                    for (int i = 1; i < r.Length; ++i)
                     {
                         if (r[i].Length > 1)
                         {
@@ -506,7 +510,7 @@
             }
             else
             {
-                throw new FormatException("Invalid pid result. Last response: " + string.Join("\n", this.LastResponse));
+                throw new FormatException("Invalid pid result");
             }
         }
 

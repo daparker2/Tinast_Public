@@ -37,5 +37,12 @@ namespace DP.Tinast.Interfaces
         /// <param name="request">The request.</param>
         /// <returns></returns>
         Task<PidResult> GetPidResultAsync(PidRequest request);
+
+        /// <summary>
+        /// Gets the last transaction information, which in most cases will be the command sent to GetPidResultAsync.
+        /// </summary>
+        /// <returns>A <see cref="Task{PidDebugData}"/> object representing the last transaction.</returns>
+        /// <remarks>This may block for a while, if no transactions are being performed due to a pending connect.</remarks>
+        Task<PidDebugData> GetLastTransactionInfo();
     }
 }

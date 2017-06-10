@@ -167,6 +167,7 @@
             StorageFile file = await appFolder.CreateFileAsync(FileName, CreationCollisionOption.ReplaceExisting);
 
             this.log.Info("Saving config to '{0}'", file.Path);
+            this.log.Trace("{0}", json);
             await FileIO.WriteTextAsync(file, json);
             this.log.Info("Config saved.");
         }
@@ -193,12 +194,16 @@
                 }
                 catch (FileNotFoundException)
                 {
+#if DEBUG
                     log.Warn("Default config file not found.");
                     DisplayConfiguration ret = new DisplayConfiguration();
 
                     // Make sure we can save the default configuration that we just created.
                     await ret.Save();
                     return ret;
+#else
+                    throw;
+#endif // DEBUG
                 }
             }
         }

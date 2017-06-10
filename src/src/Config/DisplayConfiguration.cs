@@ -27,7 +27,7 @@
         /// The logger
         /// </summary>
         private ILogger log = LogManagerFactory.DefaultLogManager.GetLogger<DisplayConfiguration>();
-
+        
         /// <summary>
         /// Gets or sets the type of the boost pid.
         /// </summary>
@@ -75,6 +75,14 @@
         /// The type of the intake temp pid.
         /// </value>
         public PidType IntakeTempPidType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum boost.
+        /// </summary>
+        /// <value>
+        /// The maximum boost.
+        /// </value>
+        public int MaxBoost { get; set; } = 15;
 
         /// <summary>
         /// Gets or sets the maximum idle load.

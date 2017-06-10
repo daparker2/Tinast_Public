@@ -40,11 +40,6 @@
         public static readonly DependencyProperty MaxLevelProperty = DependencyProperty.Register("MaxLevel", typeof(int), typeof(BoostControl), new PropertyMetadata(default(int)));
 
         /// <summary>
-        /// The last boost
-        /// </summary>
-        private int lastBoost = 0;
-
-        /// <summary>
         /// All leds
         /// </summary>
         Polygon[] allLeds;
@@ -229,74 +224,23 @@
             }
 
             // Average to next value, minimum 1, until we hit it.
-            int next = boost + (boost - this.lastBoost) / 2;
-            if (next == 0)
+            int boostEnd = boost * this.allLeds.Length / (this.MaxLevel - this.MinLevel);
+            for (int i = 0; i < this.allLeds.Length; ++i)
             {
-                if (boost > this.lastBoost)
+                if (i < boostEnd)
                 {
-                    next = 1;
+                    this.allLeds[i].Visibility = Visibility.Visible;
+                    this.allLeds[i].Fill = ColorPalette.GaugeColor;
                 }
-                else if (boost < this.lastBoost)
+                else if (i == boostEnd)
                 {
-                    next = -1;
-                }
-            }
-
-            int boostStep = this.allLeds.Length / (this.MaxLevel - this.MinLevel);
-            int curBoost = this.MinLevel;
-            for (int i = 0; i < this.allLeds.Length; ++i, curBoost += boostStep)
-            {
-                if (this.lastBoost < boost)
-                {
-                    if (curBoost <= this.lastBoost)
-                    {
-                        this.allLeds[i].Visibility = Visibility.Visible;
-                        this.allLeds[i].Fill = ColorPalette.NeedleColor;
-                    }
-                    else if (curBoost <= next)
-                    {
-                        this.allLeds[i].Visibility = Visibility.Visible;
-                        this.allLeds[i].Fill = ColorPalette.GaugeColor;
-                    }
-                    else
-                    {
-                        this.allLeds[i].Visibility = Visibility.Collapsed;
-                    }
-                }
-                else if (this.lastBoost > boost)
-                {
-                    if (curBoost <= next)
-                    {
-                        this.allLeds[i].Visibility = Visibility.Visible;
-                        this.allLeds[i].Fill = ColorPalette.GaugeColor;
-                    }
-                    else if (curBoost <= this.lastBoost)
-                    {
-                        this.allLeds[i].Visibility = Visibility.Visible;
-                        this.allLeds[i].Fill = ColorPalette.NeedleColor;
-                    }
-                    else
-                    {
-                        this.allLeds[i].Visibility = Visibility.Collapsed;
-                    }
+                    this.allLeds[i].Visibility = Visibility.Visible;
+                    this.allLeds[i].Fill = ColorPalette.NeedleColor;
                 }
                 else
                 {
-                    if (curBoost <= boost)
-                    {
-                        this.allLeds[i].Visibility = Visibility.Visible;
-                        this.allLeds[i].Fill = ColorPalette.GaugeColor;
-                    }
-                    else
-                    {
-                        this.allLeds[i].Visibility = Visibility.Collapsed;
-                    }
+                    this.allLeds[i].Visibility = Visibility.Collapsed;
                 }
-            }
-
-            if (boost != this.lastBoost)
-            {
-                this.lastBoost = next;
             }
         }
     }

@@ -2,11 +2,13 @@
 namespace DP.Tinast.ViewModel
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using Windows.ApplicationModel.Core;
@@ -49,12 +51,17 @@ namespace DP.Tinast.ViewModel
         /// <summary>
         /// The properties changed
         /// </summary>
-        private List<string> propertiesChanged = new List<string>();
+        private ConcurrentBag<string> propertiesChanged = new ConcurrentBag<string>();
 
         /// <summary>
         /// The property task
         /// </summary>
         private Task propertyTask;
+
+        /// <summary>
+        /// The first tick
+        /// </summary>
+        private bool flashedGauges = false;
 
         /// <summary>
         /// The property changed event.
@@ -198,7 +205,14 @@ namespace DP.Tinast.ViewModel
         /// <returns>A task object.</returns>
         public async Task Tick()
         {
-            if (await this.ShouldTick())
+            Task<bool> shouldTickTask = this.ShouldTick();
+            if (!this.flashedGauges)
+            {
+                this.flashedGauges = true;
+                await this.FlashGauges();
+            }
+
+            if (await shouldTickTask)
             {
                 // So basically, we want to share the bus time between boost+AFR (which always get updated every tick)
                 // and every other tick update one of the other 4 things: oil temp, coolant temp, intake temp, engine load
@@ -276,6 +290,113 @@ namespace DP.Tinast.ViewModel
         }
 
         /// <summary>
+        /// Flashes the gauges for the user so they know the gauges work.
+        /// </summary>
+        /// <returns></returns>
+        private async Task FlashGauges()
+        {
+            Task tempFlash = this.FlashTempGauges();
+            Task boostFlash = this.FlashBoostGauge();
+            Task afrFlash = this.FlashAfrGauge();
+            await Task.WhenAll(tempFlash, boostFlash, afrFlash);
+        }
+
+        /// <summary>
+        /// Flashes the temperature gauges for the user so they know the gauges work.
+        /// </summary>
+        /// <returns></returns>
+        private async Task FlashTempGauges()
+        {
+            bool propertyChanged;
+            this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, true, out propertyChanged);
+            this.CoolantTempWarn = this.SetProperty("CoolantTempWarn", this.CoolantTempWarn, true, out propertyChanged);
+            this.OilTempWarn = this.SetProperty("OilTempWarn", this.OilTempWarn, true, out propertyChanged);
+            await this.OnPropertiesChanged();
+
+            for (int i = 150; i >= 0; i -= 50)
+            {
+                if (i == 100)
+                {
+                    this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, false, out propertyChanged);
+                    this.CoolantTempWarn = this.SetProperty("CoolantTempWarn", this.CoolantTempWarn, false, out propertyChanged);
+                    this.OilTempWarn = this.SetProperty("OilTempWarn", this.OilTempWarn, false, out propertyChanged);
+                    await this.OnPropertiesChanged();
+                }
+
+                this.EngineIntakeTemp = this.SetProperty("EngineIntakeTemp", this.EngineIntakeTemp, i, out propertyChanged);
+                this.EngineCoolantTemp = this.SetProperty("EngineCoolantTemp", this.EngineCoolantTemp, i, out propertyChanged);
+                this.EngineOilTemp = this.SetProperty("EngineOilTemp", this.EngineOilTemp, i, out propertyChanged);
+                await this.OnPropertiesChanged();
+                await Task.Delay(100);
+            }
+        }
+
+        /// <summary>
+        /// Flashes the boost gauge for the user so they know the gauge works.
+        /// </summary>
+        /// <returns></returns>
+        private async Task FlashBoostGauge()
+        {
+            int step = Math.Max(1, this.config.MaxBoost / 10);
+            bool propertyChanged;
+            for (int i = 0; i < this.config.MaxBoost; i += step)
+            {
+                this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, i, out propertyChanged);
+                await this.OnPropertiesChanged();
+                await Task.Delay(33);
+            }
+
+            for (int i = this.config.MaxBoost; i >= 0; i -= step)
+            {
+                this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, i, out propertyChanged);
+                await this.OnPropertiesChanged();
+                await Task.Delay(33);
+            }
+
+            this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, 0, out propertyChanged);
+            await this.OnPropertiesChanged();
+        }
+
+        /// <summary>
+        /// Flashes the afr gauge for the user so they know the gauge works.
+        /// </summary>
+        /// <returns></returns>
+        private async Task FlashAfrGauge()
+        {
+            bool propertyChanged;
+            this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, true, out propertyChanged);
+            await this.OnPropertiesChanged();
+            await Task.Delay(33);
+
+            for (double i = 18; i >= 11; i -= 0.25)
+            {
+                if (i == 17.75)
+                {
+                    this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, false, out propertyChanged);
+                }
+
+                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
+                await this.OnPropertiesChanged();
+                await Task.Delay(33);
+            }
+
+            this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, true, out propertyChanged);
+            await this.OnPropertiesChanged();
+
+            for (double i = 11; i <= 14.5; i += 0.5)
+            {
+                if (i == 11.5)
+                {
+                    this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, false, out propertyChanged);
+                }
+
+                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
+                await this.OnPropertiesChanged();
+                await Task.Delay(33);
+            }
+        }
+
+        /// <summary>
         /// Get if we should do the rest of the tick.
         /// </summary>
         /// <returns></returns>
@@ -312,13 +433,16 @@ namespace DP.Tinast.ViewModel
         /// <returns>A task object.</returns>
         protected virtual async Task OnPropertiesChanged()
         {
-            List<string> props = this.propertiesChanged.ToList();
-            this.propertiesChanged.Clear();
+            List<string> props = new List<string>();
+            string prop;
+            while (this.propertiesChanged.TryTake(out prop))
+            {
+                props.Add(prop);
+            }
 
             if (this.propertyTask != null)
             {
                 await this.propertyTask;
-                this.propertyTask = null;
             }
 
             this.propertyTask = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>

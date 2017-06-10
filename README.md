@@ -30,6 +30,4 @@ The touchscreen won't work right witwh the display being a nonstandard HDMI reso
 
 TODO: A schematic. 
 
-![schematic](https://daparker.visualstudio.com/0b16eba6-9218-4f4b-a629-87fe16048574/_api/_versioncontrol/itemContent?repositoryId=7f54c86c-6802-4911-9f5b-9a97bd2317e2&path=%2Fimg%2Fproto1.jpg&version=GBmaster&contentOnly=true&__v=5 "Proto1")
-
 Since the touchscreen isn't used, I might try cutting a custom connector for powering the UPS and backlight.

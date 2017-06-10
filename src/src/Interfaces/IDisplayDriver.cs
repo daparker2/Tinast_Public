@@ -24,7 +24,7 @@ namespace DP.Tinast.Interfaces
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
         /// <returns>True if the connection was established.</returns>
-        Task<bool> TryConnect();
+       Task<bool> TryConnectAsync();
 
         /// <summary>
         /// Disconnects from the OBD2 ELM327 interface.
@@ -36,6 +36,6 @@ namespace DP.Tinast.Interfaces
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns></returns>
-        Task<PidResult> GetPidResult(PidRequest request);
+        Task<PidResult> GetPidResultAsync(PidRequest request);
     }
 }

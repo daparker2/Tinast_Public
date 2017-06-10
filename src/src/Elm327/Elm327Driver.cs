@@ -5,12 +5,15 @@
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.Devices.Bluetooth.Rfcomm;
     using Windows.Devices.Enumeration;
     using Windows.Foundation;
     using Windows.Networking.Sockets;
+    using Windows.Storage;
+    using Windows.Storage.Streams;
     using Config;
     using Elm327;
     using Interfaces;
@@ -49,16 +52,6 @@
         private RfcommDeviceService service;
 
         /// <summary>
-        /// The reader
-        /// </summary>
-        private StreamReader reader;
-
-        /// <summary>
-        /// The writer
-        /// </summary>
-        private StreamWriter writer;
-
-        /// <summary>
         /// The socket connected
         /// </summary>
         private bool socketConnected = false;
@@ -72,6 +65,11 @@
         /// The PID table
         /// </summary>
         private PidTable pt = new PidTable();
+
+        /// <summary>
+        /// The read buffer
+        /// </summary>
+        private Windows.Storage.Streams.Buffer readBuffer = new Windows.Storage.Streams.Buffer(1 << 12);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Elm327Driver"/> class.
@@ -183,7 +181,7 @@
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
         /// <returns>True if the connection was established.</returns>
-        public async Task<bool> TryConnect()
+        public async Task<bool> TryConnectAsync()
         {
             if (!this.socketConnected)
             {
@@ -226,9 +224,6 @@
                     return false;
                 }
 
-                this.reader = new StreamReader(this.socket.InputStream.AsStreamForRead());
-                this.writer = new StreamWriter(this.socket.OutputStream.AsStreamForWrite());
-
                 // Get some info about the device we just connected to.
                 string elmDeviceDesc = (await this.SendCommand("atz"))[1];
                 this.log.Trace("Connected to device: {0}", elmDeviceDesc);
@@ -254,7 +249,7 @@
         /// </summary>
         /// <param name="request">The PID request.</param>
         /// <returns>A <see cref="PidResult"/> object.</returns>
-        public async Task<PidResult> GetPidResult(PidRequest request)
+        public async Task<PidResult> GetPidResultAsync(PidRequest request)
         {
             StringBuilder sb = new StringBuilder();
             int cPids = 0;
@@ -337,18 +332,6 @@
         public void Disconnect()
         {
             this.socketConnected = false;
-            if (this.reader != null)
-            {
-                this.reader.Dispose();
-                this.reader = null;
-            }
-
-            if (this.writer != null)
-            {
-                this.writer.Dispose();
-                this.writer = null;
-            }
-
             if (this.socket != null)
             {
                 this.socket.Dispose();
@@ -389,9 +372,9 @@
             try
             {
                 this.LastCommand = commandString;
-                await this.writer.WriteAsync(commandString);
-                await this.writer.WriteAsync("\r");
-                await this.writer.FlushAsync();
+                byte[] outBuf = Encoding.ASCII.GetBytes(commandString + "\r");
+                await this.socket.OutputStream.WriteAsync(outBuf.AsBuffer());
+                await this.socket.OutputStream.FlushAsync();
                 return await this.ReadResponse();
             }
             catch (IOException ex)
@@ -410,49 +393,47 @@
         {
             try
             {
-                char[] buf = new char[1 << 8];
                 List<char> cb = new List<char>();
                 List<string> sr = new List<string>();
                 for (;;)
                 {
-                    int len;
-                    if ((len = await this.reader.ReadAsync(buf, 0, buf.Length)) > 0)
+                    byte[] read = (await this.socket.InputStream.ReadAsync(this.readBuffer, this.readBuffer.Capacity, InputStreamOptions.Partial))
+                                             .ToArray();
+                    for (int i = 0; i < read.Length; ++i)
                     {
-                        for (int i = 0; i < len; ++i)
+                        if (read[i] == '>')
                         {
-                            if (buf[i] == '>')
+                            int sCur = 0;
+                            while (sCur < cb.Count)
                             {
-                                int sCur = 0;
-                                while (sCur < cb.Count)
+                                int sEnd = cb.IndexOf('\r', sCur);
+                                if (sEnd < 0)
                                 {
-                                    int sEnd = cb.IndexOf('\r', sCur);
-                                    if (sEnd < 0)
+                                    break;
+                                }
+                                else if (sEnd > sCur)
+                                {
+                                    int sLen = sEnd - sCur;
+                                    char[] sa = new char[sLen];
+                                    cb.CopyTo(sCur, sa, 0, sLen);
+                                    string s = new string(sa, 0, sLen);
+                                    if (s.Equals("STOPPED"))
                                     {
-                                        break;
-                                    }
-                                    else if (sEnd > sCur)
-                                    {
-                                        int sLen = sEnd - sCur;
-                                        cb.CopyTo(sCur, buf, 0, sLen);
-                                        string s = new string(buf, 0, sLen);
-                                        if (s.Equals("STOPPED"))
-                                        {
-                                            throw new IOException("ELM327 device stopped.");
-                                        }
-
-                                        sr.Add(s);
+                                        throw new IOException("ELM327 device stopped.");
                                     }
 
-                                    sCur = sEnd + 1;
+                                    sr.Add(s);
                                 }
 
-                                this.LastResponse = sr;
-                                return sr;
+                                sCur = sEnd + 1;
                             }
-                            else
-                            {
-                                cb.Add(buf[i]);
-                            }
+
+                            this.LastResponse = sr;
+                            return sr;
+                        }
+                        else
+                        {
+                            cb.Add((char)read[i]);
                         }
                     }
                 }

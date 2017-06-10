@@ -7,6 +7,7 @@
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Threading;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
@@ -128,38 +129,46 @@
             if (!this.resumed)
             {
                 this.resumed = true;
-                this.tickTask = Task.Run(async () =>
-                {
-                    IDisplayDriver driver = ((App)Application.Current).Driver;
-                    while (this.resumed)
-                    {
-                        try
-                        {
-                            Task tick = this.viewModel.Tick();
-                            Task delayTask;
-                            if (Debugger.IsAttached)
-                            {
-                                delayTask = Task.Delay(60000);
-                            }
-                            else
-                            {
-                                delayTask = Task.Delay(TickTimeout);
-                            }
+                this.tickTask = Task.Run(this.TickLoopAsync);
+            }
+        }
 
-                            Task waited = await Task.WhenAny(tick, delayTask);
-                            if (waited != tick)
-                            {
-                                this.log.Error("Tick timed out.");
-                                driver.Disconnect();
-                            }
-                        }
-                        catch (IOException ex)
-                        {
-                            this.log.Error("Tick update error", ex);
-                            continue;
-                        }
+        /// <summary>
+        /// The async tick loop.
+        /// </summary>
+        /// <returns></returns>
+        private async Task TickLoopAsync()
+        {
+            IDisplayDriver driver = ((App)Application.Current).Driver;
+            while (this.resumed)
+            {
+                int tickDelay;
+                if (Debugger.IsAttached)
+                {
+                    tickDelay = 60000;
+                }
+                else
+                {
+                    tickDelay = TickTimeout;
+                }
+
+                try
+                {
+                    Task tick = this.viewModel.Tick();
+                    if (!tick.Wait(tickDelay))
+                    {
+                        this.log.Error("Tick timed out.");
+                        driver.Disconnect();
+                        continue;
                     }
-                });
+
+                    await tick;
+                }
+                catch (IOException ex)
+                {
+                    this.log.Error("Tick update error", ex);
+                    continue;
+                }
             }
         }
     }

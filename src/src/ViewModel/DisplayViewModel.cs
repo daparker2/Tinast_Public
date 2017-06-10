@@ -205,6 +205,8 @@ namespace DP.Tinast.ViewModel
         /// <returns>A task object.</returns>
         public async Task Tick()
         {
+            this.propertiesChanged = new ConcurrentBag<string>();
+
             Task<bool> shouldTickTask = this.ShouldTick();
             if (!this.flashedGauges)
             {
@@ -241,7 +243,7 @@ namespace DP.Tinast.ViewModel
                         break;
                 }
 
-                PidResult result = await this.driver.GetPidResult(request);
+                PidResult result = await this.driver.GetPidResultAsync(request);
                 bool propertyChanged;
                 this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
                 this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
@@ -405,7 +407,7 @@ namespace DP.Tinast.ViewModel
             if (!this.driver.Connected)
             {
                 bool propertyChanged;
-                this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, !(await this.driver.TryConnect()), out propertyChanged);
+                this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, !(await this.driver.TryConnectAsync()), out propertyChanged);
                 await this.OnPropertiesChanged();
                 return this.Obd2Connecting;
             }

@@ -45,19 +45,13 @@
         Polygon[] allLeds;
 
         /// <summary>
-        /// The update timer
-        /// </summary>
-        private DispatcherTimer updateTimer;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="BoostControl"/> class.
         /// </summary>
         public BoostControl()
         {
             this.InitializeComponent();
-            this.Loaded += BoostControl_Loaded;
-            this.Unloaded += BoostControl_Unloaded;
             this.DataContext = this;
+            ((App)Application.Current).GaugeTick += UpdateTimer_Tick;
             this.label.Foreground = ColorPalette.IndicatorColor;
             this.outline1.Stroke = ColorPalette.OutlineColor;
             this.outline2.Stroke = ColorPalette.OutlineColor;
@@ -185,33 +179,11 @@
         }
 
         /// <summary>
-        /// Handles the Loaded event of the BoostControl control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void BoostControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(33) };
-            this.updateTimer.Tick += UpdateTimer_Tick;
-            this.updateTimer.Start();
-        }
-
-        /// <summary>
-        /// Handles the Unloaded event of the BoostControl control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="Windows.UI.Xaml.RoutedEventArgs" /> instance containing the event data.</param>
-        private void BoostControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            this.updateTimer.Stop();
-        }
-
-        /// <summary>
         /// Boost gauge update tick.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private void UpdateTimer_Tick(object sender, object e)
+        private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             int boost = this.Level;
             if (boost < this.MinLevel)

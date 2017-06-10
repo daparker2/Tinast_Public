@@ -47,6 +47,16 @@
         private Elm327Driver driver;
 
         /// <summary>
+        /// The update timer
+        /// </summary>
+        private DispatcherTimer updateTimer;
+
+        /// <summary>
+        /// The ticks
+        /// </summary>
+        private uint tick = 0;
+
+        /// <summary>
         /// The disposed value
         /// </summary>
         private bool disposed = false;
@@ -55,6 +65,16 @@
         /// Occurs when faulted.
         /// </summary>
         public event EventHandler Faulted;
+
+        /// <summary>
+        /// Occurs when the short tick for updating gauges occurs.
+        /// </summary>
+        public event EventHandler GaugeTick;
+
+        /// <summary>
+        /// Occurs when the long tick for blinking indicators occurs.
+        /// </summary>
+        public event EventHandler IndicatorTick;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -137,6 +157,15 @@
                 this.driver = new Elm327Driver(this.config);
             }
 
+            if (this.updateTimer == null)
+            {
+                this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+                this.updateTimer.Tick += UpdateTimer_Tick;
+                this.updateTimer.Start();
+            }
+
+            this.updateTimer.Start();
+
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
@@ -160,6 +189,28 @@
                 }
 
                 Window.Current.Activate();
+            }
+        }
+
+        /// <summary>
+        /// The main animation timer tick.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
+        private void UpdateTimer_Tick(object sender, object e)
+        {
+            EventArgs eventArgs = new EventArgs();
+            if (tick++ % 16 == 0)
+            {
+                if (this.IndicatorTick != null)
+                {
+                    this.IndicatorTick(this, eventArgs);
+                }
+            }
+
+            if (this.GaugeTick != null)
+            {
+                this.GaugeTick(this, eventArgs);
             }
         }
 
@@ -203,6 +254,8 @@
             SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             try
             {
+                this.updateTimer.Stop();
+
                 if (this.driver != null)
                 {
                     this.driver.Disconnect();

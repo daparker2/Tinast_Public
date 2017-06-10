@@ -40,11 +40,6 @@
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(TemperatureControl), new PropertyMetadata("Temp:"));
 
         /// <summary>
-        /// The on timer
-        /// </summary>
-        private DispatcherTimer updateTimer;
-
-        /// <summary>
         /// The last recorded level
         /// </summary>
         private int lastLevel = 0;
@@ -55,8 +50,7 @@
         public TemperatureControl()
         {
             this.InitializeComponent();
-            this.Loaded += TemperatureControl_Loaded;
-            this.Unloaded += TemperatureControl_Unloaded;
+            ((App)Application.Current).IndicatorTick += UpdateTimer_Tick;
             this.DataContext = this;
             this.temp.Foreground = ColorPalette.IndicatorColor;
             this.text.Foreground = ColorPalette.IndicatorColor;
@@ -123,35 +117,11 @@
         }
 
         /// <summary>
-        /// Handles the Loaded event of the TemperatureControl control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void TemperatureControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.temp.Foreground = ColorPalette.IndicatorColor;
-            this.text.Foreground = ColorPalette.IndicatorColor;
-            this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
-            this.updateTimer.Tick += UpdateTimer_Tick;
-            this.updateTimer.Start();
-        }
-
-        /// <summary>
-        /// Handles the Unloaded event of the TemperatureControl control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void TemperatureControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            this.updateTimer.Stop();
-        }
-
-        /// <summary>
         /// Updates the timer tick.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private void UpdateTimer_Tick(object sender, object e)
+        private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             int level = this.Level;
             if (lastLevel != level)

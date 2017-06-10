@@ -71,19 +71,13 @@
         private DateTime whenChanged = DateTime.Now;
 
         /// <summary>
-        /// The update timer
-        /// </summary>
-        private DispatcherTimer updateTimer;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AfrControl"/> class.
         /// </summary>
         public AfrControl()
         {
             this.InitializeComponent();
-            this.Loaded += AfrControl_Loaded;
-            this.Unloaded += AfrControl_Unloaded;
             this.DataContext = this;
+            ((App)Application.Current).GaugeTick += UpdateTimer_Tick;
             this.label.Foreground = ColorPalette.IndicatorColor;
             this.level.Foreground = ColorPalette.IndicatorColor;
             this.afrOutline.Stroke = ColorPalette.OutlineColor;
@@ -227,33 +221,11 @@
         }
 
         /// <summary>
-        /// Handles the Loaded event of the AfrControl control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void AfrControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
-            this.updateTimer.Tick += UpdateTimer_Tick; ;
-            this.updateTimer.Start();
-        }
-
-        /// <summary>
-        /// Handles the Unloaded event of the AfrControl control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void AfrControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            this.updateTimer.Stop();
-        }
-
-        /// <summary>
         /// AFR gauge update tick.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private void UpdateTimer_Tick(object sender, object e)
+        private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             // Color the AFR display appropriately
             bool shouldWarn = !this.Idle && (this.TooRich || this.TooLean);

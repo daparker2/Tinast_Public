@@ -1,36 +1,23 @@
-# For more options and information see
-# http://www.raspberrypi.org/documentation/configuration/config-txt.md
-# Some settings may impact device functionality. See link above for details
-# GPU Firmware SHA256 checksum: 7CE2EF13CDD77F1782FFFF98533572503DF4B46765966CC7E18F6C6455B9623A
-# kernel.img SHA256 checksum: 6C82C8720BE4EFB2951BDC01FA187B0B659227033EB7D7DB5ACA6324FD644D7F
-# kernel.img git commit ID: f6706f4bd3b10c8294589f45082c8bdc4c50be59
+init_uart_clock=16000000    # set uart clock to 16mhz
 
-#
-# Boot
-#
-init_uart_clock=16000000    # Set UART clock to 16Mhz
-kernel_old=1                # Load kernel.img at physical memory address 0x0
-safe_mode_gpio=8            # A temp firmware limitation workaround
-max_usb_current=1           # Enable maximum usb current
+kernel_old=1                # load kernel.img at physical memory address 0x0
 
-#
-# Memory
-#
-gpu_mem=32                  # Set VC to 32MB, ARM DRAM to (1008-32)MB
-hdmi_force_hotplug=1        # Enable HDMI display even if it is not connected (640x480)
+safe_mode_gpio=8            # a temp firmware limitation workaround
 
-#
-# Overclocking
-#
-core_freq=250               # Frequency of GPU processor core in MHz
+max_usb_current=1           # enable maximum usb current
 
-#
-# Video
-#
-framebuffer_ignore_alpha=1  # Ignore the alpha channel for Windows.
-framebuffer_swap=1          # Set the frame buffer to be Windows BGR compatible.
-disable_overscan=1          # Disable overscan
-hdmi_group=2                # Use VESA Display Mode Timing over CEA
-hdmi_drive=1
-hdmi_mode=87
-hdmi_cvt 1024 768 60 1 0 0 0
+gpu_mem=32
+hdmi_force_hotplug=1        # enable hdmi display even if it is not connected (640x480)
+
+core_freq=250               # frequency of gpu processor core in mhz
+
+framebuffer_ignore_alpha=1  # ignore the alpha channel for windows.
+
+framebuffer_swap=1          # set the frame buffer to be windows bgr compatible.
+
+disable_overscan=1          # disable overscan
+
+hdmi_group=2                # use vesa display mode timing over cea
+
+hdmi_mode=16
+display_rotate=0

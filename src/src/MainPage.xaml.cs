@@ -170,22 +170,36 @@
             {
                 while (this.resumed)
                 {
+                    bool tickError = false;
                     try
                     {
                         Task tick = this.viewModel.Tick();
-                        if (!tick.Wait(tickDelay))
+                        if (tick.Wait(tickDelay))
                         {
-                            this.log.Error("Tick timed out. The last transaction was {0}", await driver.GetLastTransactionInfo());
-                            driver.Disconnect();
-                            continue;
+                            await tick;
                         }
-
-                        await tick;
+                        else
+                        {
+                            this.log.Error("Tick timed out.");
+                            tickError = true;
+                        }
                     }
                     catch (IOException ex)
                     {
-                        this.log.Error(string.Format("Tick update error. The last transaction was {0}", await driver.GetLastTransactionInfo()), ex);
-                        continue;
+                        this.log.Error("Tick update error.", ex);
+                        tickError = true;
+                    }
+
+                    if (tickError)
+                    {
+                        Task<PidDebugData> transactionTask = driver.GetLastTransactionInfo();
+                        if (transactionTask.IsCompleted)
+                        {
+                            PidDebugData data = await transactionTask;
+                            this.log.Error("Tick data: {0}", data);
+                        }
+
+                        driver.Disconnect();
                     }
                 }
             });

@@ -203,104 +203,110 @@ namespace DP.Tinast.ViewModel
         /// Ticks an update of the display view model.
         /// </summary>
         /// <returns>A task object.</returns>
-        public async Task Tick()
+        public Task Tick()
         {
-            this.propertiesChanged = new ConcurrentBag<string>();
-
-            Task<bool> shouldTickTask = this.ShouldTick();
-            if (!this.flashedGauges)
+            return Task.Run(async () =>
             {
-                this.flashedGauges = true;
-                await this.FlashGauges();
-            }
+                this.propertiesChanged = new ConcurrentBag<string>();
 
-            if (await shouldTickTask)
-            {
-                // So basically, we want to share the bus time between boost+AFR (which always get updated every tick)
-                // and every other tick update one of the other 4 things: oil temp, coolant temp, intake temp, engine load
-                // This is to try and keep the frame-rate for boost and AFR as high as possible.
-
-                PidRequest request = PidRequest.Boost | PidRequest.Afr;
-                switch (this.ticks++ % 20)
+                Task<bool> shouldTickTask = this.ShouldTick();
+                if (!this.flashedGauges)
                 {
-                    case 4:
-                        request |= PidRequest.CoolantTemp;
-                        break;
-
-                    case 8:
-                        request |= PidRequest.IntakeTemp;
-                        break;
-
-                    case 12:
-                        request |= PidRequest.OilTemp;
-                        break;
-
-                    case 19:
-                        request |= PidRequest.OilTemp;
-                        break;
-
-                    default:
-                        break;
+                    this.flashedGauges = true;
+                    await this.FlashGauges();
                 }
 
-                PidResult result = await this.driver.GetPidResultAsync(request);
-                bool propertyChanged;
-                this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
-                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
-                if (propertyChanged)
+                if (await shouldTickTask)
                 {
-                    this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, this.EngineAfr > 18, out propertyChanged);
-                    this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, this.EngineAfr < 11, out propertyChanged);
-                }
+                    // So basically, we want to share the bus time between boost+AFR (which always get updated every tick)
+                    // and every other tick update one of the other 4 things: oil temp, coolant temp, intake temp, engine load
+                    // This is to try and keep the frame-rate for boost and AFR as high as possible.
 
-                if (request.HasFlag(PidRequest.OilTemp))
-                {
-                    this.EngineOilTemp = this.SetProperty("EngineOilTemp", this.EngineOilTemp, result.OilTemp, out propertyChanged);
+                    PidRequest request = PidRequest.Boost | PidRequest.Afr;
+                    switch (this.ticks++ % 20)
+                    {
+                        case 4:
+                            request |= PidRequest.CoolantTemp;
+                            break;
+
+                        case 8:
+                            request |= PidRequest.IntakeTemp;
+                            break;
+
+                        case 12:
+                            request |= PidRequest.OilTemp;
+                            break;
+
+                        case 19:
+                            request |= PidRequest.OilTemp;
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    PidResult result = await this.driver.GetPidResultAsync(request);
+                    bool propertyChanged;
+                    this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
+                    this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
                     if (propertyChanged)
                     {
-                        this.OilTempWarn = this.SetProperty("OilTempWarn", this.OilTempWarn, !(this.EngineOilTemp >= this.config.OilTempMin && this.EngineOilTemp <= this.config.OilTempMax), out propertyChanged);
+                        this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, this.EngineAfr > 18, out propertyChanged);
+                        this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, this.EngineAfr < 11, out propertyChanged);
                     }
-                }
-                else if (request.HasFlag(PidRequest.CoolantTemp))
-                {
-                    this.EngineCoolantTemp = this.SetProperty("EngineCoolantTemp", this.EngineCoolantTemp, result.CoolantTemp, out propertyChanged);
-                    if (propertyChanged)
-                    {
-                        this.CoolantTempWarn = this.SetProperty("CoolantTempWarn", this.CoolantTempWarn, !(this.EngineCoolantTemp >= this.config.CoolantTempMin && this.EngineCoolantTemp <= this.config.CoolantTempMax), out propertyChanged);
-                    }
-                }
-                else if (request.HasFlag(PidRequest.IntakeTemp))
-                {
-                    this.EngineIntakeTemp = this.SetProperty("EngineIntakeTemp", this.EngineIntakeTemp, result.IntakeTemp, out propertyChanged);
-                    if (propertyChanged)
-                    {
-                        this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, !(this.EngineIntakeTemp >= this.config.IntakeTempMin && this.EngineIntakeTemp <= this.config.IntakeTempMax), out propertyChanged);
-                    }
-                }
-                else if (request.HasFlag(PidRequest.Load))
-                {
-                    this.EngineLoad = this.SetProperty("EngineLoad", this.EngineLoad, result.Load, out propertyChanged);
-                    if (propertyChanged)
-                    {
-                        this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, this.EngineLoad < this.config.MaxIdleLoad, out propertyChanged);
-                    }
-                }
 
-                this.TempWarning = this.SetProperty("TempWarning", this.TempWarning, this.IntakeTempWarn || this.OilTempWarn || this.CoolantTempWarn, out propertyChanged);
-                await this.OnPropertiesChanged();
-            }
+                    if (request.HasFlag(PidRequest.OilTemp))
+                    {
+                        this.EngineOilTemp = this.SetProperty("EngineOilTemp", this.EngineOilTemp, result.OilTemp, out propertyChanged);
+                        if (propertyChanged)
+                        {
+                            this.OilTempWarn = this.SetProperty("OilTempWarn", this.OilTempWarn, !(this.EngineOilTemp >= this.config.OilTempMin && this.EngineOilTemp <= this.config.OilTempMax), out propertyChanged);
+                        }
+                    }
+                    else if (request.HasFlag(PidRequest.CoolantTemp))
+                    {
+                        this.EngineCoolantTemp = this.SetProperty("EngineCoolantTemp", this.EngineCoolantTemp, result.CoolantTemp, out propertyChanged);
+                        if (propertyChanged)
+                        {
+                            this.CoolantTempWarn = this.SetProperty("CoolantTempWarn", this.CoolantTempWarn, !(this.EngineCoolantTemp >= this.config.CoolantTempMin && this.EngineCoolantTemp <= this.config.CoolantTempMax), out propertyChanged);
+                        }
+                    }
+                    else if (request.HasFlag(PidRequest.IntakeTemp))
+                    {
+                        this.EngineIntakeTemp = this.SetProperty("EngineIntakeTemp", this.EngineIntakeTemp, result.IntakeTemp, out propertyChanged);
+                        if (propertyChanged)
+                        {
+                            this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, !(this.EngineIntakeTemp >= this.config.IntakeTempMin && this.EngineIntakeTemp <= this.config.IntakeTempMax), out propertyChanged);
+                        }
+                    }
+                    else if (request.HasFlag(PidRequest.Load))
+                    {
+                        this.EngineLoad = this.SetProperty("EngineLoad", this.EngineLoad, result.Load, out propertyChanged);
+                        if (propertyChanged)
+                        {
+                            this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, this.EngineLoad < this.config.MaxIdleLoad, out propertyChanged);
+                        }
+                    }
+
+                    this.TempWarning = this.SetProperty("TempWarning", this.TempWarning, this.IntakeTempWarn || this.OilTempWarn || this.CoolantTempWarn, out propertyChanged);
+                    await this.OnPropertiesChanged();
+                }
+            });
         }
 
         /// <summary>
         /// Flashes the gauges for the user so they know the gauges work.
         /// </summary>
         /// <returns></returns>
-        private async Task FlashGauges()
+        private Task FlashGauges()
         {
-            Task tempFlash = this.FlashTempGauges();
-            Task boostFlash = this.FlashBoostGauge();
-            Task afrFlash = this.FlashAfrGauge();
-            await Task.WhenAll(tempFlash, boostFlash, afrFlash);
+            return Task.Run(async () =>
+            {
+                Task tempFlash = this.FlashTempGauges();
+                Task boostFlash = this.FlashBoostGauge();
+                Task afrFlash = this.FlashAfrGauge();
+                await Task.WhenAll(tempFlash, boostFlash, afrFlash);
+            });
         }
 
         /// <summary>
@@ -409,7 +415,7 @@ namespace DP.Tinast.ViewModel
                 bool propertyChanged;
                 this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, !(await this.driver.TryConnectAsync()), out propertyChanged);
                 await this.OnPropertiesChanged();
-                return this.Obd2Connecting;
+                return this.driver.Connected;
             }
 
             return true;

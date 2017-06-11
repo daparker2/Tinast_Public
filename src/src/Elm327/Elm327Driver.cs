@@ -162,69 +162,67 @@
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
         /// <returns>True if the connection was established.</returns>
-        public async Task<bool> TryConnectAsync()
+        public Task<bool> TryConnectAsync()
         {
-            if (!this.socketConnected)
+            return Task.Run(async () =>
             {
-                if (this.service == null)
+                if (!this.socketConnected)
                 {
-                    DeviceInformationCollection serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
-                    if (serviceInfoCollection.Count != 1)
-                    {
-                        throw new InvalidOperationException("Only one paired RFComm device is supported at a time with this app and there must be at least one device.");
-                    }
-
-                    DeviceInformation deviceInfo = serviceInfoCollection.First();
-                    this.log.Debug("BT device {0}", deviceInfo.Id);
-                    this.service = await RfcommDeviceService.FromIdAsync(deviceInfo.Id);
                     if (this.service == null)
                     {
-                        throw new InvalidOperationException("Access to the OBD2 device was denied.");
+                        DeviceInformationCollection serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
+                        if (serviceInfoCollection.Count != 1)
+                        {
+                            throw new InvalidOperationException("Only one paired RFComm device is supported at a time with this app and there must be at least one device.");
+                        }
+
+                        DeviceInformation deviceInfo = serviceInfoCollection.First();
+                        this.log.Debug("BT device {0}", deviceInfo.Id);
+                        this.service = await RfcommDeviceService.FromIdAsync(deviceInfo.Id);
+                        if (this.service == null)
+                        {
+                            throw new InvalidOperationException("Access to the OBD2 device was denied.");
+                        }
                     }
-                }
 
-                if (this.socket == null)
-                {
-                    this.socket = new StreamSocket();
-                    this.socket.Control.NoDelay = true;
-                    this.socket.Control.SerializeConnectionAttempts = true;
-                }
-
-                this.log.Info("Connecting to {0};{1}", this.service.ConnectionHostName, this.service.ConnectionServiceName);
-                try
-                {
-                    await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName);
-                }
-                catch (Exception ex)
-                {
-                    this.log.Warn("Connect failed", ex);
-                    if (this.socket != null)
+                    if (this.socket == null)
                     {
-                        this.socket.Dispose();
-                        this.socket = null;
+                        this.socket = new StreamSocket();
+                        this.socket.Control.NoDelay = true;
+                        this.socket.Control.SerializeConnectionAttempts = true;
                     }
 
-                    return false;
+                    this.log.Info("Connecting to {0};{1}", this.service.ConnectionHostName, this.service.ConnectionServiceName);
+                    try
+                    {
+                        await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.log.Warn("Connect failed", ex);
+                        this.Disconnect();
+                        return false;
+                    }
+
+                    // Get some info about the device we just connected to.
+                    string elmDeviceDesc = (await this.SendCommand("atz"))[1];
+                    this.log.Trace("Connected to device: {0}", elmDeviceDesc);
+
+                    await this.SendCommand("e0");
+                    await this.SendCommand("atsp0");
+                    if (this.config.AggressiveTiming)
+                    {
+                        await this.SendCommand("at2");
+                    }
+
+                    while (!(await this.SendCommand("atsp0")).Contains("OK")) ;
+
+                    this.log.Info("ELM327 device connected. ECU on.");
+                    this.socketConnected = true;
                 }
 
-                // Get some info about the device we just connected to.
-                string elmDeviceDesc = (await this.SendCommand("atz"))[1];
-                this.log.Trace("Connected to device: {0}", elmDeviceDesc);
-
-                await this.SendCommand("e0");
-                await this.SendCommand("atsp0");
-                if (this.config.AggressiveTiming)
-                {
-                    await this.SendCommand("at2");
-                }
-
-                while (!(await this.SendCommand("atsp0")).Contains("OK")) ;
-
-                this.log.Info("ELM327 device connected. ECU on.");
-                this.socketConnected = true;
-            }
-
-            return this.socketConnected;
+                return this.socketConnected;
+            });
         }
 
         /// <summary>

@@ -1,0 +1,18 @@
+{
+  "BoostPidType": 0,
+  "AfrPidType": 0,
+  "LoadPidType": 0,
+  "OilTempPidType": 0,
+  "CoolantTempPidType": 0,
+  "IntakeTempPidType": 0,
+  "MaxBoost": 15,
+  "MaxIdleLoad": 0.0,
+  "OilTempMin": 160.0,
+  "OilTempMax": 240.0,
+  "CoolantTempMin": 160.0,
+  "CoolantTempMax": 240.0,
+  "IntakeTempMin": 0.0,
+  "IntakeTempMax": 170.0,
+  "AggressiveTiming": true,
+  "MaxPidsAtOnce": 6
+}

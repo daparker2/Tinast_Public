@@ -219,7 +219,7 @@
                     if (transactionTask.Wait(this.tickDelay))
                     {
                         PidDebugData transactionResult = await transactionTask;
-                        this.log.Trace("{0}", transactionResult.ToString().Replace('\n', ','));
+                        this.log.Trace("{0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
                         await Task.Delay(2000);
                     }
                 }

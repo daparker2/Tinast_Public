@@ -12,6 +12,7 @@
     using Windows.ApplicationModel.Activation;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -137,11 +138,12 @@
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
+            if (Debugger.IsAttached)
             {
                 this.DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             if (this.config == null)
@@ -173,6 +175,15 @@
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
+            }
+
+            if (!Debugger.IsAttached)
+            {
+                ApplicationView view = ApplicationView.GetForCurrentView();
+                if (view.TryEnterFullScreenMode())
+                {
+                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+                }
             }
 
             if (e.PrelaunchActivated == false)

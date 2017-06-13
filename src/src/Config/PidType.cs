@@ -11,6 +11,11 @@
         /// <summary>
         /// The OBD2 spec PID type
         /// </summary>
-        Obd2
+        Obd2,
+
+        /// <summary>
+        /// The Subaru PID type
+        /// </summary>
+        Subaru
     }
 }

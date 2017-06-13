@@ -45,6 +45,16 @@
         Polygon[] allLeds;
 
         /// <summary>
+        /// The ticks
+        /// </summary>
+        private ulong ticks = 0;
+
+        /// <summary>
+        /// The blink
+        /// </summary>
+        private bool blink = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="BoostControl"/> class.
         /// </summary>
         public BoostControl()
@@ -189,10 +199,16 @@
             if (boost < this.MinLevel)
             {
                 boost = this.MinLevel;
+                this.blink = false;
             }
             else if (boost > this.MaxLevel)
             {
                 boost = this.MaxLevel;
+                this.blink = true;
+            }
+            else
+            {
+                this.blink = false;
             }
 
             // Average to next value, minimum 1, until we hit it.
@@ -201,17 +217,26 @@
             {
                 if (i < boostEnd)
                 {
-                    this.allLeds[i].Visibility = Visibility.Visible;
-                    this.allLeds[i].Fill = ColorPalette.GaugeColor;
+                    if (this.blink && (this.ticks++ % 2) == 0)
+                    {
+                        this.allLeds[i].Fill = ColorPalette.NeedleColor;
+                    }
+                    else
+                    {
+                        this.allLeds[i].Fill = ColorPalette.GaugeColor;
+                    }
+
+                    this.allLeds[i].Stroke = ColorPalette.OutlineColor;
                 }
                 else if (i == boostEnd)
                 {
-                    this.allLeds[i].Visibility = Visibility.Visible;
+                    this.allLeds[i].Stroke = ColorPalette.OutlineColor;
                     this.allLeds[i].Fill = ColorPalette.NeedleColor;
                 }
                 else
                 {
-                    this.allLeds[i].Visibility = Visibility.Collapsed;
+                    this.allLeds[i].Stroke = ColorPalette.InactiveColor;
+                    this.allLeds[i].Fill = ColorPalette.InactiveColor;
                 }
             }
         }

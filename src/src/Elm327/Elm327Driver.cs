@@ -91,7 +91,13 @@
 
             if (this.config.AfrPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 2, (pd) => this.result.Afr = ((double)pd[0] * 256.0 + (double)pd[1]) / 32768.0 * 14.7));
+                this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 4, (pd) =>
+                {
+                    double t1 = pd[0] * 256 + pd[1];
+                    double t2 = t1 / 32768.0;
+                    double t3 = t2 * 14.7;
+                    this.result.Afr = t3;
+                }));
             }
             else
             {
@@ -100,7 +106,9 @@
 
             if (this.config.BoostPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => this.result.Boost = (int)((double)pd[0] * 0.000145037738007)));
+                // We could calculate this based on barometric pressure but this is slightly faster.
+                // Also, BEWWWST
+                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => this.result.Boost = (int)((double)pd[0] * 0.145037738007 - 14.7)));
             }
             else
             {
@@ -109,7 +117,10 @@
 
             if (this.config.LoadPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) => this.result.Load = pd[0] * 100 / 255));
+                this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) =>
+                {
+                    this.result.Load = pd[0] * 100 / 255;
+                }));
             }
             else
             {
@@ -118,7 +129,16 @@
 
             if (this.config.OilTempPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
+                this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => this.result.OilTemp = (int)this.CToF(pd[0] - 40)));
+            }
+            else if (this.config.OilTempPidType == PidType.Subaru)
+            {
+                this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 3,
+                    (pd) =>
+                    {
+                        this.result.OilTemp = (int)this.CToF(pd[0] * pd[1] - 40);
+                    }
+                ));
             }
             else
             {
@@ -127,7 +147,10 @@
 
             if (this.config.CoolantTempPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
+                this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) =>
+                {
+                    this.result.CoolantTemp = (int)this.CToF(pd[0] - 40);
+                }));
             }
             else
             {
@@ -205,10 +228,10 @@
                     }
 
                     // Get some info about the device we just connected to.
-                    string elmDeviceDesc = (await this.SendCommand("atz"))[1];
-                    this.log.Trace("Connected to device: {0}", elmDeviceDesc);
+                    string elmDeviceDesc = (await this.SendCommand("atz")).FirstOrDefault();
+                    this.log.Trace("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
 
-                    await this.SendCommand("e0");
+                    await this.SendCommand("ate0");
                     await this.SendCommand("atsp0");
                     if (this.config.AggressiveTiming)
                     {
@@ -284,12 +307,11 @@
             {
                 if (pidResult.Count > 0)
                 {
-                    for (int i = 0; i < pidResult.Count; ++i)
+                    int mode = pidResult[0] - 0x40;
+                    for (int i = 1; i < pidResult.Count; ++i)
                     {
-                        int mode = pidResult[i] - 0x40;
-                        ++i;
                         PidHandler ph = this.pt.GetHandler((mode << 8) | pidResult[i]);
-                        i += ph.Handle(pidResult, i);
+                        i += ph.Handle(pidResult, i + 1);
                     }
                 }
             }
@@ -462,22 +484,42 @@
                 string[] r = await this.SendCommand(pid);
                 if (!r[r.Length - 1].Equals("UNABLE TO CONNECT") && !r[r.Length - 1].Equals("NO DATA"))
                 {
-                    for (int i = 1; i < r.Length; ++i)
+                    bool multiline = false;
+                    for (int i = 0; i < r.Length; ++i)
                     {
-                        if (r[i].Length > 1)
+                        if (r[i] != "SEARCHING...")
                         {
-                            int j = 0;
-                            if (r[i][1] == ':')
+                            if (r[i].Length > 1)
                             {
-                                // This is part of a line segment indicator...?
-                                j = 3;
-                            }
+                                int j = 0;
+                                if (r[i][1] == ':')
+                                {
+                                    // This is part of a line segment indicator...?
+                                    multiline = true;
+                                    j = 3;
+                                }
 
-                            for (; j < r[i].Length; j += 3)
-                            {
-                                pr.Add((this.ToDec(r[i][j]) << 4) | this.ToDec(r[i][j + 1]));
+                                while (j < r[i].Length)
+                                {
+                                    int next = r[i].IndexOf(' ', j);
+                                    string str = r[i].Substring(j, next - j);
+                                    pr.Add(Convert.ToInt32(str, 16));
+                                    j = next + 1;
+                                }
                             }
                         }
+                    }
+
+                    // In a multi-line response, the first digit is the number of bytes in the response.
+                    if (multiline)
+                    {
+                        List<int> mPr = new List<int>(pr[0]);
+                        for (int i = 1; i <= pr[0]; ++i)
+                        {
+                            mPr.Add(pr[i]);
+                        }
+
+                        pr = mPr;
                     }
                 }
 
@@ -485,31 +527,6 @@
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Convert a character to decimal
-        /// </summary>
-        /// <param name="v"></param>
-        /// <returns></returns>
-        private int ToDec(char v)
-        {
-            if (v >= '0' && v <= '9')
-            {
-                return v - '0';
-            }
-            else if (v >= 'A' && v <= 'F')
-            {
-                return v - 'A';
-            }
-            else if (v >= 'a' && v <= 'f')
-            {
-                return v - 'a';
-            }
-            else
-            {
-                throw new FormatException("Invalid pid result");
-            }
         }
 
         /// <summary>

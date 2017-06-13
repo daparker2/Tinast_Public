@@ -2,7 +2,7 @@
   "BoostPidType": 0,
   "AfrPidType": 0,
   "LoadPidType": 0,
-  "OilTempPidType": 0,
+  "OilTempPidType": 1,
   "CoolantTempPidType": 0,
   "IntakeTempPidType": 0,
   "MaxBoost": 15,

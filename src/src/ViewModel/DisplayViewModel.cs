@@ -295,6 +295,18 @@ namespace DP.Tinast.ViewModel
         }
 
         /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            return string.Format("Boost: {0}, Afr: {1}, AfrTooLean: {2}, AfrTooRich: {3}, Oil Temp: {4}, OilTempWarn: {5}, Coolant Temp: {6}, CoolantTempWarn: {7}, Intake Temp: {8}, IntakeTempWarn: {9}, Load: {10}, IdleLoad: {11}",
+                this.EngineBoost, this.EngineAfr, this.AfrTooLean, this.AfrTooRich, this.EngineOilTemp, this.OilTempWarn, this.EngineCoolantTemp, this.CoolantTempWarn, this.EngineIntakeTemp, this.IntakeTempWarn, this.EngineLoad, this.IdleLoad);
+        }
+
+        /// <summary>
         /// Flashes the gauges for the user so they know the gauges work.
         /// </summary>
         /// <returns></returns>

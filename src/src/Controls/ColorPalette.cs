@@ -20,6 +20,11 @@
         public static readonly Brush GaugeColor = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0x92, 0x00));
 
         /// <summary>
+        /// The inactive color
+        /// </summary>
+        public static readonly Brush InactiveColor = new SolidColorBrush(Color.FromArgb(0xff, 0x19, 0x0e, 0x00));
+
+        /// <summary>
         /// The needle color
         /// </summary>
         public static readonly Brush NeedleColor = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0x9b, 0x73));

@@ -283,7 +283,6 @@
             {
                 if (i >= startIndex && i < endIndex)
                 {
-                    this.allLeds[i].Visibility = Visibility.Visible;
                     if (this.warning != shouldWarn)
                     {
                         this.allLeds[i].Fill = ColorPalette.NeedleColor;
@@ -302,7 +301,8 @@
                 }
                 else
                 {
-                    this.allLeds[i].Visibility = Visibility.Collapsed;
+                    this.allLeds[i].Stroke = ColorPalette.InactiveColor;
+                    this.allLeds[i].Fill = ColorPalette.InactiveColor;
                 }
             }
 

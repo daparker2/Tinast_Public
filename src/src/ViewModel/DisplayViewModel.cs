@@ -5,6 +5,7 @@ namespace DP.Tinast.ViewModel
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -59,9 +60,14 @@ namespace DP.Tinast.ViewModel
         private Task propertyTask;
 
         /// <summary>
-        /// The first tick
+        /// The flashed gauges
         /// </summary>
         private bool flashedGauges = false;
+
+        /// <summary>
+        /// The debugger attached
+        /// </summary>
+        private bool debuggerAttached = Debugger.IsAttached;
 
         /// <summary>
         /// The property changed event.
@@ -234,7 +240,7 @@ namespace DP.Tinast.ViewModel
                             break;
 
                         case 12:
-                            request |= PidRequest.OilTemp;
+                            request |= PidRequest.Load;
                             break;
 
                         case 19:
@@ -292,6 +298,26 @@ namespace DP.Tinast.ViewModel
                     await this.OnPropertiesChanged();
                 }
             });
+        }
+
+        /// <summary>
+        /// Gets the expected duration of the tick based on the current step state.
+        /// </summary>
+        /// <returns></returns>
+        public TimeSpan GetTickDuration()
+        {
+            if (this.debuggerAttached)
+            {
+                return TimeSpan.FromMilliseconds(60000);
+            }
+            else if (this.Obd2Connecting)
+            {
+                return TimeSpan.FromMilliseconds(30000);
+            }
+            else
+            {
+                return TimeSpan.FromMilliseconds(7000);
+            }
         }
 
         /// <summary>

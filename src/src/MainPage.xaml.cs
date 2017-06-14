@@ -33,11 +33,6 @@
     public sealed partial class MainPage : Page
     {
         /// <summary>
-        /// The tick timeout
-        /// </summary>
-        const int TickTimeout = 10000;
-
-        /// <summary>
         /// The logger.
         /// </summary>
         private ILogger log;
@@ -58,11 +53,6 @@
         private Task debugTask;
 
         /// <summary>
-        /// The tick delay
-        /// </summary>
-        private int tickDelay;
-
-        /// <summary>
         /// The loaded
         /// </summary>
         private bool resumed;
@@ -73,15 +63,6 @@
         public MainPage()
         {
             this.InitializeComponent();
-            if (Debugger.IsAttached)
-            {
-                this.tickDelay = 60000;
-            }
-            else
-            {
-                this.tickDelay = TickTimeout;
-            }
-
             this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
             this.viewModel = new DisplayViewModel(((App)Application.Current).Driver, ((App)Application.Current).Config);
             this.boostGauge.MaxLevel = ((App)Application.Current).Config.MaxBoost;
@@ -174,7 +155,7 @@
                     try
                     {
                         Task tick = this.viewModel.Tick();
-                        if (tick.Wait(tickDelay))
+                        if (tick.Wait(this.viewModel.GetTickDuration()))
                         {
                             await tick;
                         }
@@ -216,7 +197,7 @@
                 while (this.resumed)
                 {
                     Task<PidDebugData> transactionTask = driver.GetLastTransactionInfo();
-                    if (transactionTask.Wait(this.tickDelay))
+                    if (transactionTask.Wait(this.viewModel.GetTickDuration()))
                     {
                         PidDebugData transactionResult = await transactionTask;
                         this.log.Trace("{0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);

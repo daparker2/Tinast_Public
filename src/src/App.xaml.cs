@@ -89,6 +89,9 @@
             // setup the global crash handler...
             GlobalCrashHandler.Configure();
 
+            // change the config...
+            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Debug, LogLevel.Fatal, new StreamingFileTarget());
+
             this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
             HockeyClient.Current.Configure("97e8a58ba9a74a2bb9a8b8d46a464b7b");
             this.log.Info("Starting application");
@@ -154,6 +157,7 @@
             if (this.driver == null)
             {
                 this.driver = new Elm327Driver(this.config);
+                await this.driver.OpenAsync();
             }
 
             if (this.updateTimer == null)

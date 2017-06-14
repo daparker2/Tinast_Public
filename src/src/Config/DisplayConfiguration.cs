@@ -90,7 +90,7 @@
         /// <value>
         /// The maximum idle load.
         /// </value>
-        public double MaxIdleLoad { get; set; } = 5;
+        public double MaxIdleLoad { get; set; } = 25;
 
         /// <summary>
         /// Gets or sets the oil temp minimum.

@@ -91,13 +91,7 @@
 
             if (this.config.AfrPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 4, (pd) =>
-                {
-                    double t1 = pd[0] * 256 + pd[1];
-                    double t2 = t1 / 32768.0;
-                    double t3 = t2 * 14.7;
-                    this.result.Afr = t3;
-                }));
+                this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 4, (pd) => Task.Run(() => this.result.Afr = (double)(pd[0] * 256 + pd[1]) / 32768.0 * 14.7)));
             }
             else
             {
@@ -106,9 +100,9 @@
 
             if (this.config.BoostPidType == PidType.Obd2)
             {
-                // We could calculate this based on barometric pressure but this is slightly faster.
+                // We could calculate this based on barometric pressure PID but this is slightly faster.
                 // Also, BEWWWST
-                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => this.result.Boost = (int)((double)pd[0] * 0.145037738007 - 14.7)));
+                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => Task.Run(() => this.result.Boost = (int)((double)pd[0] * 0.145037738007 - 13.8))));
             }
             else
             {
@@ -117,10 +111,7 @@
 
             if (this.config.LoadPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) =>
-                {
-                    this.result.Load = pd[0] * 100 / 255;
-                }));
+                this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) => Task.Run(() => this.result.Load = pd[0] * 100 / 255)));
             }
             else
             {
@@ -129,16 +120,11 @@
 
             if (this.config.OilTempPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => this.result.OilTemp = (int)this.CToF(pd[0] - 40)));
+                this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => Task.Run(() => this.result.OilTemp = (int)this.CToF(pd[0] - 40))));
             }
             else if (this.config.OilTempPidType == PidType.Subaru)
             {
-                this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 3,
-                    (pd) =>
-                    {
-                        this.result.OilTemp = (int)this.CToF(pd[0] * pd[1] - 40);
-                    }
-                ));
+                this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 29, (pd) => Task.Run(() => this.result.OilTemp = (int)this.CToF(pd[29] - 40))));
             }
             else
             {
@@ -147,10 +133,7 @@
 
             if (this.config.CoolantTempPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) =>
-                {
-                    this.result.CoolantTemp = (int)this.CToF(pd[0] - 40);
-                }));
+                this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) => Task.Run(() => this.result.CoolantTemp = (int)this.CToF(pd[0] - 40))));
             }
             else
             {
@@ -159,7 +142,7 @@
 
             if (this.config.IntakeTempPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x010f, PidRequest.IntakeTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
+                this.pt.Add(new PidHandler(0x010f, PidRequest.IntakeTemp, 1, (pd) => Task.Run(() => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40))));
             }
             else
             {
@@ -182,6 +165,34 @@
         }
 
         /// <summary>
+        /// Opens the OBD2 scan tool asynchronously.
+        /// </summary>
+        /// <returns></returns>
+        public async Task OpenAsync()
+        {
+            DeviceInformationCollection serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
+            if (serviceInfoCollection.Count != 1)
+            {
+                throw new InvalidOperationException("Only one paired RFComm device is supported at a time with this app and there must be at least one device.");
+            }
+
+            DeviceInformation deviceInfo = serviceInfoCollection.First();
+            this.log.Debug("BT device {0}", deviceInfo.Id);
+            this.service = await RfcommDeviceService.FromIdAsync(deviceInfo.Id);
+            if (this.service == null)
+            {
+                throw new InvalidOperationException("Access to the OBD2 device was denied.");
+            }
+
+            DeviceAccessStatus accessStatus = await this.service.RequestAccessAsync();
+            if (accessStatus != DeviceAccessStatus.Allowed)
+            {
+                this.log.Debug("BT device access status: {0}", accessStatus);
+                throw new InvalidOperationException("Cannot connect to the OBD2 device. Access to the OBD2 device was denied by the user.");
+            }
+        }
+
+        /// <summary>
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
         /// <returns>True if the connection was established.</returns>
@@ -193,19 +204,7 @@
                 {
                     if (this.service == null)
                     {
-                        DeviceInformationCollection serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
-                        if (serviceInfoCollection.Count != 1)
-                        {
-                            throw new InvalidOperationException("Only one paired RFComm device is supported at a time with this app and there must be at least one device.");
-                        }
-
-                        DeviceInformation deviceInfo = serviceInfoCollection.First();
-                        this.log.Debug("BT device {0}", deviceInfo.Id);
-                        this.service = await RfcommDeviceService.FromIdAsync(deviceInfo.Id);
-                        if (this.service == null)
-                        {
-                            throw new InvalidOperationException("Access to the OBD2 device was denied.");
-                        }
+                        throw new InvalidOperationException("Service not opened. Call OpenAsync() first.");
                     }
 
                     if (this.socket == null)
@@ -231,12 +230,7 @@
                     string elmDeviceDesc = (await this.SendCommand("atz")).FirstOrDefault();
                     this.log.Trace("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
 
-                    await this.SendCommand("ate0");
-                    await this.SendCommand("atsp0");
-                    if (this.config.AggressiveTiming)
-                    {
-                        await this.SendCommand("at2");
-                    }
+                    await this.SetDefaults();
 
                     while (!(await this.SendCommand("atsp0")).Contains("OK")) ;
 
@@ -311,7 +305,7 @@
                     for (int i = 1; i < pidResult.Count; ++i)
                     {
                         PidHandler ph = this.pt.GetHandler((mode << 8) | pidResult[i]);
-                        i += ph.Handle(pidResult, i + 1);
+                        i += await ph.Handle(pidResult, i + 1);
                     }
                 }
             }
@@ -373,6 +367,24 @@
 
                     this.Disconnect();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Sets the defaults scantool settings for the ELM 327 driver.
+        /// </summary>
+        /// <returns></returns>
+        private async Task SetDefaults()
+        {
+            await this.SendCommand("ate0");
+            await this.SendCommand("atsp0");
+
+            // Only talk to ECU #1, which in most cases is the engine. That's the only one that we really care about.
+            await this.SendCommand("atsh 7e0");
+
+            if (this.config.AggressiveTiming)
+            {
+                await this.SendCommand("at2");
             }
         }
 

@@ -17,7 +17,7 @@ namespace DP.Tinast.Elm327
         /// <summary>
         /// The action
         /// </summary>
-        private Action<int[]> action;
+        private Func<int[], Task> action;
 
         /// <summary>
         /// The number of parameters
@@ -30,7 +30,7 @@ namespace DP.Tinast.Elm327
         /// <param name="mode">The mode.</param>
         /// <param name="request">The request.</param>
         /// <param name="action">The action.</param>
-        public PidHandler(int mode, PidRequest request, int numParameters, Action<int[]> action)
+        public PidHandler(int mode, PidRequest request, int numParameters, Func<int[],Task> action)
         {
             this.Mode = mode;
             this.Request = request;
@@ -60,7 +60,8 @@ namespace DP.Tinast.Elm327
         /// <param name="pidData">The pid data.</param>
         /// <param name="start">The start of pid data.</param>
         /// <returns>The number of PID data bytes consumed.</returns>
-        public int Handle(IList<int> pidData, int start)
+        /// >returns>A <see cref="Task{int}"/> object.</returns>
+        public async Task<int> Handle(IList<int> pidData, int start)
         {
             if (pidData.Count - start < numParameters)
             {
@@ -73,7 +74,7 @@ namespace DP.Tinast.Elm327
                 pidParams[i] = pidData[start + i];
             }
 
-            this.action(pidParams);
+            await this.action(pidParams);
             return this.numParameters;
         }
     }

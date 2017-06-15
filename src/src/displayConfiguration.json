@@ -6,7 +6,7 @@
   "CoolantTempPidType": 0,
   "IntakeTempPidType": 0,
   "BoostOffset": 9,
-  "MaxBoost": 15,
+  "MaxBoost": 19,
   "MaxIdleLoad": 25.0,
   "OilTempMin": 160.0,
   "OilTempMax": 240.0,

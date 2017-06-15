@@ -77,6 +77,14 @@
         public PidType IntakeTempPidType { get; set; }
 
         /// <summary>
+        /// Gets or sets the boost offset for the MAP reading.
+        /// </summary>
+        /// <value>
+        /// The boost offset.
+        /// </value>
+        public double BoostOffset { get; set; } = 0;
+
+        /// <summary>
         /// Gets or sets the maximum boost.
         /// </summary>
         /// <value>

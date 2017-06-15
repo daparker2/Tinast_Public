@@ -102,7 +102,7 @@
             {
                 // We could calculate this based on barometric pressure PID but this is slightly faster.
                 // Also, BEWWWST
-                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => Task.Run(() => this.result.Boost = (int)((double)pd[0] * 0.145037738007 - 13.8))));
+                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => Task.Run(() => this.result.Boost = (int)((double)pd[0] * 0.145037738007 + this.config.BoostOffset))));
             }
             else
             {
@@ -124,7 +124,7 @@
             }
             else if (this.config.OilTempPidType == PidType.Subaru)
             {
-                this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 29, (pd) => Task.Run(() => this.result.OilTemp = (int)this.CToF(pd[29] - 40))));
+                this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 29, (pd) => Task.Run(() => this.result.OilTemp = (int)this.CToF(pd[28] - 40))));
             }
             else
             {

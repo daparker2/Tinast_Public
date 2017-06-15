@@ -45,6 +45,11 @@
         Polygon[] allLeds;
 
         /// <summary>
+        /// The current boost
+        /// </summary>
+        private int curBoost;
+
+        /// <summary>
         /// The ticks
         /// </summary>
         private ulong ticks = 0;
@@ -211,32 +216,49 @@
                 this.blink = false;
             }
 
-            // Average to next value, minimum 1, until we hit it.
-            int boostEnd = boost * this.allLeds.Length / (this.MaxLevel - this.MinLevel);
-            for (int i = 0; i < this.allLeds.Length; ++i)
+            if (boost != this.curBoost)
             {
-                if (i < boostEnd)
+                if (this.curBoost < boost)
                 {
-                    if (this.blink && (this.ticks++ % 2) == 0)
+                    ++this.curBoost;
+                }
+                else
+                {
+                    --this.curBoost;
+                }
+
+                // Average to next value, minimum 1, until we hit it.
+                int boostEnd = this.curBoost * this.allLeds.Length / (this.MaxLevel - this.MinLevel);
+                for (int i = 0; i < this.allLeds.Length; ++i)
+                {
+                    if (i < boostEnd)
                     {
+                        if (i == 17)
+                        {
+                            this.allLeds[i].Stroke = ColorPalette.InactiveColor;
+                            this.allLeds[i].Fill = ColorPalette.InactiveColor;
+                        }
+                        else if (this.blink && (this.ticks++ % 2) == 0)
+                        {
+                            this.allLeds[i].Fill = ColorPalette.NeedleColor;
+                        }
+                        else
+                        {
+                            this.allLeds[i].Fill = ColorPalette.GaugeColor;
+                        }
+
+                        this.allLeds[i].Stroke = ColorPalette.OutlineColor;
+                    }
+                    else if (i == boostEnd)
+                    {
+                        this.allLeds[i].Stroke = ColorPalette.OutlineColor;
                         this.allLeds[i].Fill = ColorPalette.NeedleColor;
                     }
                     else
                     {
-                        this.allLeds[i].Fill = ColorPalette.GaugeColor;
+                        this.allLeds[i].Stroke = ColorPalette.InactiveColor;
+                        this.allLeds[i].Fill = ColorPalette.InactiveColor;
                     }
-
-                    this.allLeds[i].Stroke = ColorPalette.OutlineColor;
-                }
-                else if (i == boostEnd)
-                {
-                    this.allLeds[i].Stroke = ColorPalette.OutlineColor;
-                    this.allLeds[i].Fill = ColorPalette.NeedleColor;
-                }
-                else
-                {
-                    this.allLeds[i].Stroke = ColorPalette.InactiveColor;
-                    this.allLeds[i].Fill = ColorPalette.InactiveColor;
                 }
             }
         }

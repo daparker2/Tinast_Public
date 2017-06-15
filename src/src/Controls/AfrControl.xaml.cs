@@ -251,7 +251,7 @@
 
             // Now update and color the radial gauge. We just pick which ones should be visible and which should be hidden.
             double afrLevel = Math.Min(18.0, Math.Max(11.0, this.Level));
-            int startIndex = this.allLeds.Length / 2; ;
+            int startIndex = this.allLeds.Length / 2;
             int endIndex;
             if (this.Idle)
             {
@@ -268,7 +268,7 @@
             }
             else
             {
-                double offsetLambda = (afrLevel - 11.0) / 7.0;
+                double offsetLambda = (afrLevel - 11.2) / 7.0;
                 endIndex = (int)(Math.Ceiling((double)this.allLeds.Length * offsetLambda));
             }
 

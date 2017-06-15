@@ -183,6 +183,8 @@
                         driver.Disconnect();
                     }
                 }
+
+                driver.Disconnect();
             });
         }
 

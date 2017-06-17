@@ -216,8 +216,9 @@
                 this.blink = false;
             }
 
-            if (boost != this.curBoost)
+            if (this.blink || boost != this.curBoost)
             {
+                ++this.ticks;
                 if (this.curBoost < boost)
                 {
                     ++this.curBoost;
@@ -238,7 +239,7 @@
                             this.allLeds[i].Stroke = ColorPalette.InactiveColor;
                             this.allLeds[i].Fill = ColorPalette.InactiveColor;
                         }
-                        else if (this.blink && (this.ticks++ % 2) == 0)
+                        else if (this.blink && (this.ticks % 2) == 0)
                         {
                             this.allLeds[i].Fill = ColorPalette.NeedleColor;
                         }

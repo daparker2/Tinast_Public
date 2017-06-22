@@ -385,12 +385,17 @@ namespace DP.Tinast.ViewModel
         {
             int step = Math.Max(1, this.config.MaxBoost / 10);
             bool propertyChanged;
-            for (int i = 0; i < this.config.MaxBoost; i += step)
+            
+            for (int i = 0; i <= this.config.MaxBoost; i += step)
             {
                 this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, i, out propertyChanged);
                 await this.OnPropertiesChanged();
                 await Task.Delay(33);
             }
+
+            this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, this.config.MaxBoost, out propertyChanged);
+            await this.OnPropertiesChanged();
+            await Task.Delay(300);
 
             for (int i = this.config.MaxBoost; i >= 0; i -= step)
             {

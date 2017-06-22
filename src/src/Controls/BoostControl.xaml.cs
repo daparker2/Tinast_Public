@@ -206,7 +206,7 @@
                 boost = this.MinLevel;
                 this.blink = false;
             }
-            else if (boost > this.MaxLevel)
+            else if (boost >= this.MaxLevel)
             {
                 boost = this.MaxLevel;
                 this.blink = true;
@@ -223,7 +223,7 @@
                 {
                     ++this.curBoost;
                 }
-                else
+                else if (this.curBoost > boost)
                 {
                     --this.curBoost;
                 }

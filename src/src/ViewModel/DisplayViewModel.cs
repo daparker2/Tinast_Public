@@ -155,7 +155,7 @@ namespace DP.Tinast.ViewModel
         /// <value>
         /// The engine boost.
         /// </value>
-        public int EngineBoost { get; set; }
+        public double EngineBoost { get; set; }
 
         /// <summary>
         /// Gets or sets the engine AFR.
@@ -383,10 +383,9 @@ namespace DP.Tinast.ViewModel
         /// <returns></returns>
         private async Task FlashBoostGauge()
         {
-            int step = Math.Max(1, this.config.MaxBoost / 10);
             bool propertyChanged;
             
-            for (int i = 0; i <= this.config.MaxBoost; i += step)
+            for (int i = (int)this.config.BoostOffset; i <= this.config.MaxBoost; ++i)
             {
                 this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, i, out propertyChanged);
                 await this.OnPropertiesChanged();
@@ -397,14 +396,14 @@ namespace DP.Tinast.ViewModel
             await this.OnPropertiesChanged();
             await Task.Delay(300);
 
-            for (int i = this.config.MaxBoost; i >= 0; i -= step)
+            for (int i = (int)this.config.MaxBoost; i >= (int)this.config.BoostOffset; --i)
             {
                 this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, i, out propertyChanged);
                 await this.OnPropertiesChanged();
                 await Task.Delay(33);
             }
 
-            this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, 0, out propertyChanged);
+            this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, this.config.BoostOffset, out propertyChanged);
             await this.OnPropertiesChanged();
         }
 

@@ -27,27 +27,27 @@
         /// <summary>
         /// The temp level property
         /// </summary>
-        public static readonly DependencyProperty LevelProperty = DependencyProperty.Register("Level", typeof(int), typeof(BoostControl), new PropertyMetadata(default(int)));
+        public static readonly DependencyProperty LevelProperty = DependencyProperty.Register("Level", typeof(double), typeof(BoostControl), new PropertyMetadata(default(double)));
 
         /// <summary>
-        /// The temp level property
+        /// The absolute offset maximum boost
         /// </summary>
-        public static readonly DependencyProperty MinLevelProperty = DependencyProperty.Register("MinLevel", typeof(int), typeof(BoostControl), new PropertyMetadata(default(int)));
+        private readonly double absMaxBoost;
 
         /// <summary>
-        /// The temp level property
+        /// The boost offset from atmospheric pressure
         /// </summary>
-        public static readonly DependencyProperty MaxLevelProperty = DependencyProperty.Register("MaxLevel", typeof(int), typeof(BoostControl), new PropertyMetadata(default(int)));
+        private double boostOffset;
+
+        /// <summary>
+        /// The maximum boost
+        /// </summary>
+        private double maxBoost;
 
         /// <summary>
         /// All leds
         /// </summary>
-        Polygon[] allLeds;
-
-        /// <summary>
-        /// The current boost
-        /// </summary>
-        private int curBoost;
+        private Polygon[] allLeds;
 
         /// <summary>
         /// The ticks
@@ -67,6 +67,9 @@
             this.InitializeComponent();
             this.DataContext = this;
             ((App)Application.Current).GaugeTick += UpdateTimer_Tick;
+            this.boostOffset = ((App)Application.Current).Config.BoostOffset;
+            this.maxBoost = ((App)Application.Current).Config.MaxBoost;
+            this.absMaxBoost = this.maxBoost - this.boostOffset;
             this.label.Foreground = ColorPalette.IndicatorColor;
             this.outline1.Stroke = ColorPalette.OutlineColor;
             this.outline2.Stroke = ColorPalette.OutlineColor;
@@ -141,55 +144,15 @@
         /// </value>
         [DesignerCategory("BoostControl")]
         [Description("The boost level.")]
-        public int Level
+        public double Level
         {
             get
             {
-                return (int)this.GetValue(LevelProperty);
+                return (double)this.GetValue(LevelProperty);
             }
             set
             {
                 this.SetValue(LevelProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the minimum boost level.
-        /// </summary>
-        /// <value>
-        /// The minimum boost level.
-        /// </value>
-        [DesignerCategory("BoostControl")]
-        [Description("The minimum boost level.")]
-        public int MinLevel
-        {
-            get
-            {
-                return (int)this.GetValue(MinLevelProperty);
-            }
-            set
-            {
-                this.SetValue(MinLevelProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the maximum boost level.
-        /// </summary>
-        /// <value>
-        /// The maximum boost level.
-        /// </value>
-        [DesignerCategory("BoostControl")]
-        [Description("The maximum boost level.")]
-        public int MaxLevel
-        {
-            get
-            {
-                return (int)this.GetValue(MaxLevelProperty);
-            }
-            set
-            {
-                this.SetValue(MaxLevelProperty, value);
             }
         }
 
@@ -200,15 +163,17 @@
         /// <param name="e">The e.</param>
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
-            int boost = this.Level;
-            if (boost < this.MinLevel)
+            double boost = this.Level;
+            double absBoost = boost - this.boostOffset;
+
+            if (absBoost < 0)
             {
-                boost = this.MinLevel;
+                absBoost = 0;
                 this.blink = false;
             }
-            else if (boost >= this.MaxLevel)
+            else if (absBoost >= this.absMaxBoost)
             {
-                boost = this.MaxLevel;
+                absBoost = this.absMaxBoost;
                 this.blink = true;
             }
             else
@@ -216,50 +181,39 @@
                 this.blink = false;
             }
 
-            if (this.blink || boost != this.curBoost)
+            ++this.ticks;
+
+            // Average to next value, minimum 1, until we hit it.
+            int boostEnd = (int)(absBoost * this.allLeds.Length / this.absMaxBoost);
+            for (int i = 0; i < this.allLeds.Length; ++i)
             {
-                ++this.ticks;
-                if (this.curBoost < boost)
+                if (i < boostEnd)
                 {
-                    ++this.curBoost;
-                }
-                else if (this.curBoost > boost)
-                {
-                    --this.curBoost;
-                }
-
-                // Average to next value, minimum 1, until we hit it.
-                int boostEnd = this.curBoost * this.allLeds.Length / (this.MaxLevel - this.MinLevel);
-                for (int i = 0; i < this.allLeds.Length; ++i)
-                {
-                    if (i < boostEnd)
-                    {
-                        if (i == 17)
-                        {
-                            this.allLeds[i].Stroke = ColorPalette.InactiveColor;
-                            this.allLeds[i].Fill = ColorPalette.InactiveColor;
-                        }
-                        else if (this.blink && (this.ticks % 2) == 0)
-                        {
-                            this.allLeds[i].Fill = ColorPalette.NeedleColor;
-                        }
-                        else
-                        {
-                            this.allLeds[i].Fill = ColorPalette.GaugeColor;
-                        }
-
-                        this.allLeds[i].Stroke = ColorPalette.OutlineColor;
-                    }
-                    else if (i == boostEnd)
-                    {
-                        this.allLeds[i].Stroke = ColorPalette.OutlineColor;
-                        this.allLeds[i].Fill = ColorPalette.NeedleColor;
-                    }
-                    else
+                    if (i == 17)
                     {
                         this.allLeds[i].Stroke = ColorPalette.InactiveColor;
                         this.allLeds[i].Fill = ColorPalette.InactiveColor;
                     }
+                    else if (this.blink && (this.ticks % 2) == 0)
+                    {
+                        this.allLeds[i].Fill = ColorPalette.NeedleColor;
+                    }
+                    else
+                    {
+                        this.allLeds[i].Fill = ColorPalette.GaugeColor;
+                    }
+
+                    this.allLeds[i].Stroke = ColorPalette.OutlineColor;
+                }
+                else if (i == boostEnd)
+                {
+                    this.allLeds[i].Stroke = ColorPalette.OutlineColor;
+                    this.allLeds[i].Fill = ColorPalette.NeedleColor;
+                }
+                else
+                {
+                    this.allLeds[i].Stroke = ColorPalette.InactiveColor;
+                    this.allLeds[i].Fill = ColorPalette.InactiveColor;
                 }
             }
         }

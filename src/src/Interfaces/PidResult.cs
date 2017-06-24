@@ -26,7 +26,7 @@ namespace DP.Tinast.Interfaces
         /// <value>
         /// The boost.
         /// </value>
-        public int Boost { get; set; }
+        public double Boost { get; set; }
 
         /// <summary>
         /// Gets or sets the load.

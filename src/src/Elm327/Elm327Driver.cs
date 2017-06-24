@@ -101,8 +101,7 @@
             if (this.config.BoostPidType == PidType.Obd2)
             {
                 // We could calculate this based on barometric pressure PID but this is slightly faster.
-                // Also, BEWWWST
-                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => Task.Run(() => this.result.Boost = (int)((double)pd[0] * 0.145037738007 + this.config.BoostOffset))));
+                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => Task.Run(() => this.result.Boost = (double)pd[0] * 0.145037738007 + this.config.BoostOffset)));
             }
             else
             {

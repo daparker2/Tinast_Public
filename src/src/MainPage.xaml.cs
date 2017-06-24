@@ -65,7 +65,6 @@
             this.InitializeComponent();
             this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
             this.viewModel = new DisplayViewModel(((App)Application.Current).Driver, ((App)Application.Current).Config);
-            this.boostGauge.MaxLevel = ((App)Application.Current).Config.MaxBoost;
             this.DataContext = this.viewModel;
             ((App)Application.Current).Faulted += MainPage_Faulted;
             this.Loaded += MainPage_Loaded;

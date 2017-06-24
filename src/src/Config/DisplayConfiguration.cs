@@ -90,7 +90,7 @@
         /// <value>
         /// The maximum boost.
         /// </value>
-        public int MaxBoost { get; set; } = 15;
+        public double MaxBoost { get; set; } = 15;
 
         /// <summary>
         /// Gets or sets the maximum idle load.

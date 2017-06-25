@@ -4,9 +4,9 @@ This my car dash panel project. It's for my flashed ECU 2013 Subaru BRZ, but the
 
 There will be some limited customization of PIDs in a json file (look at displayConfiguration.json for an example) that can be placed in the user settings for the app, but not much in the way of configuring settings for a custom vehicle. 
 
-## Update 2: It seems to run. In the vehicle.
+## Update 3: Here's a brief demo of the gauge panel during normal driving
 
-[![update2](http://img.youtube.com/vi/ap7DToZnHCE/0.jpg)](https://www.youtube.com/watch?v=ap7DToZnHCE "Sort of works")
+[![update3](http://img.youtube.com/vi/lsFMVJhmXTw/0.jpg)](https://youtu.be/lsFMVJhmXTw "Demo")
 
 Here's what I have so far. I had to ditch the pi, as the Bluetooth radio was crummy. Works much better on this Compute Stick, but Windows Desktop definitely isn't permissive in an automotive environment. It doesn't like choppy power, nor does it like suddenly being shut off or power cycled. Still, it unblocked me for now.
 

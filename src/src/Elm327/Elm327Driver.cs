@@ -74,7 +74,7 @@
         /// <summary>
         /// The debug data task
         /// </summary>
-        private TaskCompletionSource<PidDebugData> debugDataTask = new TaskCompletionSource<PidDebugData>();
+        private PidDebugData debugData = new PidDebugData(string.Empty, new string[0], TimeSpan.Zero);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Elm327Driver"/> class.
@@ -91,7 +91,7 @@
 
             if (this.config.AfrPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 4, (pd) => Task.Run(() => this.result.Afr = (double)(pd[0] * 256 + pd[1]) / 32768.0 * 14.7)));
+                this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 4, (pd) => this.result.Afr = (double)(pd[0] * 256 + pd[1]) / 32768.0 * 14.7));
             }
             else
             {
@@ -101,7 +101,7 @@
             if (this.config.BoostPidType == PidType.Obd2)
             {
                 // We could calculate this based on barometric pressure PID but this is slightly faster.
-                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => Task.Run(() => this.result.Boost = (double)pd[0] * 0.145037738007 + this.config.BoostOffset)));
+                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => this.result.Boost = (double)pd[0] * 0.145037738007 + this.config.BoostOffset));
             }
             else
             {
@@ -110,7 +110,7 @@
 
             if (this.config.LoadPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) => Task.Run(() => this.result.Load = pd[0] * 100 / 255)));
+                this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) => this.result.Load = pd[0] * 100 / 255));
             }
             else
             {
@@ -119,11 +119,11 @@
 
             if (this.config.OilTempPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => Task.Run(() => this.result.OilTemp = (int)this.CToF(pd[0] - 40))));
+                this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => this.result.OilTemp = (int)this.CToF(pd[0] - 40)));
             }
             else if (this.config.OilTempPidType == PidType.Subaru)
             {
-                this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 29, (pd) => Task.Run(() => this.result.OilTemp = (int)this.CToF(pd[28] - 40))));
+                this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 29, (pd) => this.result.OilTemp = (int)this.CToF(pd[28] - 40)));
             }
             else
             {
@@ -132,7 +132,7 @@
 
             if (this.config.CoolantTempPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) => Task.Run(() => this.result.CoolantTemp = (int)this.CToF(pd[0] - 40))));
+                this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) => this.result.CoolantTemp = (int)this.CToF(pd[0] - 40)));
             }
             else
             {
@@ -141,7 +141,7 @@
 
             if (this.config.IntakeTempPidType == PidType.Obd2)
             {
-                this.pt.Add(new PidHandler(0x010f, PidRequest.IntakeTemp, 1, (pd) => Task.Run(() => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40))));
+                this.pt.Add(new PidHandler(0x010f, PidRequest.IntakeTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
             }
             else
             {
@@ -195,50 +195,48 @@
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
         /// <returns>True if the connection was established.</returns>
-        public Task<bool> TryConnectAsync()
+        public async Task<bool> TryConnectAsync()
         {
-            return Task.Run(async () =>
+            if (!this.socketConnected)
             {
-                if (!this.socketConnected)
+                if (this.service == null)
                 {
-                    if (this.service == null)
-                    {
-                        throw new InvalidOperationException("Service not opened. Call OpenAsync() first.");
-                    }
-
-                    if (this.socket == null)
-                    {
-                        this.socket = new StreamSocket();
-                        this.socket.Control.NoDelay = true;
-                        this.socket.Control.SerializeConnectionAttempts = true;
-                    }
-
-                    this.log.Info("Connecting to {0};{1}", this.service.ConnectionHostName, this.service.ConnectionServiceName);
-                    try
-                    {
-                        await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName);
-                    }
-                    catch (Exception ex)
-                    {
-                        this.log.Warn("Connect failed", ex);
-                        this.Disconnect();
-                        return false;
-                    }
-
-                    // Get some info about the device we just connected to.
-                    string elmDeviceDesc = (await this.SendCommand("atz")).FirstOrDefault();
-                    this.log.Trace("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
-
-                    await this.SetDefaults();
-
-                    while (!(await this.SendCommand("atsp0")).Contains("OK")) ;
-
-                    this.log.Info("ELM327 device connected. ECU on.");
-                    this.socketConnected = true;
+                    throw new InvalidOperationException("Service not opened. Call OpenAsync() first.");
                 }
 
-                return this.socketConnected;
-            });
+                if (this.socket == null)
+                {
+                    this.socket = new StreamSocket();
+                    this.socket.Control.NoDelay = true;
+                    this.socket.Control.SerializeConnectionAttempts = true;
+                }
+
+                this.log.Info("Connecting to {0};{1}", this.service.ConnectionHostName, this.service.ConnectionServiceName);
+                try
+                {
+                    await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName);
+                }
+                catch (Exception ex)
+                {
+                    this.log.Warn("Connect failed", ex);
+                    this.Disconnect();
+                    await Task.Delay(5000);
+                    return false;
+                }
+
+                // Get some info about the device we just connected to.
+                string elmDeviceDesc = (await this.SendCommand("atz")).FirstOrDefault();
+                this.log.Trace("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
+
+                await this.SetDefaults();
+
+                while (!(await this.SendCommand("atsp0")).Contains("OK")) ;
+
+                this.log.Info("ELM327 device connected. ECU on.");
+                this.socketConnected = true;
+            }
+
+            return this.socketConnected;
         }
 
         /// <summary>
@@ -304,7 +302,7 @@
                     for (int i = 1; i < pidResult.Count; ++i)
                     {
                         PidHandler ph = this.pt.GetHandler((mode << 8) | pidResult[i]);
-                        i += await ph.Handle(pidResult, i + 1);
+                        i += ph.Handle(pidResult, i + 1);
                     }
                 }
             }
@@ -320,9 +318,9 @@
         /// <returns>
         /// A <see cref="PidDebugData" /> object representing the last transaction.
         /// </returns>
-        public Task<PidDebugData> GetLastTransactionInfo()
+        public PidDebugData GetLastTransactionInfo()
         {
-            return this.debugDataTask.Task;
+            return this.debugData;
         }
 
         /// <summary>
@@ -394,7 +392,6 @@
         /// <returns></returns>
         private async Task<string[]> SendCommand(string commandString)
         {
-            bool resultSet = false;
             try
             {
                 DateTime start = DateTime.Now;
@@ -402,22 +399,15 @@
                 await this.socket.OutputStream.WriteAsync(outBuf.AsBuffer());
                 await this.socket.OutputStream.FlushAsync();
                 string[] ret = await this.ReadResponse();
-                resultSet = this.debugDataTask.TrySetResult(new PidDebugData(commandString, ret, DateTime.Now - start));
+                this.debugData = new PidDebugData(commandString, ret, DateTime.Now - start);
                 return ret;
             }
             catch (IOException ex)
             {
                 this.log.Warn("Lost socket connection: {0}", ex.Message);
                 this.Disconnect();
-                resultSet = this.debugDataTask.TrySetResult(new PidDebugData(commandString, new string[] { }, TimeSpan.MaxValue));
+                this.debugData = new PidDebugData(commandString, new string[] { }, TimeSpan.MaxValue);
                 throw;
-            }
-            finally
-            {
-                if (resultSet)
-                {
-                    this.debugDataTask = new TaskCompletionSource<PidDebugData>();
-                }
             }
         }
 

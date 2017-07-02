@@ -43,6 +43,6 @@ namespace DP.Tinast.Interfaces
         /// </summary>
         /// <returns>A <see cref="Task{PidDebugData}"/> object representing the last transaction.</returns>
         /// <remarks>This may block for a while, if no transactions are being performed due to a pending connect.</remarks>
-        Task<PidDebugData> GetLastTransactionInfo();
+        PidDebugData GetLastTransactionInfo();
     }
 }

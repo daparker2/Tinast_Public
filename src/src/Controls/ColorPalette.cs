@@ -42,6 +42,6 @@
         /// <summary>
         /// The outline color
         /// </summary>
-        public static readonly Brush OutlineColor = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0x00, 0xff));
+        public static readonly Brush OutlineColor = new SolidColorBrush(Color.FromArgb(0xff, 0x7f, 0x7f, 0xff));
     }
 }

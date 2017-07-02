@@ -124,9 +124,7 @@
                 this.led46,
                 this.led47,
                 this.led48,
-                this.led49,
-                this.led50,
-                this.led51
+                this.led49
             };
 
             foreach (Polygon led in this.allLeds)
@@ -189,12 +187,7 @@
             {
                 if (i < boostEnd)
                 {
-                    if (i == 17)
-                    {
-                        this.allLeds[i].Stroke = ColorPalette.InactiveColor;
-                        this.allLeds[i].Fill = ColorPalette.InactiveColor;
-                    }
-                    else if (this.blink && (this.ticks % 2) == 0)
+                    if (this.blink && (this.ticks % 2) == 0)
                     {
                         this.allLeds[i].Fill = ColorPalette.NeedleColor;
                     }

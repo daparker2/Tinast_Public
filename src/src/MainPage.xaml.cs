@@ -6,6 +6,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices.WindowsRuntime;
     using System.Threading;
     using System.Threading.Tasks;
@@ -46,11 +47,6 @@
         /// The viewmodel tick task
         /// </summary>
         private Task tickTask;
-
-        /// <summary>
-        /// The debug task
-        /// </summary>
-        private Task debugTask;
 
         /// <summary>
         /// The loaded
@@ -100,17 +96,7 @@
         private async void Current_Suspending(object sender, SuspendingEventArgs e)
         {
             this.resumed = false;
-            if (this.tickTask != null)
-            {
-                await this.tickTask;
-                this.tickTask = null;
-            }
-
-            if (this.debugTask != null)
-            {
-                await this.debugTask;
-                this.debugTask = null;
-            }
+            await this.tickTask;
         }
 
         /// <summary>
@@ -136,7 +122,6 @@
                 this.resumed = true;
                 IDisplayDriver driver = ((App)Application.Current).Driver;
                 this.tickTask = this.TickLoopAsync(driver);
-                this.debugTask = this.DebugLoopAsync(driver);
             }
         }
 
@@ -144,68 +129,45 @@
         /// The async tick loop.
         /// </summary>
         /// <returns></returns>
-        private Task TickLoopAsync(IDisplayDriver driver)
+        private async Task TickLoopAsync(IDisplayDriver driver)
         {
-            return Task.Run(async () =>
+            Random r = new Random();
+            Task logDelay = Task.Delay(2000 + r.Next(-200, 200));
+            while (this.resumed)
             {
-                while (this.resumed)
+                bool tickError = false;
+                try
                 {
-                    bool tickError = false;
-                    try
+                    await Task.Yield();
+                    await this.viewModel.Tick()
+                                        .TimeoutAfter(this.viewModel.GetTickDuration())
+                                        .ConfigureAwait(false);
+                    if (logDelay.IsCompleted)
                     {
-                        Task tick = this.viewModel.Tick();
-                        if (tick.Wait(this.viewModel.GetTickDuration()))
-                        {
-                            await tick;
-                        }
-                        else
-                        {
-                            this.log.Error("Tick timed out.");
-                            tickError = true;
-                        }
-                    }
-                    catch (IOException ex)
-                    {
-                        this.log.Error("Tick update error.", ex);
-                        tickError = true;
-                    }
-
-                    if (tickError)
-                    {
-                        Task<PidDebugData> transactionTask = driver.GetLastTransactionInfo();
-                        if (transactionTask.IsCompleted)
-                        {
-                            PidDebugData data = await transactionTask;
-                            this.log.Error("Tick data: {0}", data);
-                        }
-
-                        driver.Disconnect();
-                    }
-                }
-
-                driver.Disconnect();
-            });
-        }
-
-        /// <summary>
-        /// Periocally samples the driver for the last PID transaction, printing transactions if they have gotten a valid result already.
-        /// </summary>
-        /// <returns></returns>
-        private Task DebugLoopAsync(IDisplayDriver driver)
-        {
-            return Task.Run(async () =>
-            {
-                while (this.resumed)
-                {
-                    Task<PidDebugData> transactionTask = driver.GetLastTransactionInfo();
-                    if (transactionTask.Wait(this.viewModel.GetTickDuration()))
-                    {
-                        PidDebugData transactionResult = await transactionTask;
+                        await logDelay;
+                        PidDebugData transactionResult = driver.GetLastTransactionInfo();
                         this.log.Trace("{0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
-                        await Task.Delay(2000);
+                        logDelay = Task.Delay(2000 + r.Next(-200, 200));
                     }
                 }
-            });
+                catch (TimeoutException)
+                {
+                    this.log.Error("Tick update timed out.");
+                    tickError = true;
+                }
+                catch (IOException ex)
+                {
+                    this.log.Error("Tick update error.", ex);
+                    tickError = true;
+                }
+
+                if (tickError)
+                {
+                    driver.Disconnect();
+                }
+            }
+
+            driver.Disconnect();
         }
     }
 }

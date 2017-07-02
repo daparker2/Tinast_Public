@@ -32,44 +32,43 @@
         <shapes:Polygon x:Name="led14" Stroke="White" StrokeThickness="1" Fill="White" Points="-23 235 115 235 114 250 -23 250" />
         <shapes:Polygon x:Name="led15" Stroke="White" StrokeThickness="1" Fill="White" Points="-23 210 118 210 117 225 -23 225" />
         <shapes:Polygon x:Name="led16" Stroke="White" StrokeThickness="1" Fill="White" Points="-23 185 121 185 120 200 -23 200" />
-        <shapes:Polygon x:Name="led17" Stroke="White" StrokeThickness="1" Fill="White" Points="-15 0 124 149 123 174 -24 174" />
-        <shapes:Polygon x:Name="led18" Stroke="White" StrokeThickness="1" Fill="White" Points="5 0 162 0 162 139 137 141" />
-        <shapes:Polygon x:Name="led19" Stroke="White" StrokeThickness="1" Fill="White" Points="173 -8 188 -8 188 137 173 139" />
-        <shapes:Polygon x:Name="led20" Stroke="White" StrokeThickness="1" Fill="White" Points="198 -8 213 -8 213 135 198 137" />
-        <shapes:Polygon x:Name="led21" Stroke="White" StrokeThickness="1" Fill="White" Points="224 -8 239 -8 239 133 224 135" />
-        <shapes:Polygon x:Name="led22" Stroke="White" StrokeThickness="1" Fill="White" Points="249 -8 264 -8 264 132 249 134" />
-        <shapes:Polygon x:Name="led23" Stroke="White" StrokeThickness="1" Fill="White" Points="275 -7 290 -7 290 130 275 132" />
-        <shapes:Polygon x:Name="led24" Stroke="White" StrokeThickness="1" Fill="White" Points="300 -7 315 -7 315 128 300 130" />
-        <shapes:Polygon x:Name="led25" Stroke="White" StrokeThickness="1" Fill="White" Points="326 -7 341 -7 341 126 326 128" />
-        <shapes:Polygon x:Name="led26" Stroke="White" StrokeThickness="1" Fill="White" Points="351 -7 366 -7 366 125 351 127" />
-        <shapes:Polygon x:Name="led27" Stroke="White" StrokeThickness="1" Fill="White" Points="377 -7 392 -7 392 123 377 125" />
-        <shapes:Polygon x:Name="led28" Stroke="White" StrokeThickness="1" Fill="White" Points="402 -6 417 -6 417 121 402 123" />
-        <shapes:Polygon x:Name="led29" Stroke="White" StrokeThickness="1" Fill="White" Points="428 -6 443 -6 443 119 428 121" />
-        <shapes:Polygon x:Name="led30" Stroke="White" StrokeThickness="1" Fill="White" Points="453 -6 468 -6 468 118 453 120" />
-        <shapes:Polygon x:Name="led31" Stroke="White" StrokeThickness="1" Fill="White" Points="479 -6 494 -6 494 116 479 118" />
-        <shapes:Polygon x:Name="led32" Stroke="White" StrokeThickness="1" Fill="White" Points="504 -5 519 -5 519 114 504 116" />
-        <shapes:Polygon x:Name="led33" Stroke="White" StrokeThickness="1" Fill="White" Points="530 -5 545 -5 545 112 530 114" />
-        <shapes:Polygon x:Name="led34" Stroke="White" StrokeThickness="1" Fill="White" Points="555 -5 570 -5 570 111 555 113" />
-        <shapes:Polygon x:Name="led35" Stroke="White" StrokeThickness="1" Fill="White" Points="581 -5 596 -5 596 109 581 111" />
-        <shapes:Polygon x:Name="led36" Stroke="White" StrokeThickness="1" Fill="White" Points="606 -5 621 -5 621 107 606 109" />
-        <shapes:Polygon x:Name="led37" Stroke="White" StrokeThickness="1" Fill="White" Points="632 -4 647 -4 647 105 632 107" />
-        <shapes:Polygon x:Name="led38" Stroke="White" StrokeThickness="1" Fill="White" Points="657 -4 672 -4 672 104 657 106" />
-        <shapes:Polygon x:Name="led39" Stroke="White" StrokeThickness="1" Fill="White" Points="683 -4 698 -4 698 102 683 104" />
-        <shapes:Polygon x:Name="led40" Stroke="White" StrokeThickness="1" Fill="White" Points="708 -4 723 -4 723 100 708 102" />
-        <shapes:Polygon x:Name="led41" Stroke="White" StrokeThickness="1" Fill="White" Points="734 -3 749 -3 749 98 734 100" />
-        <shapes:Polygon x:Name="led42" Stroke="White" StrokeThickness="1" Fill="White" Points="759 -3 774 -3 774 97 759 99" />
-        <shapes:Polygon x:Name="led43" Stroke="White" StrokeThickness="1" Fill="White" Points="785 -3 800 -3 800 95 785 97" />
-        <shapes:Polygon x:Name="led44" Stroke="White" StrokeThickness="1" Fill="White" Points="810 -3 825 -3 825 93 810 95" />
-        <shapes:Polygon x:Name="led45" Stroke="White" StrokeThickness="1" Fill="White" Points="836 -3 851 -3 851 91 836 93" />
-        <shapes:Polygon x:Name="led46" Stroke="White" StrokeThickness="1" Fill="White" Points="861 -2 876 -2 876 90 861 92" />
-        <shapes:Polygon x:Name="led47" Stroke="White" StrokeThickness="1" Fill="White" Points="887 -2 902 -2 902 88 887 90" />
-        <shapes:Polygon x:Name="led48" Stroke="White" StrokeThickness="1" Fill="White" Points="912 -2 927 -2 927 86 912 88" />
-        <shapes:Polygon x:Name="led49" Stroke="White" StrokeThickness="1" Fill="White" Points="938 -2 953 -2 953 84 938 86" />
-        <shapes:Polygon x:Name="led50" Stroke="White" StrokeThickness="1" Fill="White" Points="963 -1 978 -1 978 83 963 85" />
-        <shapes:Polygon x:Name="led51" Stroke="White" StrokeThickness="1" Fill="White" Points="989 -1 1004 -1 1004 81 989 83" />
-        <TextBlock x:Name="level" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=boostConverter}}" FontSize="45" FontFamily="Consolas" FontWeight="Bold" Width="247" Height="52" Canvas.Top="125" Canvas.Left="761" Margin="0,0,0,0" TextAlignment="Center" />
+        <shapes:Polygon x:Name="led17" Stroke="White" StrokeThickness="1" Fill="White" Points="173 -8 188 -8 188 137 173 139" />
+        <shapes:Polygon x:Name="led18" Stroke="White" StrokeThickness="1" Fill="White" Points="198 -8 213 -8 213 135 198 137" />
+        <shapes:Polygon x:Name="led19" Stroke="White" StrokeThickness="1" Fill="White" Points="224 -8 239 -8 239 133 224 135" />
+        <shapes:Polygon x:Name="led20" Stroke="White" StrokeThickness="1" Fill="White" Points="249 -8 264 -8 264 132 249 134" />
+        <shapes:Polygon x:Name="led21" Stroke="White" StrokeThickness="1" Fill="White" Points="275 -7 290 -7 290 130 275 132" />
+        <shapes:Polygon x:Name="led22" Stroke="White" StrokeThickness="1" Fill="White" Points="300 -7 315 -7 315 128 300 130" />
+        <shapes:Polygon x:Name="led23" Stroke="White" StrokeThickness="1" Fill="White" Points="326 -7 341 -7 341 126 326 128" />
+        <shapes:Polygon x:Name="led24" Stroke="White" StrokeThickness="1" Fill="White" Points="351 -7 366 -7 366 125 351 127" />
+        <shapes:Polygon x:Name="led25" Stroke="White" StrokeThickness="1" Fill="White" Points="377 -7 392 -7 392 123 377 125" />
+        <shapes:Polygon x:Name="led26" Stroke="White" StrokeThickness="1" Fill="White" Points="402 -6 417 -6 417 121 402 123" />
+        <shapes:Polygon x:Name="led27" Stroke="White" StrokeThickness="1" Fill="White" Points="428 -6 443 -6 443 119 428 121" />
+        <shapes:Polygon x:Name="led28" Stroke="White" StrokeThickness="1" Fill="White" Points="453 -6 468 -6 468 118 453 120" />
+        <shapes:Polygon x:Name="led29" Stroke="White" StrokeThickness="1" Fill="White" Points="479 -6 494 -6 494 116 479 118" />
+        <shapes:Polygon x:Name="led30" Stroke="White" StrokeThickness="1" Fill="White" Points="504 -5 519 -5 519 114 504 116" />
+        <shapes:Polygon x:Name="led31" Stroke="White" StrokeThickness="1" Fill="White" Points="530 -5 545 -5 545 112 530 114" />
+        <shapes:Polygon x:Name="led32" Stroke="White" StrokeThickness="1" Fill="White" Points="555 -5 570 -5 570 111 555 113" />
+        <shapes:Polygon x:Name="led33" Stroke="White" StrokeThickness="1" Fill="White" Points="581 -5 596 -5 596 109 581 111" />
+        <shapes:Polygon x:Name="led34" Stroke="White" StrokeThickness="1" Fill="White" Points="606 -5 621 -5 621 107 606 109" />
+        <shapes:Polygon x:Name="led35" Stroke="White" StrokeThickness="1" Fill="White" Points="632 -4 647 -4 647 105 632 107" />
+        <shapes:Polygon x:Name="led36" Stroke="White" StrokeThickness="1" Fill="White" Points="657 -4 672 -4 672 104 657 106" />
+        <shapes:Polygon x:Name="led37" Stroke="White" StrokeThickness="1" Fill="White" Points="683 -4 698 -4 698 102 683 104" />
+        <shapes:Polygon x:Name="led38" Stroke="White" StrokeThickness="1" Fill="White" Points="708 -4 723 -4 723 100 708 102" />
+        <shapes:Polygon x:Name="led39" Stroke="White" StrokeThickness="1" Fill="White" Points="734 -3 749 -3 749 98 734 100" />
+        <shapes:Polygon x:Name="led40" Stroke="White" StrokeThickness="1" Fill="White" Points="759 -3 774 -3 774 97 759 99" />
+        <shapes:Polygon x:Name="led41" Stroke="White" StrokeThickness="1" Fill="White" Points="785 -3 800 -3 800 95 785 97" />
+        <shapes:Polygon x:Name="led42" Stroke="White" StrokeThickness="1" Fill="White" Points="810 -3 825 -3 825 93 810 95" />
+        <shapes:Polygon x:Name="led43" Stroke="White" StrokeThickness="1" Fill="White" Points="836 -3 851 -3 851 91 836 93" />
+        <shapes:Polygon x:Name="led44" Stroke="White" StrokeThickness="1" Fill="White" Points="861 -2 876 -2 876 90 861 92" />
+        <shapes:Polygon x:Name="led45" Stroke="White" StrokeThickness="1" Fill="White" Points="887 -2 902 -2 902 88 887 90" />
+        <shapes:Polygon x:Name="led46" Stroke="White" StrokeThickness="1" Fill="White" Points="912 -2 927 -2 927 86 912 88" />
+        <shapes:Polygon x:Name="led47" Stroke="White" StrokeThickness="1" Fill="White" Points="938 -2 953 -2 953 84 938 86" />
+        <shapes:Polygon x:Name="led48" Stroke="White" StrokeThickness="1" Fill="White" Points="963 -1 978 -1 978 83 963 85" />
+        <shapes:Polygon x:Name="led49" Stroke="White" StrokeThickness="1" Fill="White" Points="989 -1 1004 -1 1004 81 989 83" />
+        <TextBlock x:Name="level" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=boostConverter}}" FontSize="45" FontFamily="Courier New" FontWeight="Bold" Width="133" Height="52" Canvas.Top="53" Margin="0,0,0,0" TextAlignment="Center" />
         <shapes:Line x:Name="outline1" X1="143" Y1="170" X2="1018" Y2="100" Stroke="White" StrokeThickness="1" />
         <shapes:Line x:Name="outline2" X1="143" Y1="170" X2="103" Y2="594" Stroke="White" StrokeThickness="1" />
-        <TextBlock x:Name="label" Text="Boost" FontSize="15" FontFamily="Consolas" Width="60" Height="15" Canvas.Top="143" Canvas.Left="509" Margin="0,0,0,0" TextAlignment="Center" />
+        <TextBlock x:Name="label" Text="Boost" FontSize="15" FontFamily="Courier New" Width="60" Height="15" Canvas.Top="143" Canvas.Left="509" Margin="0,0,0,0" TextAlignment="Center" />
+        <TextBlock x:Name="label2" Text="PSI" FontSize="15" FontFamily="Courier New" Width="60" Height="15" Canvas.Top="110" Canvas.Left="73" Margin="0,0,0,0" TextAlignment="Right" />
     </Canvas>
 </UserControl>

@@ -22,7 +22,7 @@ namespace DP.Tinast.Converters
         {
             if (targetType == typeof(string))
             {
-                return string.Format("{0: 00.0;-00.0; 00.0}psi", value);
+                return string.Format("{0: 00.0;-00.0;  0.0}", value);
             }
 
             throw new NotImplementedException();

@@ -135,6 +135,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TaskExtensionMethods.cs" />
     <Compile Include="ViewModel\DisplayViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

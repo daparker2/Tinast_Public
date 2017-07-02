@@ -12,6 +12,8 @@ There will be some limited customization of PIDs in a json file (look at display
 
 See [this link](https://htmlpreview.github.io/?https://github.com/daparker2/Tinast_Public/blob/v1.0.15-beta1/doc/Setting%20up%20a%20raspberry%20pi%20for%20automotive.htm) for installation and bringup instructions of a Raspberry Pi bearing this app.
 
+[Click here](https://github.com/daparker2/Tinast_Public/blob/master/Face-Template.psd) to view the mechanical template I used to create my gauge face (PSD).
+
 ## Specs
 
 There's some early specs in the wiki folder that could serve as documentation for the interface. Some of the things there are out of date. For example, the early color scheme I selected was too dim on my display so I selected an even higher contrast one.

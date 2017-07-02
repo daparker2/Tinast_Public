@@ -358,8 +358,7 @@ namespace DP.Tinast.ViewModel
                 this.EngineIntakeTemp = this.SetProperty("EngineIntakeTemp", this.EngineIntakeTemp, i, out propertyChanged);
                 this.EngineCoolantTemp = this.SetProperty("EngineCoolantTemp", this.EngineCoolantTemp, i, out propertyChanged);
                 this.EngineOilTemp = this.SetProperty("EngineOilTemp", this.EngineOilTemp, i, out propertyChanged);
-                await this.OnPropertiesChanged();
-                await Task.Delay(100);
+                await Task.WhenAll(Task.Delay(100), this.OnPropertiesChanged());
             }
         }
 
@@ -374,19 +373,16 @@ namespace DP.Tinast.ViewModel
             for (int i = (int)this.config.BoostOffset; i <= this.config.MaxBoost; ++i)
             {
                 this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, i, out propertyChanged);
-                await this.OnPropertiesChanged();
-                await Task.Delay(33);
+                await Task.WhenAll(Task.Delay(33), this.OnPropertiesChanged());
             }
 
             this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, this.config.MaxBoost, out propertyChanged);
-            await this.OnPropertiesChanged();
-            await Task.Delay(300);
+            await Task.WhenAll(Task.Delay(300), this.OnPropertiesChanged());
 
             for (int i = (int)this.config.MaxBoost; i >= (int)this.config.BoostOffset; --i)
             {
                 this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, i, out propertyChanged);
-                await this.OnPropertiesChanged();
-                await Task.Delay(33);
+                await Task.WhenAll(Task.Delay(33), this.OnPropertiesChanged());
             }
 
             this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, this.config.BoostOffset, out propertyChanged);
@@ -401,8 +397,7 @@ namespace DP.Tinast.ViewModel
         {
             bool propertyChanged;
             this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, true, out propertyChanged);
-            await this.OnPropertiesChanged();
-            await Task.Delay(33);
+            await Task.WhenAll(Task.Delay(250), this.OnPropertiesChanged());
 
             for (double i = 18; i >= 11; i -= 0.25)
             {
@@ -412,12 +407,11 @@ namespace DP.Tinast.ViewModel
                 }
 
                 this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
-                await this.OnPropertiesChanged();
-                await Task.Delay(33);
+                await Task.WhenAll(Task.Delay(33), this.OnPropertiesChanged());
             }
 
             this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, true, out propertyChanged);
-            await this.OnPropertiesChanged();
+            await Task.WhenAll(Task.Delay(250), this.OnPropertiesChanged());
 
             for (double i = 11; i <= 14.5; i += 0.5)
             {
@@ -427,8 +421,7 @@ namespace DP.Tinast.ViewModel
                 }
 
                 this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
-                await this.OnPropertiesChanged();
-                await Task.Delay(33);
+                await Task.WhenAll(Task.Delay(33), this.OnPropertiesChanged());
             }
         }
 

@@ -28,22 +28,22 @@
         /// <summary>
         /// The temp level property
         /// </summary>
-        public static readonly DependencyProperty LevelProperty = DependencyProperty.Register("Level", typeof(double), typeof(AfrControl), new PropertyMetadata(default(double)));
+        public static readonly DependencyProperty LevelProperty = DependencyProperty.Register("Level", typeof(double), typeof(AfrControl), new PropertyMetadata(default(double), new PropertyChangedCallback(OnAfrPropertyChanged)));
 
         /// <summary>
         /// The too lean property
         /// </summary>
-        public static readonly DependencyProperty TooLeanProperty = DependencyProperty.Register("TooLean", typeof(bool), typeof(AfrControl), new PropertyMetadata(default(bool)));
+        public static readonly DependencyProperty TooLeanProperty = DependencyProperty.Register("TooLean", typeof(bool), typeof(AfrControl), new PropertyMetadata(default(bool), new PropertyChangedCallback(OnAfrPropertyChanged)));
 
         /// <summary>
         /// The too rich property
         /// </summary>
-        public static readonly DependencyProperty TooRichProperty = DependencyProperty.Register("TooRich", typeof(bool), typeof(AfrControl), new PropertyMetadata(default(bool)));
+        public static readonly DependencyProperty TooRichProperty = DependencyProperty.Register("TooRich", typeof(bool), typeof(AfrControl), new PropertyMetadata(default(bool), new PropertyChangedCallback(OnAfrPropertyChanged)));
 
         /// <summary>
         /// The idle property
         /// </summary>
-        public static readonly DependencyProperty IdleProperty = DependencyProperty.Register("Idle", typeof(bool), typeof(AfrControl), new PropertyMetadata(default(bool)));
+        public static readonly DependencyProperty IdleProperty = DependencyProperty.Register("Idle", typeof(bool), typeof(AfrControl), new PropertyMetadata(default(bool), new PropertyChangedCallback(OnAfrPropertyChanged)));
 
         /// <summary>
         /// All leds
@@ -77,7 +77,6 @@
         {
             this.InitializeComponent();
             this.DataContext = this;
-            ((App)Application.Current).GaugeTick += UpdateTimer_Tick;
             this.label.Foreground = ColorPalette.IndicatorColor;
             this.level.Foreground = ColorPalette.IndicatorColor;
             this.afrOutline.Stroke = ColorPalette.OutlineColor;
@@ -157,6 +156,7 @@
             set
             {
                 this.SetValue(LevelProperty, value);
+                this.Redraw();
             }
         }
 
@@ -177,6 +177,7 @@
             set
             {
                 this.SetValue(TooRichProperty, value);
+                this.Redraw();
             }
         }
 
@@ -197,6 +198,7 @@
             set
             {
                 this.SetValue(TooLeanProperty, value);
+                this.Redraw();
             }
         }
 
@@ -217,15 +219,14 @@
             set
             {
                 this.SetValue(TooLeanProperty, value);
+                this.Redraw();
             }
         }
 
         /// <summary>
-        /// AFR gauge update tick.
+        /// Redraw the AFR gauge.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private void UpdateTimer_Tick(object sender, EventArgs e)
+        private void Redraw()
         {
             // Color the AFR display appropriately
             bool shouldWarn = !this.Idle && (this.TooRich || this.TooLean);
@@ -307,6 +308,17 @@
             }
 
             this.warning = shouldWarn;
+        }
+
+        /// <summary>
+        /// Called when an AFR property changes.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="dp">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnAfrPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs dp)
+        {
+            AfrControl afrControl = (AfrControl)obj;
+            afrControl.Redraw();
         }
     }
 }

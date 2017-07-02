@@ -27,7 +27,7 @@
         /// <summary>
         /// The temp level property
         /// </summary>
-        public static readonly DependencyProperty LevelProperty = DependencyProperty.Register("Level", typeof(double), typeof(BoostControl), new PropertyMetadata(default(double)));
+        public static readonly DependencyProperty LevelProperty = DependencyProperty.Register("Level", typeof(double), typeof(BoostControl), new PropertyMetadata(default(double), new PropertyChangedCallback(OnLevelPropertyChanged)));
 
         /// <summary>
         /// The absolute offset maximum boost
@@ -60,13 +60,17 @@
         private bool blink = false;
 
         /// <summary>
+        /// The is blinking
+        /// </summary>
+        private bool isBlinking = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="BoostControl"/> class.
         /// </summary>
         public BoostControl()
         {
             this.InitializeComponent();
             this.DataContext = this;
-            ((App)Application.Current).GaugeTick += UpdateTimer_Tick;
             this.boostOffset = ((App)Application.Current).Config.BoostOffset;
             this.maxBoost = ((App)Application.Current).Config.MaxBoost;
             this.absMaxBoost = this.maxBoost - this.boostOffset;
@@ -151,15 +155,14 @@
             set
             {
                 this.SetValue(LevelProperty, value);
+                this.Redraw();
             }
         }
 
         /// <summary>
-        /// Boost gauge update tick.
+        /// Redraw the gauge.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private void UpdateTimer_Tick(object sender, EventArgs e)
+        private void Redraw()
         {
             double boost = this.Level;
             double absBoost = boost - this.boostOffset;
@@ -177,6 +180,23 @@
             else
             {
                 this.blink = false;
+            }
+
+            if (this.blink)
+            {
+                if (!this.isBlinking)
+                {
+                    this.isBlinking = true;
+                    ((App)Application.Current).GaugeTick += UpdateTimer_Tick;
+                }
+            }
+            else
+            {
+                if (this.isBlinking)
+                {
+                    this.isBlinking = false;
+                    ((App)Application.Current).GaugeTick -= UpdateTimer_Tick;
+                }
             }
 
             ++this.ticks;
@@ -209,6 +229,27 @@
                     this.allLeds[i].Fill = ColorPalette.InactiveColor;
                 }
             }
+        }
+
+        /// <summary>
+        /// Boost gauge update tick.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            this.Redraw();
+        }
+
+        /// <summary>
+        /// Called when a boost level property changes..
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="dp">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnLevelPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs dp)
+        {
+            BoostControl boostControl = (BoostControl)obj;
+            boostControl.Redraw();
         }
     }
 }

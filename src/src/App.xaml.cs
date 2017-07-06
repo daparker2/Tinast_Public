@@ -12,6 +12,7 @@
     using Windows.ApplicationModel.Activation;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Windows.System.Display;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -61,6 +62,11 @@
         /// The disposed value
         /// </summary>
         private bool disposed = false;
+
+        /// <summary>
+        /// The display request
+        /// </summary>
+        private DisplayRequest displayRequest;
 
         /// <summary>
         /// Occurs when faulted.
@@ -148,6 +154,13 @@
 #endif
 
             Frame rootFrame = Window.Current.Content as Frame;
+
+            if (this.displayRequest == null)
+            {
+                this.displayRequest = new DisplayRequest();
+            }
+
+            this.displayRequest.RequestActive();
 
             if (this.config == null)
             {
@@ -276,6 +289,11 @@
                 if (this.config != null)
                 {
                     await this.config.Save();
+                }
+
+                if (this.displayRequest != null)
+                {
+                    this.displayRequest.RequestRelease();
                 }
             }
             finally

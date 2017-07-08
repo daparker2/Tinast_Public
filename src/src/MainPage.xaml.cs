@@ -12,8 +12,13 @@
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
+    using Windows.ApplicationModel.Core;
     using Windows.Foundation;
     using Windows.Foundation.Collections;
+    using Windows.System;
+    using Windows.System.Profile;
+    using Windows.UI.Core;
+    using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -54,6 +59,16 @@
         private bool resumed;
 
         /// <summary>
+        /// The was ever connected
+        /// </summary>
+        private bool wasEverConnected = false;
+
+        /// <summary>
+        /// The is iot
+        /// </summary>
+        private bool isIot = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
         /// </summary>
         public MainPage()
@@ -75,6 +90,14 @@
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            AnalyticsVersionInfo versionInfo = AnalyticsInfo.VersionInfo;
+            this.log.Info("Device Family: {0}, Version: {1}", versionInfo.DeviceFamily, versionInfo.DeviceFamilyVersion);
+            if (versionInfo.DeviceFamily == "Windows.IoT")
+            {
+                this.log.Debug("Device is IoT.");
+                this.isIot = true;
+            }
+
             StartTicking();
         }
 
@@ -149,6 +172,29 @@
                         this.log.Trace("{0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
                         logDelay = Task.Delay(2000 + r.Next(-200, 200));
                     }
+
+                    //// This is a brutal hack to work around intermittent connection failures on the Raspberry pi with our Bluetooth interface.
+                    //// If we were ever connected to the OBD2 interface, and we become disconnected,
+                    //// Show a toast for 5 seconds and then reboot the system.
+
+                    if (!this.viewModel.Obd2Connecting)
+                    {
+                        if (!this.wasEverConnected)
+                        {
+                            this.log.Debug("OBD2 connected.");
+                            this.wasEverConnected = true;
+                        }
+                    }
+                    else
+                    {
+                        if (this.wasEverConnected && this.isIot)
+                        {
+                            await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                            {
+                                await this.RebootSystem(driver);
+                            });
+                        }
+                    }
                 }
                 catch (TimeoutException)
                 {
@@ -163,11 +209,54 @@
 
                 if (tickError)
                 {
+                    PidDebugData transactionResult = driver.GetLastTransactionInfo();
+                    this.log.Debug("Last transaction: {0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
                     driver.Disconnect();
                 }
             }
 
             driver.Disconnect();
+        }
+
+        /// <summary>
+        /// Reboots the system.
+        /// </summary>
+        /// <param name="driver">The driver.</param>
+        private async Task RebootSystem(IDisplayDriver driver)
+        {
+            this.log.Warn("OBD2 disconnected. About to reboot the system.");
+            PidDebugData transactionResult = driver.GetLastTransactionInfo();
+            this.log.Debug("Last transaction: {0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
+
+            TimeSpan restartTimeout;
+            if (Debugger.IsAttached)
+            {
+                restartTimeout = TimeSpan.FromSeconds(60);
+            }
+            else
+            {
+                restartTimeout = TimeSpan.FromSeconds(5);
+            }
+
+            try
+            {
+                ShutdownManager.BeginShutdown(ShutdownKind.Restart, restartTimeout);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                this.log.Warn("Shutdown attempt failed.", ex);
+                return;
+            }
+
+            MessageDialog dialog = new MessageDialog(string.Format("The system will reboot in {0} seconds.", restartTimeout.TotalSeconds));
+            dialog.Commands.Add(new UICommand("Abort Shutdown") { Id = 0 });
+            dialog.DefaultCommandIndex = 0;
+            dialog.CancelCommandIndex = 0;
+            IUICommand result = await dialog.ShowAsync();
+
+            // Doesn't matter what the result is. We returned, so continue execution.
+            this.log.Info("Canceling shutdown.");
+            ShutdownManager.CancelShutdown();
         }
     }
 }

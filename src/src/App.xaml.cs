@@ -92,15 +92,7 @@
             this.InitializeComponent();
             this.Suspending += OnSuspending;
             
-            // setup the global crash handler...
-            GlobalCrashHandler.Configure();
-
-            // change the config...
-            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Debug, LogLevel.Fatal, new StreamingFileTarget());
-
-            this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
             HockeyClient.Current.Configure("97e8a58ba9a74a2bb9a8b8d46a464b7b");
-            this.log.Info("Starting application");
         }
 
         /// <summary>
@@ -155,33 +147,6 @@
 
             Frame rootFrame = Window.Current.Content as Frame;
 
-            if (this.displayRequest == null)
-            {
-                this.displayRequest = new DisplayRequest();
-            }
-
-            this.displayRequest.RequestActive();
-
-            if (this.config == null)
-            {
-                this.config = await DisplayConfiguration.Load();
-            }
-
-            if (this.driver == null)
-            {
-                this.driver = new Elm327Driver(this.config);
-                await this.driver.OpenAsync();
-            }
-
-            if (this.updateTimer == null)
-            {
-                this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
-                this.updateTimer.Tick += UpdateTimer_Tick;
-                this.updateTimer.Start();
-            }
-
-            this.updateTimer.Start();
-
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
@@ -194,17 +159,54 @@
                 Window.Current.Content = rootFrame;
             }
 
-            if (!Debugger.IsAttached)
-            {
-                ApplicationView view = ApplicationView.GetForCurrentView();
-                if (view.TryEnterFullScreenMode())
-                {
-                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
-                }
-            }
-
             if (e.PrelaunchActivated == false)
             {
+                if (this.log == null)
+                {
+                    // setup the global crash handler...
+                    GlobalCrashHandler.Configure();
+
+                    this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
+                }
+
+                this.log.Info("Starting application");
+
+                if (!Debugger.IsAttached)
+                {
+                    ApplicationView view = ApplicationView.GetForCurrentView();
+                    if (view.TryEnterFullScreenMode())
+                    {
+                        ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+                    }
+                }
+
+                if (this.displayRequest == null)
+                {
+                    this.displayRequest = new DisplayRequest();
+                }
+
+                this.displayRequest.RequestActive();
+
+                if (this.config == null)
+                {
+                    this.config = await DisplayConfiguration.Load();
+                }
+
+                if (this.driver == null)
+                {
+                    this.driver = new Elm327Driver(this.config);
+                    await this.driver.OpenAsync();
+                }
+
+                if (this.updateTimer == null)
+                {
+                    this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+                    this.updateTimer.Tick += UpdateTimer_Tick;
+                    this.updateTimer.Start();
+                }
+
+                this.updateTimer.Start();
+
                 if (rootFrame.Content == null)
                 {
                     // When the navigation stack isn't restored navigate to the first page,
@@ -279,7 +281,10 @@
             SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                this.updateTimer.Stop();
+                if (this.updateTimer != null)
+                {
+                    this.updateTimer.Stop();
+                }
 
                 if (this.driver != null)
                 {

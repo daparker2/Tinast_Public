@@ -25,16 +25,16 @@ w\:* {behavior:url(#default#VML);}
   <o:Author>Dan</o:Author>
   <o:Template>Normal</o:Template>
   <o:LastAuthor>Dan</o:LastAuthor>
-  <o:Revision>3</o:Revision>
-  <o:TotalTime>18</o:TotalTime>
-  <o:Created>2017-07-02T05:10:00Z</o:Created>
-  <o:LastSaved>2017-07-02T05:10:00Z</o:LastSaved>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>92</o:TotalTime>
+  <o:Created>2017-07-16T22:48:00Z</o:Created>
+  <o:LastSaved>2017-07-16T22:48:00Z</o:LastSaved>
   <o:Pages>1</o:Pages>
-  <o:Words>1345</o:Words>
-  <o:Characters>7673</o:Characters>
-  <o:Lines>63</o:Lines>
-  <o:Paragraphs>17</o:Paragraphs>
-  <o:CharactersWithSpaces>9001</o:CharactersWithSpaces>
+  <o:Words>1369</o:Words>
+  <o:Characters>7807</o:Characters>
+  <o:Lines>65</o:Lines>
+  <o:Paragraphs>18</o:Paragraphs>
+  <o:CharactersWithSpaces>9158</o:CharactersWithSpaces>
   <o:Version>16.00</o:Version>
  </o:DocumentProperties>
  <o:OfficeDocumentSettings>
@@ -71,7 +71,6 @@ href="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/colorschememapp
    <w:DontFlipMirrorIndents/>
    <w:OverrideTableStyleHps/>
   </w:Compatibility>
-  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
   <m:mathPr>
    <m:mathFont m:val="Cambria Math"/>
    <m:brkBin m:val="before"/>
@@ -676,10 +675,10 @@ href="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/colorschememapp
 @font-face
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;
-	mso-font-charset:0;
+	mso-font-charset:1;
 	mso-generic-font-family:roman;
 	mso-font-pitch:variable;
-	mso-font-signature:-536870145 1107305727 0 0 415 0;}
+	mso-font-signature:0 0 0 0 0 0;}
 @font-face
 	{font-family:Calibri;
 	panose-1:2 15 5 2 2 2 4 3 2 4;
@@ -1250,10 +1249,10 @@ yes'><!--[if gte vml 1]><v:shapetype id="_x0000_t75" coordsize="21600,21600"
  <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
  <o:lock v:ext="edit" aspectratio="t"/>
 </v:shapetype><v:shape id="Picture_x0020_1" o:spid="_x0000_i1036" type="#_x0000_t75"
- style='width:694.8pt;height:347.4pt;visibility:visible;mso-wrap-style:square'>
+ style='width:695.4pt;height:347.4pt;visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image001.jpg"
   o:title=""/>
-</v:shape><![endif]--><![if !vml]><img border=0 width=926 height=463
+</v:shape><![endif]--><![if !vml]><img border=0 width=927 height=463
 src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image002.jpg"
 v:shapes="Picture_x0020_1"><![endif]></span></p>
 
@@ -1333,21 +1332,27 @@ color:black'>=1<o:p></o:p></span></p>
 105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
 color:black'>hdmi_force_mode</span></span><span style='font-size:8.0pt;
 line-height:105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
-color:black'>=1</span><span style='font-size:10.0pt;line-height:105%;
+color:black'>=1<o:p></o:p></span></p>
+
+<p class=MsoNormal><span class=SpellE><span style='font-size:8.0pt;line-height:
+105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
+color:black'>boot_delay_ms</span></span><span style='font-size:8.0pt;
+line-height:105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
+color:black'>=10000</span><span style='font-size:10.0pt;line-height:105%;
 font-family:Consolas;mso-fareast-font-family:"Times New Roman";mso-bidi-font-family:
 "Courier New";color:#242729'><o:p></o:p></span></p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
-
-<p class=MsoNormal>Note that the bottom 168px of the frame won’t be visible
-since the native resolution on the 7-inch LCD is 600p, not 768. Remove the SD
-card from your system and insert it to the Raspberry Pi, then proceed to power
-it on with it connected to the same network router as your laptop. When it gets
-to OOBE (the first blueish looking menu after the Windows logo asking you for
-stuff like your language and <span class=SpellE>Wifi</span> access point) open
-up IoT core dashboard and look for the device in the My Devices menu:</p>
+<p class=MsoNormal>Note the 10 second startup delay. This is to de-bounce
+intermittent power transitions during the ignition sequence of the care. Also note
+that the bottom 168px of the frame won’t be visible since the native resolution
+on the 7-inch LCD is 600p, not 768. Remove the SD card from your system and
+insert it to the Raspberry Pi, then proceed to power it on with it connected to
+the same network router as your laptop. When it gets to OOBE (the first blueish
+looking menu after the Windows logo asking you for stuff like your language and
+<span class=SpellE>Wifi</span> access point) open up IoT core dashboard and
+look for the device in the My Devices menu:</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
@@ -1373,15 +1378,16 @@ to Processes &gt; Run command, then type <span style='mso-bidi-font-family:
 Calibri;mso-bidi-theme-font:minor-latin'>in </span><span style='font-family:
 Consolas;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin;
 color:#E7E6E6;mso-themecolor:background2;background:black;mso-highlight:black'>“<span
-class=SpellE>devcon</span> disable<span style='mso-shading:black'> BCMBTBUS\BLUETOOTH”.</span></span><span
-style='font-family:Consolas;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
-minor-latin;color:#E7E6E6;mso-themecolor:background2;background:black'> </span><span
-style='mso-spacerun:yes'> </span>Note: <i style='mso-bidi-font-style:normal'>This
-is an important step. To work around limitations in the Raspberry Pi’s <span
-class=SpellE>builtin</span> Bluetooth radio, this disables the onboard radio so
-that pairing will take place with the USB Bluetooth radio. </i>When the onboard
-radio is disabled, click the OBD2 <span class=SpellE>scantool</span> you want
-to pair, then follow your manufacturer’s instructions to pair it:</p>
+class=SpellE>devcon</span> disable<span style='mso-shading:black'>
+BCMBTBUS\BLUETOOTH”.</span></span><span style='font-family:Consolas;mso-bidi-font-family:
+Calibri;mso-bidi-theme-font:minor-latin;color:#E7E6E6;mso-themecolor:background2;
+background:black'> </span><span style='mso-spacerun:yes'> </span>Note: <i
+style='mso-bidi-font-style:normal'>This is an important step. To work around
+limitations in the Raspberry Pi’s <span class=SpellE>builtin</span> Bluetooth
+radio, this disables the onboard radio so that pairing will take place with the
+USB Bluetooth radio.</i> Then click the OBD2 <span class=SpellE>scantool</span>
+you want to pair in the Connectivity &gt; Bluetooth menu, then follow your
+manufacturer’s instructions to pair it:</p>
 
 <p class=MsoNormal style='page-break-after:avoid'><span style='mso-no-proof:
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_5" o:spid="_x0000_i1032"
@@ -1474,7 +1480,7 @@ installed to it, you’ll end up with something like this:</p>
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_8" o:spid="_x0000_i1029"
  type="#_x0000_t75" style='width:883.8pt;height:601.8pt;visibility:visible;
  mso-wrap-style:square'>
- <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image015.png"
+ <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image015.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1178 height=802
 src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image016.jpg"
@@ -1483,8 +1489,9 @@ v:shapes="Picture_x0020_8"><![endif]></span></p>
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
 field-begin'></span><span style='mso-spacerun:yes'> </span>SEQ Figure \* ARABIC
 <span style='mso-element:field-separator'></span><![endif]--><span
-style='mso-no-proof:yes'>8</span><!--[if supportFields]><span style='mso-element:
-field-end'></span><![endif]--> Building a display fixture</p>
+style='mso-no-proof:yes'>8</span><!--[if supportFields]><span style='mso-no-proof:
+yes'><span style='mso-element:field-end'></span></span><![endif]--> Building a
+display fixture</p>
 
 <p class=MsoNormal>Mount your gauge fixture back onto the vehicle, using bolts
 (or in my case tape and the plastic clips) to secure it to the vehicle. Route
@@ -1495,7 +1502,7 @@ fascia and down into the glovebox:</p>
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_9" o:spid="_x0000_i1028"
  type="#_x0000_t75" style='width:889.8pt;height:624pt;visibility:visible;
  mso-wrap-style:square'>
- <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image017.png"
+ <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image017.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1186 height=832
 src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image018.jpg"
@@ -1504,8 +1511,9 @@ v:shapes="Picture_x0020_9"><![endif]></span></p>
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
 field-begin'></span><span style='mso-spacerun:yes'> </span>SEQ Figure \* ARABIC
 <span style='mso-element:field-separator'></span><![endif]--><span
-style='mso-no-proof:yes'>9</span><!--[if supportFields]><span style='mso-element:
-field-end'></span><![endif]--> Attaching the gauge to the vehicle.</p>
+style='mso-no-proof:yes'>9</span><!--[if supportFields]><span style='mso-no-proof:
+yes'><span style='mso-element:field-end'></span></span><![endif]--> Attaching
+the gauge to the vehicle.</p>
 
 <p class=MsoNormal>Connect the Raspberry Pi to the cables from the last step in
 the glovebox, and then begin routing the power cable from the passenger side to
@@ -1518,7 +1526,7 @@ and error to find the proper routing:</p>
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_10" o:spid="_x0000_i1027"
  type="#_x0000_t75" style='width:887.4pt;height:624pt;visibility:visible;
  mso-wrap-style:square'>
- <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image019.png"
+ <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image019.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1183 height=832
 src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image020.jpg"
@@ -1528,7 +1536,8 @@ v:shapes="Picture_x0020_10"><![endif]></span></p>
 field-begin'></span><span style='mso-spacerun:yes'> </span>SEQ Figure \* ARABIC
 <span style='mso-element:field-separator'></span><![endif]--><span
 style='mso-no-proof:yes'>10</span><!--[if supportFields]><span
-style='mso-element:field-end'></span><![endif]--> Installing the Raspberry Pi.</p>
+style='mso-no-proof:yes'><span style='mso-element:field-end'></span></span><![endif]-->
+Installing the Raspberry Pi.</p>
 
 <p class=MsoNormal>Access the driver side <span class=SpellE>fusebox</span> by
 removing the cover under the steering wheel. Tap out the radio fuse to the
@@ -1544,7 +1553,7 @@ wire to an external wire going to a distribution bus going to the radio fuse:</p
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_11" o:spid="_x0000_i1026"
  type="#_x0000_t75" style='width:883.8pt;height:624pt;visibility:visible;
  mso-wrap-style:square'>
- <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image021.png"
+ <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image021.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1178 height=832
 src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image022.jpg"
@@ -1554,7 +1563,8 @@ v:shapes="Picture_x0020_11"><![endif]></span></p>
 field-begin'></span><span style='mso-spacerun:yes'> </span>SEQ Figure \* ARABIC
 <span style='mso-element:field-separator'></span><![endif]--><span
 style='mso-no-proof:yes'>11</span><!--[if supportFields]><span
-style='mso-element:field-end'></span><![endif]--> Connecting to the vehicle</p>
+style='mso-no-proof:yes'><span style='mso-element:field-end'></span></span><![endif]-->
+Connecting to the vehicle</p>
 
 <p class=MsoNormal>Reassemble the dash cover. You’ll end up with something
 looking like the below. Proceed to start your vehicle and see if the new gauge
@@ -1563,22 +1573,22 @@ works or not:</p>
 <p class=MsoNormal><span style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape
  id="Picture_x0020_12" o:spid="_x0000_i1025" type="#_x0000_t75" style='width:883.8pt;
  height:624pt;visibility:visible;mso-wrap-style:square'>
- <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image023.png"
+ <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image023.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1178 height=832
 src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image024.jpg"
 v:shapes="Picture_x0020_12"><![endif]></span></p>
 
-<p class=MsoNormal>Note that when you start the car there will be 2 power
-cycles for the Raspberry Pi when it’s connected to the radio fuse in this way
-from key off to ignition. I’m still experimenting with ways to smooth this
-power level out; connecting 12V to the battery and using the radio fuse as a
-relay signal might work better for you. For me, I intermittently have to open
-the glove box after the car is running and just reset the power connector on
-the Raspberry Pi if it’s having trouble booting [you’ll know if it’s not
-booting if the red LED is blinking a trouble code periodically]. Alternatively,
-simply connecting the 5V supply to a toggle switch or backup battery may be a
-more straightforward method of working around this.</p>
+<p class=MsoNormal>Note that when you start the car there will be 2 power cycles
+for the Raspberry Pi when it’s connected to the radio fuse in this way from key
+off to ignition. I’m still experimenting with ways to smooth this power level out;
+connecting 12V to the battery and using the radio fuse as a relay signal might
+work better for you. For me, I intermittently have to open the glove box after
+the car is running and just reset the power connector on the Raspberry Pi if
+it’s having trouble booting [you’ll know if it’s not booting if the red LED is
+blinking a trouble code periodically]. Alternatively, simply connecting the 5V
+supply to a toggle switch or backup battery may be a more straightforward
+method of working around this.</p>
 
 </div>
 

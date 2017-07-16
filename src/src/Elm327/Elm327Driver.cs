@@ -214,7 +214,7 @@
                 this.log.Info("Connecting to {0};{1}", this.service.ConnectionHostName, this.service.ConnectionServiceName);
                 try
                 {
-                    await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName);
+                    await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName, SocketProtectionLevel.PlainSocket);
                 }
                 catch (Exception ex)
                 {

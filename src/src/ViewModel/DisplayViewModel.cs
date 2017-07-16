@@ -297,15 +297,15 @@ namespace DP.Tinast.ViewModel
         {
             if (this.debuggerAttached)
             {
-                return TimeSpan.FromMilliseconds(60000);
+                return TimeSpan.FromMilliseconds(120000);
             }
             else if (this.Obd2Connecting)
             {
-                return TimeSpan.FromMilliseconds(30000);
+                return TimeSpan.FromMilliseconds(120000);
             }
             else
             {
-                return TimeSpan.FromMilliseconds(7000);
+                return TimeSpan.FromMilliseconds(30000);
             }
         }
 

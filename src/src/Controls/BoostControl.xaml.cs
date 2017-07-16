@@ -15,6 +15,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Shapes;
+    using Config;
 
     /// <summary>
     /// The boost gauge goes from the bottom left of the display to the top right of the display. At 0 psi, the gauge is empty. 
@@ -32,7 +33,7 @@
         /// <summary>
         /// The absolute offset maximum boost
         /// </summary>
-        private readonly double absMaxBoost;
+        private double absMaxBoost;
 
         /// <summary>
         /// The boost offset from atmospheric pressure
@@ -71,9 +72,6 @@
         {
             this.InitializeComponent();
             this.DataContext = this;
-            this.boostOffset = ((App)Application.Current).Config.BoostOffset;
-            this.maxBoost = ((App)Application.Current).Config.MaxBoost;
-            this.absMaxBoost = this.maxBoost - this.boostOffset;
             this.label.Foreground = ColorPalette.IndicatorColor;
             this.outline1.Stroke = ColorPalette.OutlineColor;
             this.outline2.Stroke = ColorPalette.OutlineColor;
@@ -136,6 +134,8 @@
                 led.Fill = ColorPalette.GaugeColor;
                 led.Stroke = ColorPalette.OutlineColor;
             }
+
+            this.Loaded += BoostControl_Loaded;
         }
 
         /// <summary>
@@ -229,6 +229,19 @@
                     this.allLeds[i].Fill = ColorPalette.InactiveColor;
                 }
             }
+        }
+
+        /// <summary>
+        /// Handles the Loaded event of the BoostControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private async void BoostControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            DisplayConfiguration config = await ((App)Application.Current).GetConfigAsync();
+            this.boostOffset = config.BoostOffset;
+            this.maxBoost = config.MaxBoost;
+            this.absMaxBoost = this.maxBoost - this.boostOffset;
         }
 
         /// <summary>

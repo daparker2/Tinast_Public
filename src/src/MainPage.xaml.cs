@@ -54,6 +54,16 @@
         private Task tickTask;
 
         /// <summary>
+        /// The configuration
+        /// </summary>
+        private DisplayConfiguration config;
+
+        /// <summary>
+        /// The driver
+        /// </summary>
+        private IDisplayDriver driver;
+
+        /// <summary>
         /// The loaded
         /// </summary>
         private bool resumed;
@@ -74,9 +84,6 @@
         public MainPage()
         {
             this.InitializeComponent();
-            this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
-            this.viewModel = new DisplayViewModel(((App)Application.Current).Driver, ((App)Application.Current).Config);
-            this.DataContext = this.viewModel;
             ((App)Application.Current).Faulted += MainPage_Faulted;
             this.Loaded += MainPage_Loaded;
             Application.Current.Suspending += Current_Suspending;
@@ -88,8 +95,9 @@
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            this.log = LogManagerFactory.DefaultLogManager.GetLogger<App>();
             AnalyticsVersionInfo versionInfo = AnalyticsInfo.VersionInfo;
             this.log.Info("Device Family: {0}, Version: {1}", versionInfo.DeviceFamily, versionInfo.DeviceFamilyVersion);
             if (versionInfo.DeviceFamily == "Windows.IoT")
@@ -98,7 +106,11 @@
                 this.isIot = true;
             }
 
-            StartTicking();
+            this.config = await ((App)Application.Current).GetConfigAsync();
+            this.driver = await ((App)Application.Current).GetDriverAsync();
+            this.viewModel = new DisplayViewModel(this.driver, this.config);
+            this.DataContext = this.viewModel;
+            this.StartTicking();
         }
 
         /// <summary>
@@ -143,8 +155,7 @@
             if (!this.resumed)
             {
                 this.resumed = true;
-                IDisplayDriver driver = ((App)Application.Current).Driver;
-                this.tickTask = this.TickLoopAsync(driver);
+                this.tickTask = this.TickLoopAsync();
             }
         }
 
@@ -152,7 +163,7 @@
         /// The async tick loop.
         /// </summary>
         /// <returns></returns>
-        private async Task TickLoopAsync(IDisplayDriver driver)
+        private async Task TickLoopAsync()
         {
             Random r = new Random();
             Task logDelay = Task.Delay(2000 + r.Next(-200, 200));
@@ -168,7 +179,7 @@
                     if (logDelay.IsCompleted)
                     {
                         await logDelay;
-                        PidDebugData transactionResult = driver.GetLastTransactionInfo();
+                        PidDebugData transactionResult = this.driver.GetLastTransactionInfo();
                         this.log.Trace("{0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
                         logDelay = Task.Delay(2000 + r.Next(-200, 200));
                     }
@@ -191,7 +202,7 @@
                         {
                             await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                             {
-                                await this.RebootSystem(driver);
+                                await this.RebootSystem();
                             });
                         }
                     }
@@ -211,21 +222,20 @@
                 {
                     PidDebugData transactionResult = driver.GetLastTransactionInfo();
                     this.log.Debug("Last transaction: {0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
-                    driver.Disconnect();
+                    this.driver.Disconnect();
                 }
             }
 
-            driver.Disconnect();
+            this.driver.Disconnect();
         }
 
         /// <summary>
         /// Reboots the system.
         /// </summary>
-        /// <param name="driver">The driver.</param>
-        private async Task RebootSystem(IDisplayDriver driver)
+        private async Task RebootSystem()
         {
             this.log.Warn("OBD2 disconnected. About to reboot the system.");
-            PidDebugData transactionResult = driver.GetLastTransactionInfo();
+            PidDebugData transactionResult = this.driver.GetLastTransactionInfo();
             this.log.Debug("Last transaction: {0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
 
             TimeSpan restartTimeout;

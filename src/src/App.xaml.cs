@@ -96,31 +96,32 @@
         }
 
         /// <summary>
-        /// Gets the driver.
+        /// Gets the driver asynchronously.
         /// </summary>
-        /// <value>
-        /// The driver.
-        /// </value>
-        public IDisplayDriver Driver
+        /// <returns>A <see cref="IDisplayDriver"/> object.</returns>
+        public async Task<IDisplayDriver> GetDriverAsync()
         {
-            get
+            if (this.driver == null)
             {
-                return this.driver;
+                this.driver = new Elm327Driver(await this.GetConfigAsync());
+                await this.driver.OpenAsync();
             }
+
+            return this.driver;
         }
 
         /// <summary>
-        /// Gets the configuration.
+        /// Gets the configuration asynchronously.
         /// </summary>
-        /// <value>
-        /// The configuration.
-        /// </value>
-        public DisplayConfiguration Config
+        /// <returns>An <see cref="DisplayConfiguration"/> object.</returns>
+        public async Task<DisplayConfiguration> GetConfigAsync()
         {
-            get
+            if (this.config == null)
             {
-                return this.config;
+                this.config = await DisplayConfiguration.Load();
             }
+
+            return this.config;
         }
 
         /// <summary>
@@ -136,7 +137,7 @@
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
             if (Debugger.IsAttached)
@@ -186,17 +187,6 @@
                 }
 
                 this.displayRequest.RequestActive();
-
-                if (this.config == null)
-                {
-                    this.config = await DisplayConfiguration.Load();
-                }
-
-                if (this.driver == null)
-                {
-                    this.driver = new Elm327Driver(this.config);
-                    await this.driver.OpenAsync();
-                }
 
                 if (this.updateTimer == null)
                 {
@@ -276,7 +266,7 @@
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private async void OnSuspending(object sender, SuspendingEventArgs e)
+        private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             try
@@ -289,11 +279,6 @@
                 if (this.driver != null)
                 {
                     this.driver.Disconnect();
-                }
-
-                if (this.config != null)
-                {
-                    await this.config.Save();
                 }
 
                 if (this.displayRequest != null)

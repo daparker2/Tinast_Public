@@ -4,6 +4,7 @@
     "MetroLog": "1.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
     "Newtonsoft.Json": "10.0.2",
+    "Npm": "3.5.2",
     "NUnit3TestAdapter": "3.8.0"
   },
   "frameworks": {

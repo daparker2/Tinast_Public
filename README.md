@@ -1,4 +1,5 @@
 # Introduction 
+<img src="https://daparker.visualstudio.com/_apis/public/build/definitions/0b16eba6-9218-4f4b-a629-87fe16048574/2/badge"/>
 
 This my car dash panel project. It's for my 2013 Subaru BRZ, and the PIDs should work on most BRZ ECUs provided they aren't running OpenFlash, as that changes the oil temp PID. I haven't tested it on other things. I was originally targetting Windows IoT but the Raspberry Pi was having issues staying connected to my OBD2  scantool that were resolved by moving to an intel compute stick. The story for getting an app launched automatically on Windows is more complicated, but can be achieved by adding a scheduled task to the system.
 

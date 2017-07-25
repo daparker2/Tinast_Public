@@ -18,7 +18,7 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>tinast_TemporaryKey.pfx</PackageCertificateKeyFile>
     <HockeyAppResourceId>97e8a58ba9a74a2bb9a8b8d46a464b7b</HockeyAppResourceId>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>EA4BB2A02737A298CE1D2BE391E2EA8E8DC3EDD4</PackageCertificateThumbprint>

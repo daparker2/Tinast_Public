@@ -13,6 +13,7 @@
     using Windows.Foundation;
     using Windows.Foundation.Collections;
     using Windows.System.Display;
+    using Windows.UI.Popups;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -91,7 +92,8 @@
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            
+            this.UnhandledException += UnhandledExceptionHandler;
+            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Info, LogLevel.Fatal, new StreamingFileTarget());
             HockeyClient.Current.Configure("97e8a58ba9a74a2bb9a8b8d46a464b7b");
         }
 
@@ -104,7 +106,21 @@
             if (this.driver == null)
             {
                 this.driver = new Elm327Driver(await this.GetConfigAsync());
-                await this.driver.OpenAsync();
+                try
+                {
+                    await this.driver.OpenAsync();
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    this.log.Error("App launch failed. Couldn't access the OBD2 scantool.", ioe);
+                    MessageDialog dialog = new MessageDialog(string.Format("App launch failed for the following reason: '{0}'. You must pair the system with the OBD2 scantool before launching the app again. Press OK to quit the app.", ioe.Message));
+                    dialog.Commands.Add(new UICommand("OK") { Id = 0 });
+                    dialog.DefaultCommandIndex = 0;
+                    dialog.CancelCommandIndex = 0;
+                    IUICommand result = await dialog.ShowAsync();
+                    this.Exit();
+                    return null;
+                }
             }
 
             return this.driver;
@@ -238,7 +254,7 @@
         /// <param name="e">The <see cref="UnhandledExceptionEventArgs"/> instance containing the event data.</param>
         private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
-            this.log.Error("Unhandled exception in app", e.Exception);
+            this.log.Fatal("Unhandled exception in app", e.Exception);
             if (this.Faulted != null)
             {
                 this.Faulted(this, new EventArgs());

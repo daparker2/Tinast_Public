@@ -19,6 +19,7 @@
     <PackageCertificateKeyFile>test_TemporaryKey.pfx</PackageCertificateKeyFile>
     <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">14.0</UnitTestPlatformVersion>
     <PackageCertificateThumbprint>CA3B6B1AE25C00094B6802B6988224170FCC570D</PackageCertificateThumbprint>
+    <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>

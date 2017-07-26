@@ -25,16 +25,16 @@ w\:* {behavior:url(#default#VML);}
   <o:Author>Dan</o:Author>
   <o:Template>Normal</o:Template>
   <o:LastAuthor>Dan</o:LastAuthor>
-  <o:Revision>2</o:Revision>
-  <o:TotalTime>59</o:TotalTime>
+  <o:Revision>3</o:Revision>
+  <o:TotalTime>60</o:TotalTime>
   <o:Created>2017-07-26T02:26:00Z</o:Created>
-  <o:LastSaved>2017-07-26T02:26:00Z</o:LastSaved>
+  <o:LastSaved>2017-07-26T02:57:00Z</o:LastSaved>
   <o:Pages>1</o:Pages>
-  <o:Words>1366</o:Words>
-  <o:Characters>7790</o:Characters>
-  <o:Lines>64</o:Lines>
+  <o:Words>1346</o:Words>
+  <o:Characters>7677</o:Characters>
+  <o:Lines>63</o:Lines>
   <o:Paragraphs>18</o:Paragraphs>
-  <o:CharactersWithSpaces>9138</o:CharactersWithSpaces>
+  <o:CharactersWithSpaces>9005</o:CharactersWithSpaces>
   <o:Version>16.00</o:Version>
  </o:DocumentProperties>
  <o:OfficeDocumentSettings>
@@ -47,8 +47,7 @@ href="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/themedata.thmx"
 href="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/colorschememapping.xml">
 <!--[if gte mso 9]><xml>
  <w:WordDocument>
-  <w:SpellingState>Clean</w:SpellingState>
-  <w:GrammarState>Clean</w:GrammarState>
+  <w:Zoom>70</w:Zoom>
   <w:TrackMoves>false</w:TrackMoves>
   <w:TrackFormatting/>
   <w:PunctuationKerning/>
@@ -71,6 +70,7 @@ href="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/colorschememapp
    <w:DontFlipMirrorIndents/>
    <w:OverrideTableStyleHps/>
   </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
   <m:mathPr>
    <m:mathFont m:val="Cambria Math"/>
    <m:brkBin m:val="before"/>
@@ -752,7 +752,8 @@ h1
 	mso-font-kerning:0pt;
 	font-weight:normal;}
 h2
-	{mso-style-priority:9;
+	{mso-style-noshow:yes;
+	mso-style-priority:9;
 	mso-style-qformat:yes;
 	mso-style-link:"Heading 2 Char";
 	mso-style-next:Normal;
@@ -780,7 +781,8 @@ h2
 	mso-themeshade:191;
 	font-weight:normal;}
 p.MsoCaption, li.MsoCaption, div.MsoCaption
-	{mso-style-priority:35;
+	{mso-style-noshow:yes;
+	mso-style-priority:35;
 	mso-style-qformat:yes;
 	mso-style-next:Normal;
 	margin-top:0in;
@@ -944,6 +946,7 @@ span.Heading1Char
 	mso-themeshade:191;}
 span.Heading2Char
 	{mso-style-name:"Heading 2 Char";
+	mso-style-noshow:yes;
 	mso-style-priority:9;
 	mso-style-unhide:no;
 	mso-style-locked:yes;
@@ -986,12 +989,6 @@ p.msonormal0, li.msonormal0, div.msonormal0
 	font-family:"Times New Roman",serif;
 	mso-fareast-font-family:"Times New Roman";
 	mso-fareast-theme-font:minor-fareast;}
-span.SpellE
-	{mso-style-name:"";
-	mso-spl-e:yes;}
-span.GramE
-	{mso-style-name:"";
-	mso-gram-e:yes;}
 .MsoChpDefault
 	{mso-style-type:export-only;
 	mso-default-props:yes;
@@ -1129,12 +1126,12 @@ ul
 
 <div class=WordSection1>
 
-<h1>Setting Up <span class=GramE>A</span> Raspberry Pi For Automotive (1.0)</h1>
+<h1>Setting Up A Raspberry Pi For Automotive (1.0)</h1>
 
 <p class=MsoNormal>This guide will show you how to set up a raspberry pi
 connected to a display for automotive use, including installing a my app to
-read some vehicle sensor data over an OBD2 <span class=SpellE>bluetooth</span> <span
-class=SpellE>scantool</span>. To complete this guide, you will need:</p>
+read some vehicle sensor data over an OBD2 bluetooth scantool. To complete this
+guide, you will need:</p>
 
 <p class=MsoListParagraphCxSpFirst style='text-indent:-.25in;mso-list:l0 level1 lfo2'><![if !supportLists]><span
 style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
@@ -1193,15 +1190,15 @@ Raspberry Pi 3</a></p>
 style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
 Symbol'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]><a
-href="https://smile.amazon.com/gp/product/B01HPV7KL8/ref=oh_aui_detailpage_o06_s00?ie=UTF8&amp;psc=1"><span
-class=SpellE>Waveshare</span> 7 inch HDMI display</a></p>
+href="https://smile.amazon.com/gp/product/B01HPV7KL8/ref=oh_aui_detailpage_o06_s00?ie=UTF8&amp;psc=1">Waveshare
+7 inch HDMI display</a></p>
 
 <p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in;mso-list:l0 level1 lfo2'><![if !supportLists]><span
 style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
 Symbol'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]><a
 href="https://smile.amazon.com/gp/product/B06W2LKXYY/ref=oh_aui_detailpage_o03_s00?ie=UTF8&amp;psc=1">32
-GB <span class=SpellE>sd</span> card</a></p>
+GB sd card</a></p>
 
 <p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in;mso-list:l0 level1 lfo2'><![if !supportLists]><span
 style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
@@ -1221,8 +1218,8 @@ Bluetooth dongle</a></p>
 style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
 Symbol'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]><a
-href="https://smile.amazon.com/gp/product/B006NZTZLQ/ref=oh_aui_detailpage_o09_s00?ie=UTF8&amp;psc=1"><span
-class=SpellE>Scantool</span> <span class=SpellE>obdlink</span> mx</a></p>
+href="https://smile.amazon.com/gp/product/B006NZTZLQ/ref=oh_aui_detailpage_o09_s00?ie=UTF8&amp;psc=1">Scantool
+obdlink mx</a></p>
 
 <h2>Step 1: Setting up IoT</h2>
 
@@ -1252,7 +1249,7 @@ yes'><!--[if gte vml 1]><v:shapetype id="_x0000_t75" coordsize="21600,21600"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image001.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=927 height=463
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image002.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image025.jpg"
 v:shapes="Picture_x0020_1"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1265,20 +1262,20 @@ bench</p>
 <p class=MsoNormal>Connect the Raspberry Pi to the HDMI display and Bluetooth
 dongle in the manner shown. Before we can power the raspberry pi on, we need to
 install an OS for it as well as change some of the configuration settings in
-the <span class=SpellE>bootcode</span> to make it play nice with the display.
-Insert the SD card into your laptop, then get the IoT installer for the
-Raspberry Pi <a
+the bootcode to make it play nice with the display. Insert the SD card into
+your laptop, then get the IoT installer for the Raspberry Pi <a
 href="https://developer.microsoft.com/en-us/windows/iot/Downloads">here</a> and
 open the IoT Core Dashboard:</p>
 
 <p class=MsoNormal style='page-break-after:avoid'><span style='mso-no-proof:
-yes'><!--[if gte vml 1]><v:shape id="_x0000_i1035" type="#_x0000_t75" style='width:611.4pt;
- height:352.2pt;visibility:visible;mso-wrap-style:square'>
+yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_2" o:spid="_x0000_i1035"
+ type="#_x0000_t75" style='width:611.4pt;height:352.2pt;visibility:visible;
+ mso-wrap-style:square'>
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image003.png"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=815 height=470
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image004.jpg"
-v:shapes="_x0000_i1035"><![endif]></span></p>
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image026.jpg"
+v:shapes="Picture_x0020_2"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
 field-begin'></span><span style='mso-spacerun:yes'> </span>SEQ Figure \* ARABIC
@@ -1288,11 +1285,11 @@ yes'><span style='mso-element:field-end'></span></span><![endif]--> IoT
 dashboard</p>
 
 <p class=MsoNormal>Click “Set up a new device” and configure it in the manner
-shown. You need the <span class=SpellE>wifi</span> connection to match the
-connection your laptop uses to configure it later on. When ready, click
-Download and Install to flash the OS to your SD card. Once you’ve downloaded,
-the OS, you’ll need to make some modifications to the config.txt in the root of
-the SD card. Open the EFIESP and edit the config.txt file:</p>
+shown. You need the wifi connection to match the connection your laptop uses to
+configure it later on. When ready, click Download and Install to flash the OS
+to your SD card. Once you’ve downloaded, the OS, you’ll need to make some
+modifications to the config.txt in the root of the SD card. Open the EFIESP and
+edit the config.txt file:</p>
 
 <p class=MsoNormal style='page-break-after:avoid'><span style='mso-no-proof:
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_3" o:spid="_x0000_i1034"
@@ -1301,7 +1298,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_3" o:spid="_x0000_i1034"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image005.png"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=842 height=585
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image006.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image027.jpg"
 v:shapes="Picture_x0020_3"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1312,43 +1309,32 @@ yes'><span style='mso-element:field-end'></span></span><![endif]--> The
 config.txt file</p>
 
 <p class=MsoNormal>Append the following lines to the config.txt, removing any
-duplicate config.txt entries that were already there and removing the existing <span
-class=SpellE>hdmi_cvt</span> entry:</p>
+duplicate config.txt entries that were already there and removing the existing
+hdmi_cvt entry:</p>
 
 <p class=MsoNormal><span style='font-size:8.0pt;line-height:105%;font-family:
 "Courier New";mso-fareast-font-family:"Times New Roman";color:black'><o:p>&nbsp;</o:p></span></p>
 
-<p class=MsoNormal><span class=SpellE><span style='font-size:8.0pt;line-height:
-105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
-color:black'>hdmi_mode</span></span><span style='font-size:8.0pt;line-height:
-105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
-color:black'>=16<o:p></o:p></span></p>
+<p class=MsoNormal><span style='font-size:8.0pt;line-height:105%;font-family:
+"Courier New";mso-fareast-font-family:"Times New Roman";color:black'>hdmi_mode=16<o:p></o:p></span></p>
 
-<p class=MsoNormal><span class=SpellE><span style='font-size:8.0pt;line-height:
-105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
-color:black'>hdmi_drive</span></span><span style='font-size:8.0pt;line-height:
-105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
-color:black'>=1<o:p></o:p></span></p>
+<p class=MsoNormal><span style='font-size:8.0pt;line-height:105%;font-family:
+"Courier New";mso-fareast-font-family:"Times New Roman";color:black'>hdmi_drive=1<o:p></o:p></span></p>
 
-<p class=MsoNormal><span class=SpellE><span style='font-size:8.0pt;line-height:
-105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
-color:black'>hdmi_force_mode</span></span><span style='font-size:8.0pt;
-line-height:105%;font-family:"Courier New";mso-fareast-font-family:"Times New Roman";
-color:black'>=1</span><span style='font-size:10.0pt;line-height:105%;
-font-family:Consolas;mso-fareast-font-family:"Times New Roman";mso-bidi-font-family:
-"Courier New";color:#242729'><o:p></o:p></span></p>
+<p class=MsoNormal><span style='font-size:8.0pt;line-height:105%;font-family:
+"Courier New";mso-fareast-font-family:"Times New Roman";color:black'>hdmi_force_mode=1</span><span
+style='font-size:10.0pt;line-height:105%;font-family:Consolas;mso-fareast-font-family:
+"Times New Roman";mso-bidi-font-family:"Courier New";color:#242729'><o:p></o:p></span></p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal>Note the 10 second startup delay. This is to de-bounce
-intermittent power transitions during the ignition sequence of the care. Also note
-that the bottom 168px of the frame won’t be visible since the native resolution
-on the 7-inch LCD is 600p, not 768. Remove the SD card from your system and
-insert it to the Raspberry Pi, then proceed to power it on with it connected to
-the same network router as your laptop. When it gets to OOBE (the first blueish
-looking menu after the Windows logo asking you for stuff like your language and
-<span class=SpellE>Wifi</span> access point) open up IoT core dashboard and look
-for the device in the My Devices menu:</p>
+<p class=MsoNormal>Note that the bottom 168px of the frame won’t be visible
+since the native resolution on the 7-inch LCD is 600p, not 768. Remove the SD
+card from your system and insert it to the Raspberry Pi, then proceed to power
+it on with it connected to the same network router as your laptop. When it gets
+to OOBE (the first blueish looking menu after the Windows logo asking you for
+stuff like your language and Wifi access point) open up IoT core dashboard and
+look for the device in the My Devices menu:</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
@@ -1359,7 +1345,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_4" o:spid="_x0000_i1033"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image007.png"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1254 height=470
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image008.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image028.jpg"
 v:shapes="Picture_x0020_4"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1374,16 +1360,15 @@ password and go to the Apps manager by clicking Connectivity &gt; Bluetooth. Go
 to Processes &gt; Run command, then type <span style='mso-bidi-font-family:
 Calibri;mso-bidi-theme-font:minor-latin'>in </span><span style='font-family:
 Consolas;mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin;
-color:#E7E6E6;mso-themecolor:background2;background:black;mso-highlight:black'>“<span
-class=SpellE>devcon</span> disable<span style='mso-shading:black'>
-BCMBTBUS\BLUETOOTH”.</span></span><span style='font-family:Consolas;mso-bidi-font-family:
-Calibri;mso-bidi-theme-font:minor-latin;color:#E7E6E6;mso-themecolor:background2;
-background:black'> </span><span style='mso-spacerun:yes'> </span>Note: <i
-style='mso-bidi-font-style:normal'>This is an important step. To work around
-limitations in the Raspberry Pi’s <span class=SpellE>builtin</span> Bluetooth
-radio, this disables the onboard radio so that pairing will take place with the
-USB Bluetooth radio.</i> Then click the OBD2 <span class=SpellE>scantool</span>
-you want to pair in the Connectivity &gt; Bluetooth menu, then follow your
+color:#E7E6E6;mso-themecolor:background2;background:black;mso-highlight:black'>“devcon
+disable<span style='mso-shading:black'> BCMBTBUS\BLUETOOTH”.</span></span><span
+style='font-family:Consolas;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin;color:#E7E6E6;mso-themecolor:background2;background:black'> </span><span
+style='mso-spacerun:yes'> </span>Note: <i style='mso-bidi-font-style:normal'>This
+is an important step. To work around limitations in the Raspberry Pi’s builtin
+Bluetooth radio, this disables the onboard radio so that pairing will take
+place with the USB Bluetooth radio.</i> Then click the OBD2 scantool you want
+to pair in the Connectivity &gt; Bluetooth menu, then follow your
 manufacturer’s instructions to pair it:</p>
 
 <p class=MsoNormal style='page-break-after:avoid'><span style='mso-no-proof:
@@ -1393,7 +1378,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_5" o:spid="_x0000_i1032"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image009.png"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1067 height=382
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image010.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image029.jpg"
 v:shapes="Picture_x0020_5"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1401,7 +1386,7 @@ field-begin'></span><span style='mso-spacerun:yes'> </span>SEQ Figure \* ARABIC
 <span style='mso-element:field-separator'></span><![endif]--><span
 style='mso-no-proof:yes'>5</span><!--[if supportFields]><span style='mso-no-proof:
 yes'><span style='mso-element:field-end'></span></span><![endif]--> Pairing
-with a <span class=SpellE>bluetooth</span> device.</p>
+with a bluetooth device.</p>
 
 <p class=MsoNormal>Once it’s paired, go to the Apps &gt; Apps Manager menu.
 Locate the app package to install and install it by choosing the appropriate
@@ -1414,7 +1399,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_6" o:spid="_x0000_i1031"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image011.png"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1307 height=579
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image012.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image030.jpg"
 v:shapes="Picture_x0020_6"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1424,8 +1409,8 @@ style='mso-no-proof:yes'>6</span><!--[if supportFields]><span style='mso-no-proo
 yes'><span style='mso-element:field-end'></span></span><![endif]--> Installing
 an app</p>
 
-<p class=MsoNormal>Make sure you install the <span class=SpellE>appxbundle</span>,
-certificate, as well as the dependencies contained in the package:</p>
+<p class=MsoNormal>Make sure you install the appxbundle, certificate, as well
+as the dependencies contained in the package:</p>
 
 <p class=MsoNormal style='page-break-after:avoid'><span style='mso-no-proof:
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_7" o:spid="_x0000_i1030"
@@ -1434,7 +1419,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_7" o:spid="_x0000_i1030"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image013.png"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=886 height=657
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image014.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image031.jpg"
 v:shapes="Picture_x0020_7"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1452,28 +1437,28 @@ in the app list for the app. That will make it run automatically on startup.</p>
 <p class=MsoNormal>Cool man.</p>
 
 <p class=MsoNormal>Now that you have your Raspberry Pi brought up to run an app
-at startup and paired it with your <span class=SpellE>scantool</span>, the next
-step is to wire it into the vehicle. You’ll need to put together your mounting
-hardware, power supply, and probably some soldering equipment for this. For the
-power supply, I really recommend an LDO to cut down on flicker going to the display,
-but I picked a stepper. I can’t offer much in detail advice on how to mount
-this. The first figure in this guide shows how I did it, but I’m not a metal
-working genius by any means. One of the pictures below will show the improved
-version I’m currently running in my vehicle. In general, I recommend some sheet
-metal, a hammer, flat corner of a table, Dremel, epoxy or <span class=SpellE>bondo</span>,
-tin snips and patience. </p>
+at startup and paired it with your scantool, the next step is to wire it into
+the vehicle. You’ll need to put together your mounting hardware, power supply,
+and probably some soldering equipment for this. For the power supply, I really
+recommend an LDO to cut down on flicker going to the display, but I picked a
+stepper. I can’t offer much in detail advice on how to mount this. The first
+figure in this guide shows how I did it, but I’m not a metal working genius by
+any means. One of the pictures below will show the improved version I’m
+currently running in my vehicle. In general, I recommend some sheet metal, a
+hammer, flat corner of a table, Dremel, epoxy or bondo, tin snips and patience.
+</p>
 
 <p class=MsoNormal>The guide below will walk through how I configured it and
 mounted it in my vehicle. I chose to mount it on the facia covering the
 passenger side dash, as that was an easy to replace part in the event I messed
-something up and provided easy cabling access to the <span class=SpellE>dashbox</span>
-which I use as a service point for the raspberry pi assembled above. You’ll
-have to make sure you angle the screen correctly wherever you mount it. For
-instance, to avoid glare obscuring the instruments. To start with, take your
-LCD display and cover the edges in silicone to prevent water damage from
-seeping into it. Then apply the anti-glare screen to it and mount it to the
-gauge fixture. Once you’ve gotten your gauge fixture set up with the screen
-installed to it, you’ll end up with something like this:</p>
+something up and provided easy cabling access to the dashbox which I use as a
+service point for the raspberry pi assembled above. You’ll have to make sure
+you angle the screen correctly wherever you mount it. For instance, to avoid
+glare obscuring the instruments. To start with, take your LCD display and cover
+the edges in silicone to prevent water damage from seeping into it. Then apply
+the anti-glare screen to it and mount it to the gauge fixture. Once you’ve
+gotten your gauge fixture set up with the screen installed to it, you’ll end up
+with something like this:</p>
 
 <p class=MsoNormal style='page-break-after:avoid'><span style='mso-no-proof:
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_8" o:spid="_x0000_i1029"
@@ -1482,7 +1467,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_8" o:spid="_x0000_i1029"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image015.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1178 height=802
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image016.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image032.jpg"
 v:shapes="Picture_x0020_8"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1504,7 +1489,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_9" o:spid="_x0000_i1028"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image017.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1186 height=832
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image018.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image033.jpg"
 v:shapes="Picture_x0020_9"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1516,10 +1501,10 @@ the gauge to the vehicle.</p>
 
 <p class=MsoNormal>Connect the Raspberry Pi to the cables from the last step in
 the glovebox, and then begin routing the power cable from the passenger side to
-the driver side of the vehicle to access the <span class=SpellE>fusebox</span>
-there. There should be a passage to the driver side visible when you remove the
-glovebox and shine a light on the other end. It located, might take some trial
-and error to find the proper routing:</p>
+the driver side of the vehicle to access the fusebox there. There should be a
+passage to the driver side visible when you remove the glovebox and shine a
+light on the other end. It located, might take some trial and error to find the
+proper routing:</p>
 
 <p class=MsoNormal style='page-break-after:avoid'><span style='mso-no-proof:
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_10" o:spid="_x0000_i1027"
@@ -1528,7 +1513,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_10" o:spid="_x0000_i1027"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image019.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1183 height=832
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image020.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image034.jpg"
 v:shapes="Picture_x0020_10"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1538,15 +1523,15 @@ style='mso-no-proof:yes'>10</span><!--[if supportFields]><span
 style='mso-no-proof:yes'><span style='mso-element:field-end'></span></span><![endif]-->
 Installing the Raspberry Pi.</p>
 
-<p class=MsoNormal>Access the driver side <span class=SpellE>fusebox</span> by
-removing the cover under the steering wheel. Tap out the radio fuse to the
-stepper you install under the dash, then connect a ground wire to the chassis.
-Connect the USB +5V and GND lines appropriately to the stepper. Connect your
-OBD2 scan tool to the vehicle’s OBD2 interface. When done, your routing will
-look something like the below. In my example, I also tapped 12V out from the
-OBD2 connector I installed to the radio fuse to avoid parasitic power drain on
-the battery by opening the switch on my OBD2 cable and re-soldering the +12V
-wire to an external wire going to a distribution bus going to the radio fuse:</p>
+<p class=MsoNormal>Access the driver side fusebox by removing the cover under
+the steering wheel. Tap out the radio fuse to the stepper you install under the
+dash, then connect a ground wire to the chassis. Connect the USB +5V and GND
+lines appropriately to the stepper. Connect your OBD2 scan tool to the
+vehicle’s OBD2 interface. When done, your routing will look something like the
+below. In my example, I also tapped 12V out from the OBD2 connector I installed
+to the radio fuse to avoid parasitic power drain on the battery by opening the
+switch on my OBD2 cable and re-soldering the +12V wire to an external wire
+going to a distribution bus going to the radio fuse:</p>
 
 <p class=MsoNormal style='page-break-after:avoid'><span style='mso-no-proof:
 yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_11" o:spid="_x0000_i1026"
@@ -1555,7 +1540,7 @@ yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_11" o:spid="_x0000_i1026"
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image021.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1178 height=832
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image022.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image035.jpg"
 v:shapes="Picture_x0020_11"><![endif]></span></p>
 
 <p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
@@ -1575,7 +1560,7 @@ works or not:</p>
  <v:imagedata src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image023.jpg"
   o:title=""/>
 </v:shape><![endif]--><![if !vml]><img border=0 width=1178 height=832
-src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image024.jpg"
+src="Setting%20up%20a%20raspberry%20pi%20for%20automotive_files/image036.jpg"
 v:shapes="Picture_x0020_12"><![endif]></span></p>
 
 <p class=MsoNormal>Note that when you start the car there will be 2 power

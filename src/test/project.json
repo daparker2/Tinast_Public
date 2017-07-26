@@ -3,8 +3,8 @@
     "MetroLog": "1.0.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
     "Newtonsoft.Json": "10.0.3",
-    "xunit": "2.1.0",
-    "xunit.runner.visualstudio": "2.1.0"
+    "xunit": "2.2.0",
+    "xunit.runner.devices": "2.2.0"
   },
   "frameworks": {
     "uap10.0": {}

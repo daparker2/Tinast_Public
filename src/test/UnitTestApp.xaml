@@ -1,8 +1,8 @@
-﻿<Application
+﻿<ui:RunnerApplication
     x:Class="DP.Tinast.Tests.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:test"
+    xmlns:ui="using:Xunit.Runners.UI"
     RequestedTheme="Light">
 
-</Application>
+</ui:RunnerApplication>

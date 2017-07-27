@@ -7,7 +7,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using Windows.UI.Xaml.Data;
-    using DP.Tinast.Converters;
+    using Converters;
     using MetroLog;
     using Xunit;
     using Xunit.Abstractions;

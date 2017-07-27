@@ -310,6 +310,21 @@ namespace DP.Tinast.ViewModel
         }
 
         /// <summary>
+        /// Faults this instance.
+        /// </summary>
+        /// <returns>A task object.</returns>
+        public async Task Fault()
+        {
+            if (!this.Faulted)
+            {
+                bool propertyChanged;
+                this.Faulted = this.SetProperty("Faulted", this.Faulted, true, out propertyChanged);
+                await this.OnPropertiesChanged();
+            }
+        }
+
+
+        /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <returns>
@@ -447,20 +462,6 @@ namespace DP.Tinast.ViewModel
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Faults this instance.
-        /// </summary>
-        /// <returns>A task object.</returns>
-        public async Task Fault()
-        {
-            if (!this.Faulted)
-            {
-                bool propertyChanged;
-                this.Faulted = this.SetProperty("Faulted", this.Faulted, true, out propertyChanged);
-                await this.OnPropertiesChanged();
-            }
         }
 
         /// <summary>

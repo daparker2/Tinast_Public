@@ -1,6 +1,4 @@
-﻿
-
-namespace DP.Tinast.Tests
+﻿namespace DP.Tinast.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +6,7 @@ namespace DP.Tinast.Tests
     using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
-    using DP.Tinast.Config;
+    using Config;
     using MetroLog;
     using Xunit;
     using Xunit.Abstractions;

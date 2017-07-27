@@ -133,7 +133,6 @@
                 }
 
                 string s = this.writer.ToString();
-                this.log.Debug(s);
                 await Task.Delay(1000);
 
                 if (s.Contains("Tests run: "))

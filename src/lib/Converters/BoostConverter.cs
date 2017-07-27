@@ -44,7 +44,7 @@ namespace DP.Tinast.Converters
         {
             if (targetType == typeof(double))
             {
-                return double.Parse(((string)parameter).Substring(0, ((string)parameter).Length - 1));
+                return double.Parse(((string)value).Substring(0, ((string)value).Length - 1));
             }
 
             throw new NotImplementedException();

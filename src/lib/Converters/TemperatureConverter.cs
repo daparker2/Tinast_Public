@@ -48,7 +48,7 @@
         {
             if (targetType == typeof(int))
             {
-                return int.Parse(((string)parameter).Substring(0, ((string)parameter).Length - 1));
+                return int.Parse(((string)value).Substring(0, ((string)value).Length - 1));
             }
 
             throw new NotImplementedException();

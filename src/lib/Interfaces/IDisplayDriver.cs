@@ -13,29 +13,23 @@ namespace DP.Tinast.Interfaces
     public interface IDisplayDriver
     {
         /// <summary>
-        /// Gets a value indicating whether this <see cref="IDisplayDriver"/> is connected.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if connected; otherwise, <c>false</c>.
-        /// </value>
-        bool Connected { get; }
-
-        /// <summary>
-        /// Tries connecting to the OBD2 ELM327 interface.
+        /// Connects to the OBD2 ELM327 interface.
         /// </summary>
         /// <returns>True if the connection was established.</returns>
-       Task<bool> TryConnectAsync();
+        /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
+        Task OpenAsync();
 
         /// <summary>
-        /// Disconnects from the OBD2 ELM327 interface.
+        /// Closes this instance.
         /// </summary>
-        void Disconnect();
+        void Close();
 
         /// <summary>
         /// Gets the pid result.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <returns></returns>
+        /// <returns>The result of the PID request.</returns>
+        /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
         Task<PidResult> GetPidResultAsync(PidRequest request);
 
         /// <summary>

@@ -139,11 +139,11 @@
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private async void MainPage_Faulted(object sender, EventArgs e)
+        private void MainPage_Faulted(object sender, EventArgs e)
         {
             if (this.viewModel != null)
             {
-                await this.viewModel.Fault();
+                this.viewModel.Fault();
             }
         }
 
@@ -181,7 +181,7 @@
                         await logDelay;
                         PidDebugData transactionResult = this.driver.GetLastTransactionInfo();
                         this.log.Trace("{0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
-                        logDelay = Task.Delay(2000 + r.Next(-200, 200));
+                        logDelay = Task.Delay(2000);
                     }
 
                     //// This is a brutal hack to work around intermittent connection failures on the Raspberry pi with our Bluetooth interface.
@@ -212,7 +212,7 @@
                     this.log.Error("Tick update timed out.");
                     tickError = true;
                 }
-                catch (IOException ex)
+                catch (ConnectFailedException ex)
                 {
                     this.log.Error("Tick update error.", ex);
                     tickError = true;
@@ -222,11 +222,8 @@
                 {
                     PidDebugData transactionResult = driver.GetLastTransactionInfo();
                     this.log.Debug("Last transaction: {0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
-                    this.driver.Disconnect();
                 }
             }
-
-            this.driver.Disconnect();
         }
 
         /// <summary>

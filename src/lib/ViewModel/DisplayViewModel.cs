@@ -70,6 +70,11 @@ namespace DP.Tinast.ViewModel
         private bool debuggerAttached = Debugger.IsAttached;
 
         /// <summary>
+        /// The is connected
+        /// </summary>
+        private bool isConnected = false;
+
+        /// <summary>
         /// The property changed event.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
@@ -241,51 +246,62 @@ namespace DP.Tinast.ViewModel
                         break;
                 }
 
-                PidResult result = await this.driver.GetPidResultAsync(request);
-                bool propertyChanged;
-                this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
-                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
-                if (propertyChanged)
+                try
                 {
-                    this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, this.EngineAfr > 18, out propertyChanged);
-                    this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, this.EngineAfr < 11, out propertyChanged);
-                }
+                    PidResult result = await this.driver.GetPidResultAsync(request);
 
-                if (request.HasFlag(PidRequest.OilTemp))
-                {
-                    this.EngineOilTemp = this.SetProperty("EngineOilTemp", this.EngineOilTemp, result.OilTemp, out propertyChanged);
+                    bool propertyChanged;
+                    this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
+                    this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
                     if (propertyChanged)
                     {
-                        this.OilTempWarn = this.SetProperty("OilTempWarn", this.OilTempWarn, !(this.EngineOilTemp >= this.config.OilTempMin && this.EngineOilTemp <= this.config.OilTempMax), out propertyChanged);
+                        this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, this.EngineAfr > 18, out propertyChanged);
+                        this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, this.EngineAfr < 11, out propertyChanged);
                     }
-                }
-                else if (request.HasFlag(PidRequest.CoolantTemp))
-                {
-                    this.EngineCoolantTemp = this.SetProperty("EngineCoolantTemp", this.EngineCoolantTemp, result.CoolantTemp, out propertyChanged);
-                    if (propertyChanged)
-                    {
-                        this.CoolantTempWarn = this.SetProperty("CoolantTempWarn", this.CoolantTempWarn, !(this.EngineCoolantTemp >= this.config.CoolantTempMin && this.EngineCoolantTemp <= this.config.CoolantTempMax), out propertyChanged);
-                    }
-                }
-                else if (request.HasFlag(PidRequest.IntakeTemp))
-                {
-                    this.EngineIntakeTemp = this.SetProperty("EngineIntakeTemp", this.EngineIntakeTemp, result.IntakeTemp, out propertyChanged);
-                    if (propertyChanged)
-                    {
-                        this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, !(this.EngineIntakeTemp >= this.config.IntakeTempMin && this.EngineIntakeTemp <= this.config.IntakeTempMax), out propertyChanged);
-                    }
-                }
-                else if (request.HasFlag(PidRequest.Load))
-                {
-                    this.EngineLoad = this.SetProperty("EngineLoad", this.EngineLoad, result.Load, out propertyChanged);
-                    if (propertyChanged)
-                    {
-                        this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, this.EngineLoad < this.config.MaxIdleLoad, out propertyChanged);
-                    }
-                }
 
-                this.TempWarning = this.SetProperty("TempWarning", this.TempWarning, this.IntakeTempWarn || this.OilTempWarn || this.CoolantTempWarn, out propertyChanged);
-                await this.OnPropertiesChanged();
+                    if (request.HasFlag(PidRequest.OilTemp))
+                    {
+                        this.EngineOilTemp = this.SetProperty("EngineOilTemp", this.EngineOilTemp, result.OilTemp, out propertyChanged);
+                        if (propertyChanged)
+                        {
+                            this.OilTempWarn = this.SetProperty("OilTempWarn", this.OilTempWarn, !(this.EngineOilTemp >= this.config.OilTempMin && this.EngineOilTemp <= this.config.OilTempMax), out propertyChanged);
+                        }
+                    }
+                    else if (request.HasFlag(PidRequest.CoolantTemp))
+                    {
+                        this.EngineCoolantTemp = this.SetProperty("EngineCoolantTemp", this.EngineCoolantTemp, result.CoolantTemp, out propertyChanged);
+                        if (propertyChanged)
+                        {
+                            this.CoolantTempWarn = this.SetProperty("CoolantTempWarn", this.CoolantTempWarn, !(this.EngineCoolantTemp >= this.config.CoolantTempMin && this.EngineCoolantTemp <= this.config.CoolantTempMax), out propertyChanged);
+                        }
+                    }
+                    else if (request.HasFlag(PidRequest.IntakeTemp))
+                    {
+                        this.EngineIntakeTemp = this.SetProperty("EngineIntakeTemp", this.EngineIntakeTemp, result.IntakeTemp, out propertyChanged);
+                        if (propertyChanged)
+                        {
+                            this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, !(this.EngineIntakeTemp >= this.config.IntakeTempMin && this.EngineIntakeTemp <= this.config.IntakeTempMax), out propertyChanged);
+                        }
+                    }
+                    else if (request.HasFlag(PidRequest.Load))
+                    {
+                        this.EngineLoad = this.SetProperty("EngineLoad", this.EngineLoad, result.Load, out propertyChanged);
+                        if (propertyChanged)
+                        {
+                            this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, this.EngineLoad < this.config.MaxIdleLoad, out propertyChanged);
+                        }
+                    }
+
+                    this.TempWarning = this.SetProperty("TempWarning", this.TempWarning, this.IntakeTempWarn || this.OilTempWarn || this.CoolantTempWarn, out propertyChanged);
+                    await this.OnPropertiesChanged();
+                }
+                catch (ConnectFailedException ex)
+                {
+                    this.log.Error("OBD2 connection failed", ex);
+                    this.isConnected = false;
+                    this.driver.Close();
+                    return;
+                }
             }
         }
 
@@ -305,21 +321,22 @@ namespace DP.Tinast.ViewModel
             }
             else
             {
-                return TimeSpan.FromMilliseconds(30000);
+                return TimeSpan.FromMilliseconds(1000);
             }
         }
 
         /// <summary>
         /// Faults this instance.
         /// </summary>
-        /// <returns>A task object.</returns>
-        public async Task Fault()
+        public void Fault()
         {
             if (!this.Faulted)
             {
-                bool propertyChanged;
-                this.Faulted = this.SetProperty("Faulted", this.Faulted, true, out propertyChanged);
-                await this.OnPropertiesChanged();
+                this.Faulted = true;
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged(this, new PropertyChangedEventArgs("Faulted"));
+                }
             }
         }
 
@@ -446,7 +463,7 @@ namespace DP.Tinast.ViewModel
         /// <returns></returns>
         private async Task<bool> ShouldTick()
         {
-            if (!this.driver.Connected)
+            if (!this.isConnected)
             {
                 if (!this.flashedGauges)
                 {
@@ -454,11 +471,21 @@ namespace DP.Tinast.ViewModel
                     await this.FlashGauges();
                 }
 
+                try
+                {
+                    await this.driver.OpenAsync();
+                    this.isConnected = true;
+                }
+                catch (ConnectFailedException ex)
+                {
+                    this.log.Error("OBD2 connection failed", ex);
+                    this.isConnected = false;
+                }
+
                 bool propertyChanged;
-                bool connecting = !(await this.driver.TryConnectAsync());
-                this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, connecting, out propertyChanged);
+                this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, !this.isConnected, out propertyChanged);
                 await this.OnPropertiesChanged();
-                return this.driver.Connected;
+                return this.isConnected;
             }
 
             return true;

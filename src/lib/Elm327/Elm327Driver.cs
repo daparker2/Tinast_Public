@@ -23,8 +23,7 @@
     /// Represent the ELM327 driver for the gauge panel
     /// </summary>
     /// <seealso cref="DP.Tinast.Interfaces.IDisplayDriver" />
-    /// <seealso cref="System.IDisposable" />
-    public class Elm327Driver : IDisplayDriver, IDisposable
+    public class Elm327Driver : IDisplayDriver
     {
         /// <summary>
         /// The logger.
@@ -32,29 +31,14 @@
         private ILogger log = LogManagerFactory.DefaultLogManager.GetLogger<Elm327Driver>();
 
         /// <summary>
-        /// The disposed
-        /// </summary>
-        private bool disposed = false;
-
-        /// <summary>
         /// The configuration
         /// </summary>
         private DisplayConfiguration config;
 
         /// <summary>
-        /// The chat socket
+        /// The connection
         /// </summary>
-        private StreamSocket socket;
-
-        /// <summary>
-        /// The chat service
-        /// </summary>
-        private RfcommDeviceService service;
-
-        /// <summary>
-        /// The socket connected
-        /// </summary>
-        private bool socketConnected = false;
+        private IElm327Connection connection;
 
         /// <summary>
         /// The PID result
@@ -80,9 +64,11 @@
         /// Initializes a new instance of the <see cref="Elm327Driver"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        public Elm327Driver(DisplayConfiguration config)
+        /// <param name="connection">The ELM 327 connection instance.</param>
+        public Elm327Driver(DisplayConfiguration config, IElm327Connection connection)
         {
             this.config = config;
+            this.connection = connection;
 
             if (this.config.MaxPidsAtOnce < 1)
             {
@@ -150,79 +136,14 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="IDisplayDriver"/> is connected.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if connected; otherwise, <c>false</c>.
-        /// </value>
-        public bool Connected
-        {
-            get
-            {
-                return this.socketConnected;
-            }
-        }
-
-        /// <summary>
-        /// Opens the OBD2 scan tool asynchronously.
-        /// </summary>
-        /// <returns></returns>
-        public async Task OpenAsync()
-        {
-            DeviceInformationCollection serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
-            if (serviceInfoCollection.Count != 1)
-            {
-                throw new InvalidOperationException("Only one paired RFComm device is supported at a time with this app and there must be at least one device.");
-            }
-
-            DeviceInformation deviceInfo = serviceInfoCollection.First();
-            this.log.Debug("BT device {0}", deviceInfo.Id);
-            this.service = await RfcommDeviceService.FromIdAsync(deviceInfo.Id);
-            if (this.service == null)
-            {
-                throw new InvalidOperationException("Access to the OBD2 device was denied.");
-            }
-
-            DeviceAccessStatus accessStatus = await this.service.RequestAccessAsync();
-            if (accessStatus != DeviceAccessStatus.Allowed)
-            {
-                this.log.Debug("BT device access status: {0}", accessStatus);
-                throw new InvalidOperationException("Cannot connect to the OBD2 device. Access to the OBD2 device was denied by the user.");
-            }
-        }
-
-        /// <summary>
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
-        /// <returns>True if the connection was established.</returns>
-        public async Task<bool> TryConnectAsync()
+        /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
+        public async Task OpenAsync()
         {
-            if (!this.socketConnected)
+            try
             {
-                if (this.service == null)
-                {
-                    throw new InvalidOperationException("Service not opened. Call OpenAsync() first.");
-                }
-
-                if (this.socket == null)
-                {
-                    this.socket = new StreamSocket();
-                    this.socket.Control.NoDelay = true;
-                    this.socket.Control.SerializeConnectionAttempts = true;
-                }
-
-                this.log.Info("Connecting to {0};{1}", this.service.ConnectionHostName, this.service.ConnectionServiceName);
-                try
-                {
-                    await this.socket.ConnectAsync(this.service.ConnectionHostName, this.service.ConnectionServiceName, SocketProtectionLevel.PlainSocket);
-                }
-                catch (Exception ex)
-                {
-                    this.log.Warn("Connect failed", ex);
-                    this.Disconnect();
-                    await Task.Delay(5000);
-                    return false;
-                }
+                await this.connection.OpenAsync();
 
                 // Get some info about the device we just connected to.
                 string elmDeviceDesc = (await this.SendCommand("atz")).FirstOrDefault();
@@ -233,10 +154,31 @@
                 while (!(await this.SendCommand("atsp0")).Contains("OK")) ;
 
                 this.log.Info("ELM327 device connected. ECU on.");
-                this.socketConnected = true;
             }
+            catch (Exception ex)
+            {
+                throw new ConnectFailedException("Connect failed.", ex);
+            }
+        }
 
-            return this.socketConnected;
+        /// <summary>
+        /// Closes the connection to the OBD2 ELM327 interface.
+        /// </summary>
+        /// <returns></returns>
+        public void Close()
+        {
+            this.connection.Close();
+        }
+
+        /// <summary>
+        /// Gets the last transaction information, which in most cases will be the command sent to GetPidResultAsync.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="PidDebugData" /> object representing the last transaction.
+        /// </returns>
+        public PidDebugData GetLastTransactionInfo()
+        {
+            return this.debugData;
         }
 
         /// <summary>
@@ -244,46 +186,54 @@
         /// </summary>
         /// <param name="request">The PID request.</param>
         /// <returns>A <see cref="PidResult"/> object.</returns>
+        /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
         public async Task<PidResult> GetPidResultAsync(PidRequest request)
         {
-            StringBuilder sb = new StringBuilder();
-            int cPids = 0;
-            int mode = 0;
-            foreach (PidHandler ph in this.pt.GetHandlersForRequest(request))
+            try
             {
-                int curPid = ph.Mode;
-                int pidMode = (curPid & 0xFF00) >> 8;
-                if (pidMode != mode)
+                StringBuilder sb = new StringBuilder();
+                int cPids = 0;
+                int mode = 0;
+                foreach (PidHandler ph in this.pt.GetHandlersForRequest(request))
                 {
-                    if (cPids > 0)
+                    int curPid = ph.Mode;
+                    int pidMode = (curPid & 0xFF00) >> 8;
+                    if (pidMode != mode)
+                    {
+                        if (cPids > 0)
+                        {
+                            await this.UpdatePidResult(sb.ToString());
+                            cPids = 0;
+                        }
+
+                        sb.Clear();
+                        sb.AppendFormat("{0:X2}", pidMode);
+                        mode = pidMode;
+                    }
+
+                    int pidValue = curPid & 0xFF;
+                    sb.AppendFormat("{0:X2}", pidValue);
+                    ++cPids;
+
+                    if (cPids == this.config.MaxPidsAtOnce)
                     {
                         await this.UpdatePidResult(sb.ToString());
                         cPids = 0;
+                        mode = 0;
                     }
-
-                    sb.Clear();
-                    sb.AppendFormat("{0:X2}", pidMode);
-                    mode = pidMode;
                 }
 
-                int pidValue = curPid & 0xFF;
-                sb.AppendFormat("{0:X2}", pidValue);
-                ++cPids;
-
-                if (cPids == this.config.MaxPidsAtOnce)
+                if (cPids > 0)
                 {
                     await this.UpdatePidResult(sb.ToString());
-                    cPids = 0;
-                    mode = 0;
                 }
-            }
 
-            if (cPids > 0)
+                return this.result;
+            }
+            catch (Exception ex)
             {
-                await this.UpdatePidResult(sb.ToString());
+                throw new ConnectFailedException("Pid request failed.", ex);
             }
-
-            return this.result;
         }
 
         /// <summary>
@@ -309,61 +259,6 @@
             catch (Exception ex)
             {
                 throw new IOException("Failed to get PID result.", ex);
-            }
-        }
-
-        /// <summary>
-        /// Gets the last transaction information, which in most cases will be the command sent to GetPidResultAsync.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="PidDebugData" /> object representing the last transaction.
-        /// </returns>
-        public PidDebugData GetLastTransactionInfo()
-        {
-            return this.debugData;
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        /// <summary>
-        /// Disconnect the socket.
-        /// </summary>
-        public void Disconnect()
-        {
-            this.socketConnected = false;
-            if (this.socket != null)
-            {
-                this.socket.Dispose();
-                this.socket = null;
-            }
-        }
-
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                this.disposed = true;
-
-                if (disposing)
-                {
-                    if (this.service != null)
-                    {
-                        this.service.Dispose();
-                        this.service = null;
-                    }
-
-                    this.Disconnect();
-                }
             }
         }
 
@@ -396,8 +291,8 @@
             {
                 DateTime start = DateTime.Now;
                 byte[] outBuf = Encoding.ASCII.GetBytes(commandString + "\r");
-                await this.socket.OutputStream.WriteAsync(outBuf.AsBuffer());
-                await this.socket.OutputStream.FlushAsync();
+                await this.connection.OutputStream.WriteAsync(outBuf.AsBuffer());
+                await this.connection.OutputStream.FlushAsync();
                 string[] ret = await this.ReadResponse();
                 this.debugData = new PidDebugData(commandString, ret, DateTime.Now - start);
                 return ret;
@@ -405,7 +300,6 @@
             catch (IOException ex)
             {
                 this.log.Warn("Lost socket connection: {0}", ex.Message);
-                this.Disconnect();
                 this.debugData = new PidDebugData(commandString, new string[] { }, TimeSpan.MaxValue);
                 throw;
             }
@@ -423,7 +317,7 @@
                 List<string> sr = new List<string>();
                 for (;;)
                 {
-                    byte[] read = (await this.socket.InputStream.ReadAsync(this.readBuffer, this.readBuffer.Capacity, InputStreamOptions.Partial))
+                    byte[] read = (await this.connection.InputStream.ReadAsync(this.readBuffer, this.readBuffer.Capacity, InputStreamOptions.Partial))
                                              .ToArray();
                     for (int i = 0; i < read.Length; ++i)
                     {
@@ -466,7 +360,6 @@
             catch (IOException ex)
             {
                 this.log.Warn("Lost socket connection: {0}", ex.Message);
-                this.Disconnect();
                 throw;
             }
         }
@@ -479,55 +372,50 @@
         /// <returns>An array of pid values.</returns>
         private async Task<List<int>> RunPid(string pid)
         {
-            if (this.socketConnected)
+            List<int> pr = new List<int>();
+            string[] r = await this.SendCommand(pid);
+            if (!r[r.Length - 1].Equals("UNABLE TO CONNECT") && !r[r.Length - 1].Equals("NO DATA"))
             {
-                List<int> pr = new List<int>();
-                string[] r = await this.SendCommand(pid);
-                if (!r[r.Length - 1].Equals("UNABLE TO CONNECT") && !r[r.Length - 1].Equals("NO DATA"))
+                bool multiline = false;
+                for (int i = 0; i < r.Length; ++i)
                 {
-                    bool multiline = false;
-                    for (int i = 0; i < r.Length; ++i)
+                    if (r[i] != "SEARCHING...")
                     {
-                        if (r[i] != "SEARCHING...")
+                        if (r[i].Length > 1)
                         {
-                            if (r[i].Length > 1)
+                            int j = 0;
+                            if (r[i][1] == ':')
                             {
-                                int j = 0;
-                                if (r[i][1] == ':')
-                                {
-                                    // This is part of a line segment indicator...?
-                                    multiline = true;
-                                    j = 3;
-                                }
+                                // This is part of a line segment indicator...?
+                                multiline = true;
+                                j = 3;
+                            }
 
-                                while (j < r[i].Length)
-                                {
-                                    int next = r[i].IndexOf(' ', j);
-                                    string str = r[i].Substring(j, next - j);
-                                    pr.Add(Convert.ToInt32(str, 16));
-                                    j = next + 1;
-                                }
+                            while (j < r[i].Length)
+                            {
+                                int next = r[i].IndexOf(' ', j);
+                                string str = r[i].Substring(j, next - j);
+                                pr.Add(Convert.ToInt32(str, 16));
+                                j = next + 1;
                             }
                         }
                     }
-
-                    // In a multi-line response, the first digit is the number of bytes in the response.
-                    if (multiline)
-                    {
-                        List<int> mPr = new List<int>(pr[0]);
-                        for (int i = 1; i <= pr[0]; ++i)
-                        {
-                            mPr.Add(pr[i]);
-                        }
-
-                        pr = mPr;
-                    }
                 }
 
-                return pr;
+                // In a multi-line response, the first digit is the number of bytes in the response.
+                if (multiline)
+                {
+                    List<int> mPr = new List<int>(pr[0]);
+                    for (int i = 1; i <= pr[0]; ++i)
+                    {
+                        mPr.Add(pr[i]);
+                    }
+
+                    pr = mPr;
+                }
             }
 
-            return null;
+            return pr;
         }
 
         /// <summary>

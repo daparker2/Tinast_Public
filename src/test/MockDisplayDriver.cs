@@ -21,7 +21,13 @@ namespace DP.Tinast.Tests
             get; set;
         }
 
-        public void Disconnect()
+        public async Task OpenAsync()
+        {
+            await Task.Delay(0);
+            this.Connected = true;
+        }
+
+        public void Close()
         {
             this.Connected = false;
         }

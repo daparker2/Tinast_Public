@@ -119,7 +119,10 @@
     <Compile Include="Elm327\Elm327Driver.cs" />
     <Compile Include="Elm327\PidHandler.cs" />
     <Compile Include="Elm327\PidTable.cs" />
+    <Compile Include="Elm327\BluetoothElm327Connection.cs" />
+    <Compile Include="Interfaces\ConnectFailedException.cs" />
     <Compile Include="Interfaces\IDisplayDriver.cs" />
+    <Compile Include="Interfaces\IElm327Connection.cs" />
     <Compile Include="Interfaces\PidDebugData.cs" />
     <Compile Include="Interfaces\PidRequest.cs" />
     <Compile Include="Interfaces\PidResult.cs" />

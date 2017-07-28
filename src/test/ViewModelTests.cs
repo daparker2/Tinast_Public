@@ -195,7 +195,6 @@
             DisplayViewModel viewModel = new DisplayViewModel(displayDriver, new DisplayConfiguration());
             displayDriver.SetPidResult(new PidResult());
             Assert.False(viewModel.Faulted);
-            await viewModel.Fault();
             bool propSet = false;
             viewModel.PropertyChanged += (o, e) =>
             {
@@ -205,6 +204,7 @@
                 }
             };
 
+            viewModel.Fault();
             await viewModel.Tick();
             Assert.True(viewModel.Faulted);
             Assert.True(propSet);

@@ -50,6 +50,11 @@
         private Elm327Driver driver;
 
         /// <summary>
+        /// The connection
+        /// </summary>
+        private BluetoothElm327Connection connection;
+
+        /// <summary>
         /// The update timer
         /// </summary>
         private DispatcherTimer updateTimer;
@@ -103,17 +108,14 @@
         /// <returns>A <see cref="IDisplayDriver"/> object.</returns>
         public async Task<IDisplayDriver> GetDriverAsync()
         {
-            if (this.driver == null)
+            if (this.connection == null)
             {
-                this.driver = new Elm327Driver(await this.GetConfigAsync());
-                try
+                this.connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync())
+                                                                  .FirstOrDefault();
+                if (this.connection == null)
                 {
-                    await this.driver.OpenAsync();
-                }
-                catch (InvalidOperationException ioe)
-                {
-                    this.log.Error("App launch failed. Couldn't access the OBD2 scantool.", ioe);
-                    MessageDialog dialog = new MessageDialog(string.Format("App launch failed for the following reason: '{0}'. You must pair the system with the OBD2 scantool before launching the app again. Press OK to quit the app.", ioe.Message));
+                    this.log.Error("App launch failed. Couldn't access the OBD2 scantool.");
+                    MessageDialog dialog = new MessageDialog(string.Format("App launch failed for the following reason. You must pair the system with the OBD2 scantool before launching the app again. Press OK to quit the app."));
                     dialog.Commands.Add(new UICommand("OK") { Id = 0 });
                     dialog.DefaultCommandIndex = 0;
                     dialog.CancelCommandIndex = 0;
@@ -121,6 +123,11 @@
                     this.Exit();
                     return null;
                 }
+            }
+
+            if (this.driver == null)
+            {
+                this.driver = new Elm327Driver(await this.GetConfigAsync(), this.connection);
             }
 
             return this.driver;
@@ -292,9 +299,9 @@
                     this.updateTimer.Stop();
                 }
 
-                if (this.driver != null)
+                if (this.connection != null)
                 {
-                    this.driver.Disconnect();
+                    this.connection.Close();
                 }
 
                 if (this.displayRequest != null)
@@ -322,7 +329,7 @@
                 {
                     if (this.driver != null)
                     {
-                        this.driver.Dispose();
+                        this.connection.Dispose();
                         this.driver = null;
                     }
                 }

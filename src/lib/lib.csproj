@@ -117,6 +117,7 @@
     <Compile Include="Converters\BoostConverter.cs" />
     <Compile Include="Converters\TemperatureConverter.cs" />
     <Compile Include="Elm327\Elm327Driver.cs" />
+    <Compile Include="Elm327\Elm327Session.cs" />
     <Compile Include="Elm327\PidHandler.cs" />
     <Compile Include="Elm327\PidTable.cs" />
     <Compile Include="Elm327\BluetoothElm327Connection.cs" />

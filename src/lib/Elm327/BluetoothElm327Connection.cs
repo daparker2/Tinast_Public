@@ -66,7 +66,7 @@ namespace DP.Tinast.Elm327
         /// <value>
         /// The device name.
         /// </value>
-        public string DeviceNAme
+        public string DeviceName
         {
             get
             {

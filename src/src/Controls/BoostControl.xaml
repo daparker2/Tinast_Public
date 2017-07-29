@@ -65,10 +65,10 @@
         <shapes:Polygon x:Name="led47" Stroke="White" StrokeThickness="1" Fill="White" Points="938 -2 953 -2 953 84 938 86" />
         <shapes:Polygon x:Name="led48" Stroke="White" StrokeThickness="1" Fill="White" Points="963 -1 978 -1 978 83 963 85" />
         <shapes:Polygon x:Name="led49" Stroke="White" StrokeThickness="1" Fill="White" Points="989 -1 1004 -1 1004 81 989 83" />
-        <TextBlock x:Name="level" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=boostConverter}}" FontSize="45" FontFamily="Courier New" FontWeight="Bold" Width="133" Height="52" Canvas.Top="53" Margin="0,0,0,0" TextAlignment="Center" />
+        <TextBlock x:Name="level" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=boostConverter}}" FontSize="45" FontFamily="Courier New" FontWeight="Bold" Width="133" Height="52" Canvas.Top="39" Margin="0,0,0,0" TextAlignment="Center" Canvas.Left="35" />
         <shapes:Line x:Name="outline1" X1="143" Y1="170" X2="1018" Y2="100" Stroke="White" StrokeThickness="1" />
         <shapes:Line x:Name="outline2" X1="143" Y1="170" X2="103" Y2="594" Stroke="White" StrokeThickness="1" />
         <TextBlock x:Name="label" Text="Boost" FontSize="15" FontFamily="Courier New" Width="60" Height="15" Canvas.Top="143" Canvas.Left="509" Margin="0,0,0,0" TextAlignment="Center" />
-        <TextBlock x:Name="label2" Text="PSI" FontSize="15" FontFamily="Courier New" Width="60" Height="15" Canvas.Top="110" Canvas.Left="73" Margin="0,0,0,0" TextAlignment="Right" />
+        <TextBlock x:Name="label2" Text="PSI" FontSize="15" FontFamily="Courier New" Width="60" Height="15" Canvas.Top="96" Canvas.Left="108" Margin="0,0,0,0" TextAlignment="Right" />
     </Canvas>
 </UserControl>

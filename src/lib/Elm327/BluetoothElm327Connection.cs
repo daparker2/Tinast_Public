@@ -170,7 +170,6 @@ namespace DP.Tinast.Elm327
                 this.log.Debug("BT device {0}", aepInfo.Name);
                 if (aepInfo.Name == this.deviceName)
                 {
-                    await aepInfo.Pairing.UnpairAsync();
                     DevicePairingResult pairingResult = await aepInfo.Pairing.Custom.PairAsync(DevicePairingKinds.ConfirmOnly, DevicePairingProtectionLevel.None);
                     this.log.Debug("Device pairing status: {0}, protection level: {1}", pairingResult.Status, pairingResult.ProtectionLevelUsed);
 

@@ -41,6 +41,31 @@
         /// <summary>
         /// The oil temp
         /// </summary>
-        OilTemp = 0x20
+        OilTemp = 0x20,
+
+        /// <summary>
+        /// The scantool mode 1 test 1.
+        /// </summary>
+        Mode1Test1 = 0x1000,
+
+        /// <summary>
+        /// The scantool mode 1 test 2.
+        /// </summary>
+        Mode1Test2 = 0x2000,
+
+        /// <summary>
+        /// The scantool mode 1 test 3.
+        /// </summary>
+        Mode1Test3 = 0x4000,
+
+        /// <summary>
+        /// The scantool mode 9 test 1.
+        /// </summary>
+        Mode9Test1 = 0x8000,
+
+        /// <summary>
+        /// The scantool mode 9 test 2.
+        /// </summary>
+        Mode9Test2 = 0x10000
     }
 }

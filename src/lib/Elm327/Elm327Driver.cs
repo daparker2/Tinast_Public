@@ -26,6 +26,20 @@
     public class Elm327Driver : IDisplayDriver
     {
         /// <summary>
+        /// The test vin
+        /// </summary>
+        private static readonly int[] TestVin = Encoding.ASCII.GetBytes("1G1JC5444R7252367")
+                                                              .Select((b) => (int)b)
+                                                              .ToArray();
+
+        /// <summary>
+        /// The test calibration identifier
+        /// </summary>
+        private static readonly int[] TestCalibrationId = Encoding.ASCII.GetBytes("JMB*36761500")
+                                                                        .Select((b) => (int)b)
+                                                                        .ToArray();
+
+        /// <summary>
         /// The logger.
         /// </summary>
         private ILogger log = LogManagerFactory.DefaultLogManager.GetLogger<Elm327Driver>();
@@ -46,6 +60,11 @@
         private PidResult result = new PidResult();
 
         /// <summary>
+        /// The test command
+        /// </summary>
+        private bool testMode;
+
+        /// <summary>
         /// The PID table
         /// </summary>
         private PidTable pt = new PidTable();
@@ -60,74 +79,88 @@
         /// </summary>
         /// <param name="config">The configuration.</param>
         /// <param name="connection">The ELM 327 connection instance.</param>
-        public Elm327Driver(DisplayConfiguration config, IElm327Connection connection)
+        /// <param name="testMode">True to open the connection in test mode.</param>
+        public Elm327Driver(DisplayConfiguration config, IElm327Connection connection, bool testMode = false)
         {
             this.config = config;
             this.connection = connection;
             this.session = new Elm327Session(this.connection);
+            this.testMode = testMode;
 
             if (this.config.MaxPidsAtOnce < 1)
             {
                 this.config.MaxPidsAtOnce = 1;
             }
 
-            if (this.config.AfrPidType == PidType.Obd2)
+            if (this.testMode)
             {
-                this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 4, (pd) => this.result.Afr = (double)(pd[0] * 256 + pd[1]) / 32768.0 * 14.7));
+                // These are provided for test functionality only. Not guaranteed to work on anything but the ECUSIM 2000.
+                this.pt.Add(new PidHandler(0x0101, PidRequest.Mode1Test1, 4, (pd) => this.result.Mode1Test1Passed = pd.SequenceEqual(new int[] { 0x00, 0x07, 0xef, 0x80 })));
+                this.pt.Add(new PidHandler(0x0103, PidRequest.Mode1Test2, 2, (pd) => this.result.Mode1Test2Passed = pd.SequenceEqual(new int[] { 0x02, 0x01 })));
+                this.pt.Add(new PidHandler(0x0104, PidRequest.Mode1Test3, 1, (pd) => this.result.Mode1Test3Passed = pd.SequenceEqual(new int[] { 0x32 })));
+                this.pt.Add(new PidHandler(0x0902, PidRequest.Mode9Test1, TestVin.Length + 1, (pd) => this.result.Mode9Test1Passed = pd.Skip(1).SequenceEqual(TestVin)));
+                this.pt.Add(new PidHandler(0x0904, PidRequest.Mode9Test2, TestCalibrationId.Length + 1, (pd) => this.result.Mode9Test2Passed = pd.Skip(1).SequenceEqual(TestCalibrationId)));
             }
             else
             {
-                throw new InvalidOperationException("Invalid AFR pid type");
-            }
+                if (this.config.AfrPidType == PidType.Obd2)
+                {
+                    this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 4, (pd) => this.result.Afr = (double)(pd[0] * 256 + pd[1]) / 32768.0 * 14.7));
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid AFR pid type");
+                }
 
-            if (this.config.BoostPidType == PidType.Obd2)
-            {
-                // We could calculate this based on barometric pressure PID but this is slightly faster.
-                this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => this.result.Boost = (double)pd[0] * 0.145037738007 + this.config.BoostOffset));
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid boost pid type");
-            }
+                if (this.config.BoostPidType == PidType.Obd2)
+                {
+                    // We could calculate this based on barometric pressure PID but this is slightly faster.
+                    this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => this.result.Boost = (double)pd[0] * 0.145037738007 + this.config.BoostOffset));
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid boost pid type");
+                }
 
-            if (this.config.LoadPidType == PidType.Obd2)
-            {
-                this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) => this.result.Load = pd[0] * 100 / 255));
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid load pid type");
-            }
+                if (this.config.LoadPidType == PidType.Obd2)
+                {
+                    this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) => this.result.Load = pd[0] * 100 / 255));
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid load pid type");
+                }
 
-            if (this.config.OilTempPidType == PidType.Obd2)
-            {
-                this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => this.result.OilTemp = (int)this.CToF(pd[0] - 40)));
-            }
-            else if (this.config.OilTempPidType == PidType.Subaru)
-            {
-                this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 29, (pd) => this.result.OilTemp = (int)this.CToF(pd[28] - 40)));
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid AFR pid type");
-            }
+                if (this.config.OilTempPidType == PidType.Obd2)
+                {
+                    this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => this.result.OilTemp = (int)this.CToF(pd[0] - 40)));
+                }
+                else if (this.config.OilTempPidType == PidType.Subaru)
+                {
+                    this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 29, (pd) => this.result.OilTemp = (int)this.CToF(pd[28] - 40)));
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid AFR pid type");
+                }
 
-            if (this.config.CoolantTempPidType == PidType.Obd2)
-            {
-                this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) => this.result.CoolantTemp = (int)this.CToF(pd[0] - 40)));
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid AFR pid type");
-            }
+                if (this.config.CoolantTempPidType == PidType.Obd2)
+                {
+                    this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) => this.result.CoolantTemp = (int)this.CToF(pd[0] - 40)));
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid AFR pid type");
+                }
 
-            if (this.config.IntakeTempPidType == PidType.Obd2)
-            {
-                this.pt.Add(new PidHandler(0x010f, PidRequest.IntakeTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid AFR pid type");
+                if (this.config.IntakeTempPidType == PidType.Obd2)
+                {
+                    this.pt.Add(new PidHandler(0x010f, PidRequest.IntakeTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid AFR pid type");
+                }
             }
         }
 
@@ -185,6 +218,12 @@
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
         public async Task<PidResult> GetPidResultAsync(PidRequest request)
         {
+            if (this.testMode)
+            {
+                this.testMode = false;
+                this.result = new PidResult();
+            }
+
             try
             {
                 StringBuilder sb = new StringBuilder();
@@ -192,6 +231,12 @@
                 int mode = 0;
                 foreach (PidHandler ph in this.pt.GetHandlersForRequest(request))
                 {
+                    if (ph.Request == PidRequest.Mode1Test1 || ph.Request == PidRequest.Mode1Test2 || ph.Request == PidRequest.Mode1Test3 || ph.Request == PidRequest.Mode9Test1 || ph.Request == PidRequest.Mode9Test2)
+                    {
+                        // If a test command was executed this request, clear the PID result for the next one so we don't cache it.
+                        this.testMode = true;
+                    }
+
                     int curPid = ph.Mode;
                     int pidMode = (curPid & 0xFF00) >> 8;
                     if (pidMode != mode)
@@ -245,8 +290,14 @@
                 if (pidResult.Count > 0)
                 {
                     int mode = pidResult[0] - 0x40;
+                    int remainingPids = (pidRequest.Length - 2) / 2;
                     for (int i = 1; i < pidResult.Count; ++i)
                     {
+                        if (remainingPids-- <= 0)
+                        {
+                            break;
+                        }
+
                         PidHandler ph = this.pt.GetHandler((mode << 8) | pidResult[i]);
                         i += ph.Handle(pidResult, i + 1);
                     }
@@ -272,7 +323,7 @@
 
             if (this.config.AggressiveTiming)
             {
-                await this.session.SendCommand("at2");
+                await this.session.SendCommand("atat2");
             }
         }
 

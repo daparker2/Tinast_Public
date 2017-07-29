@@ -1,5 +1,5 @@
 ﻿{
   "diagnosticMessages": true,
-  "longRunningTestSeconds": 300,
+  "longRunningTestSeconds": 3000,
   "parallelizeTestCollections": false
 }

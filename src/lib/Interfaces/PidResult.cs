@@ -59,5 +59,45 @@ namespace DP.Tinast.Interfaces
         /// The load.
         /// </value>
         public int IntakeTemp { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the mode1 test passed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the mode1 test passed. otherwise, <c>false</c>.
+        /// </value>
+        public bool Mode1Test1Passed { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the mode test passed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the mode test passed. otherwise, <c>false</c>.
+        /// </value>
+        public bool Mode1Test2Passed { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the mode test passed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the mode test passed. otherwise, <c>false</c>.
+        /// </value>
+        public bool Mode1Test3Passed { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the mode test passed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the mode test passed. otherwise, <c>false</c>.
+        /// </value>
+        public bool Mode9Test1Passed { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the mode test passed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the mode test passed. otherwise, <c>false</c>.
+        /// </value>
+        public bool Mode9Test2Passed { get; set; }
     }
 }

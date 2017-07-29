@@ -82,8 +82,7 @@
         [InlineData(1, "atz", new string[] { "atz", "ELM327 v1.5" })]
         [InlineData(5, "atz", new string[] { "atz", "ELM327 v1.5" })]
         [InlineData(10, "atz", new string[] { "atz", "ELM327 v1.5" })]
-        [InlineData(100, "atz", new string[] { "atz", "ELM327 v1.5" })]
-        public async Task Elm327Parser_Can_Evaluate_Obd2_Adapter_Message(int numIterations, string message, string[] expectedResponse)
+        public async Task Elm327Session_Can_Evaluate_Obd2_Adapter_Message(int numIterations, string message, string[] expectedResponse)
         {
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
             {
@@ -93,9 +92,139 @@
                 {
                     string[] actualResponse = await session.SendCommand(message);
                     Assert.True(expectedResponse.SequenceEqual(actualResponse), "Response mismatches expected.");
+
+                    while (!(await session.SendCommand("atsp0")).Contains("OK")) ;
                 }
 
                 connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// Verifies the ELM 327 session can run a pid against the OBD2 adapter.
+        /// </summary>
+        /// <param name="numIterations">The number iterations.</param>
+        /// <param name="messages">The messages.</param>
+        /// <param name="pid">The pid.</param>
+        /// <returns></returns>
+        [Theory]
+        [InlineData(1, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0101", new int[] { 0x41, 0x01, 0x00, 0x07, 0xef, 0x80 })]
+        [InlineData(1, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0103", new int[] { 0x41, 0x03, 0x02, 0x01 })]
+        [InlineData(1, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0104", new int[] { 0x41, 0x04, 0x32 })]
+        [InlineData(1, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "01010304", new int[] { 0x41, 0x01, 0x00, 0x07, 0xef, 0x80, 0x03, 0x02, 0x01, 0x04, 0x32 })]
+        [InlineData(10, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0101", new int[] { 0x41, 0x01, 0x00, 0x07, 0xef, 0x80 })]
+        [InlineData(10, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0103", new int[] { 0x41, 0x03, 0x02, 0x01 })]
+        [InlineData(10, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0104", new int[] { 0x41, 0x04, 0x32 })]
+        [InlineData(10, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "01010304", new int[] { 0x41, 0x01, 0x00, 0x07, 0xef, 0x80, 0x03, 0x02, 0x01, 0x04, 0x32 })]
+        [InlineData(100, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0101", new int[] { 0x41, 0x01, 0x00, 0x07, 0xef, 0x80 })]
+        [InlineData(100, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0103", new int[] { 0x41, 0x03, 0x02, 0x01 })]
+        [InlineData(100, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0104", new int[] { 0x41, 0x04, 0x32 })]
+        [InlineData(100, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "01010304", new int[] { 0x41, 0x01, 0x00, 0x07, 0xef, 0x80, 0x03, 0x02, 0x01, 0x04, 0x32 })]
+        public async Task Elm327Session_Can_Run_Pid_Against_Obd2_Adapter(int numIterations, string[] messages, string pid, int[] expectedPidResponse)
+        {
+            // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            {
+                Elm327Session session = new Elm327Session(connection);
+                await connection.OpenAsync();
+
+                if (messages != null)
+                {
+                    foreach (string message in messages)
+                    {
+                        await session.SendCommand(message);
+                    }
+                }
+
+                while (!(await session.SendCommand("atsp0")).Contains("OK")) ;
+
+                for (int i = 0; i < numIterations; ++i)
+                {
+                    List<int> pidResponse = await session.RunPid(pid);
+                    Assert.NotNull(pidResponse);
+                    Assert.True(expectedPidResponse.SequenceEqual(pidResponse), "PID response does not match expected.");
+                }
+
+                connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// Verifies the ELM327 driver can construct without test mode.
+        /// </summary>
+        /// <returns></returns>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Elm327_Driver_Can_Construct_With_Test_Mode_Setting(bool testMode)
+        {
+            // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            {
+                Elm327Driver driver = new Elm327Driver(new DisplayConfiguration(), connection, testMode);
+                await driver.OpenAsync();
+                driver.Close();
+            }
+        }
+
+        /// <summary>
+        /// Verifies the ELM 327 driver can execute commands and get PID results against the OBD2 adapter.
+        /// </summary>
+        /// <param name="numIterations">The number iterations.</param>
+        /// <param name="testCommand">The test command.</param>
+        /// <returns></returns>
+        [Theory]
+        [InlineData(1, PidRequest.Mode1Test1)]
+        [InlineData(1, PidRequest.Mode1Test2)]
+        [InlineData(1, PidRequest.Mode1Test3)]
+        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test2)]
+        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test2 | PidRequest.Mode1Test3)]
+        [InlineData(1, PidRequest.Mode1Test2 | PidRequest.Mode1Test3)]
+        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test3)]
+        [InlineData(1, PidRequest.Mode9Test1)]
+        [InlineData(1, PidRequest.Mode9Test2)]
+        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode9Test1)]
+        [InlineData(1, PidRequest.Mode1Test2 | PidRequest.Mode9Test2)]
+        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test2 | PidRequest.Mode9Test2)]
+        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test2 | PidRequest.Mode1Test3 | PidRequest.Mode9Test1)]
+        public async Task Elm327Driver_Can_Get_Pid_Results_Against_Obd2_Adapter(int numIterations, PidRequest testCommand)
+        {
+            // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            {
+                Elm327Driver driver = new Elm327Driver(new DisplayConfiguration(), connection, true);
+                await driver.OpenAsync();
+                for (int i = 0; i < numIterations; ++i)
+                {
+                    PidResult result = await driver.GetPidResultAsync(testCommand);
+                    Assert.NotNull(result);
+                    if (testCommand.HasFlag(PidRequest.Mode1Test1))
+                    {
+                        Assert.True(result.Mode1Test1Passed);
+                    }
+
+                    if (testCommand.HasFlag(PidRequest.Mode1Test2))
+                    {
+                        Assert.True(result.Mode1Test2Passed);
+                    }
+
+                    if (testCommand.HasFlag(PidRequest.Mode1Test3))
+                    {
+                        Assert.True(result.Mode1Test3Passed);
+                    }
+
+                    if (testCommand.HasFlag(PidRequest.Mode9Test1))
+                    {
+                        Assert.True(result.Mode9Test1Passed);
+                    }
+
+                    if (testCommand.HasFlag(PidRequest.Mode9Test2))
+                    {
+                        Assert.True(result.Mode9Test2Passed);
+                    }
+                }
+
+                driver.Close();
             }
         }
     }

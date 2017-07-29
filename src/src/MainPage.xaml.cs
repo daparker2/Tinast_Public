@@ -165,8 +165,6 @@
         /// <returns></returns>
         private async Task TickLoopAsync()
         {
-            Random r = new Random();
-            Task logDelay = Task.Delay(2000 + r.Next(-200, 200));
             while (this.resumed)
             {
                 bool tickError = false;
@@ -176,13 +174,6 @@
                     await this.viewModel.Tick()
                                         .TimeoutAfter(this.viewModel.GetTickDuration())
                                         .ConfigureAwait(false);
-                    if (logDelay.IsCompleted)
-                    {
-                        await logDelay;
-                        PidDebugData transactionResult = this.driver.GetLastTransactionInfo();
-                        this.log.Trace("{0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
-                        logDelay = Task.Delay(2000);
-                    }
 
                     //// This is a brutal hack to work around intermittent connection failures on the Raspberry pi with our Bluetooth interface.
                     //// If we were ever connected to the OBD2 interface, and we become disconnected,

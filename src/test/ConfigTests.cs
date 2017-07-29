@@ -103,7 +103,7 @@
         public async Task DisplayConfiguration_Stores_Parameter_Correctly(string propertyName, object expectedValue)
         {
             ILogger logger = this.CreateLogger();
-            logger.Debug("Checking of '{0}' can be set to {1}", expectedValue);
+            logger.Debug("Checking of '{0}' can be set to {1}", propertyName, expectedValue);
             DisplayConfiguration config = new DisplayConfiguration();
             PropertyInfo propInfo = config.GetType().GetProperty(propertyName);
             propInfo.SetValue(config, expectedValue);

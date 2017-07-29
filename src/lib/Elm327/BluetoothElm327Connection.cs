@@ -184,9 +184,28 @@ namespace DP.Tinast.Elm327
                     this.socket.Control.NoDelay = true;
                     this.socket.Control.SerializeConnectionAttempts = true;
 
-                    this.log.Info("Connecting to {0};{1}", service.ConnectionHostName, service.ConnectionServiceName);
-                    await this.socket.ConnectAsync(service.ConnectionHostName, service.ConnectionServiceName, SocketProtectionLevel.PlainSocket);
-                    this.socketConnected = true;
+                    Exception connectException = null;
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        this.log.Info("Connecting to {0};{1}, attempt {2}", service.ConnectionHostName, service.ConnectionServiceName, i + 1);
+                        try
+                        {
+                            await this.socket.ConnectAsync(service.ConnectionHostName, service.ConnectionServiceName, SocketProtectionLevel.PlainSocket);
+                            this.socketConnected = true;
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            this.log.Error("Connect failed.", ex);
+                            ex = connectException;
+                        }
+                    }
+
+                    if (!this.socketConnected)
+                    {
+                        throw new ConnectFailedException("Failed to connect to the OBD2 adapter.", connectException);
+                    }
+
                     return;
                 }
             }

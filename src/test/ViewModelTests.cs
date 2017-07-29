@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
     using Windows.UI.Xaml.Data;
     using Config;
+    using Elm327;
     using Interfaces;
     using ViewModel;
     using MetroLog;
@@ -208,6 +209,32 @@
             await viewModel.Tick();
             Assert.True(viewModel.Faulted);
             Assert.True(propSet);
+        }
+
+        /// <summary>
+        /// Verifies the DisplayViewModel ticks against the OBD2 adapter for the given number of iterations.
+        /// </summary>
+        /// <param name="numIterations">The number iterations.</param>
+        /// <returns></returns>
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(10)]
+        [InlineData(100)]
+        [InlineData(1000)]
+        public async Task DisplayView_Model_Ticks_Against_Obd2_Adapter(int numIterations)
+        {
+            // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            {
+                DisplayConfiguration config = new DisplayConfiguration();
+                Elm327Driver driver = new Elm327Driver(config, connection);
+                DisplayViewModel viewModel = new DisplayViewModel(driver, config);
+                for (int i = 0; i < numIterations; ++i)
+                {
+                    await viewModel.Tick();
+                }
+            }
         }
     }
 }

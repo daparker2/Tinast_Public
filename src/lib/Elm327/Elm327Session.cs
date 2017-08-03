@@ -5,8 +5,10 @@
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Runtime.InteropServices.WindowsRuntime;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Windows.Devices.Bluetooth.Rfcomm;
     using Windows.Devices.Enumeration;
@@ -71,37 +73,29 @@
         /// Sends the command.
         /// </summary>
         /// <param name="commandString">The command string.</param>
+        /// <param name="token">The token.</param>
         /// <returns></returns>
-        public async Task<string[]> SendCommand(string commandString)
+        public async Task<string[]> SendCommandAsync(string commandString, CancellationToken token)
         {
-            try
-            {
-                DateTime start = DateTime.Now;
-                byte[] outBuf = Encoding.ASCII.GetBytes(commandString + "\r");
-                await this.connection.OutputStream.WriteAsync(outBuf.AsBuffer());
-                await this.connection.OutputStream.FlushAsync();
-                string[] ret = await this.ReadResponse();
-                this.debugData = new PidDebugData(commandString, ret, DateTime.Now - start);
-                this.log.Trace(this.debugData.ToString());
-                return ret;
-            }
-            catch (IOException)
-            {
-                this.debugData = new PidDebugData(commandString, new string[] { }, TimeSpan.MaxValue);
-                throw;
-            }
+            DateTime start = DateTime.Now;
+            byte[] outBuf = Encoding.ASCII.GetBytes(commandString + "\r");
+            await this.connection.OutputStream.WriteAsync(outBuf.AsBuffer());
+            string[] ret = await this.ReadResponseAsync(token);
+            this.debugData = new PidDebugData(commandString, ret, DateTime.Now - start);
+            this.log.Trace(this.debugData.ToString());
+            return ret;
         }
 
         /// <summary>
         /// Runs a PID against the ECU.
         /// </summary>
         /// <param name="pid">The PID string.</param>
-        /// <param name="resultCount">The expected result count.</param>
+        /// <param name="token">The cancellation token.</param>
         /// <returns>An array of pid values.</returns>
-        public async Task<List<int>> RunPid(string pid)
+        public async Task<List<int>> RunPidAsync(string pid, CancellationToken token)
         {
             List<int> pr = new List<int>();
-            string[] r = await this.SendCommand(pid);
+            string[] r = await this.SendCommandAsync(pid, token);
             if (!r[r.Length - 1].Equals("UNABLE TO CONNECT") && !r[r.Length - 1].Equals("NO DATA"))
             {
                 bool multiline = false;
@@ -150,48 +144,52 @@
         /// Reads a line off the input socket.
         /// </summary>
         /// <returns></returns>
-        private async Task<string[]> ReadResponse()
+        private async Task<string[]> ReadResponseAsync(CancellationToken token)
         {
-            List<char> cb = new List<char>();
-            List<string> sr = new List<string>();
-            for (;;)
+            using (CancellationTokenRegistration ctr = token.Register(async () => await this.connection.CancelAsync()))
             {
-                byte[] read = (await this.connection.InputStream.ReadAsync(this.readBuffer, this.readBuffer.Capacity, InputStreamOptions.Partial))
-                                            .ToArray();
-                for (int i = 0; i < read.Length; ++i)
+                List<char> cb = new List<char>();
+                List<string> sr = new List<string>();
+                for (;;)
                 {
-                    if (read[i] == '>')
+                    byte[] read = (await this.connection.InputStream.ReadAsync(this.readBuffer, this.readBuffer.Capacity, InputStreamOptions.Partial))
+                                                .ToArray();
+                    token.ThrowIfCancellationRequested();
+                    for (int i = 0; i < read.Length; ++i)
                     {
-                        int sCur = 0;
-                        while (sCur < cb.Count)
+                        if (read[i] == '>')
                         {
-                            int sEnd = cb.IndexOf('\r', sCur);
-                            if (sEnd < 0)
+                            int sCur = 0;
+                            while (sCur < cb.Count)
                             {
-                                break;
-                            }
-                            else if (sEnd > sCur)
-                            {
-                                int sLen = sEnd - sCur;
-                                char[] sa = new char[sLen];
-                                cb.CopyTo(sCur, sa, 0, sLen);
-                                string s = new string(sa, 0, sLen);
-                                if (s.Equals("STOPPED"))
+                                int sEnd = cb.IndexOf('\r', sCur);
+                                if (sEnd < 0)
                                 {
-                                    throw new IOException("ELM327 device stopped.");
+                                    break;
+                                }
+                                else if (sEnd > sCur)
+                                {
+                                    int sLen = sEnd - sCur;
+                                    char[] sa = new char[sLen];
+                                    cb.CopyTo(sCur, sa, 0, sLen);
+                                    string s = new string(sa, 0, sLen);
+                                    if (s.Equals("STOPPED"))
+                                    {
+                                        throw new IOException("ELM327 device stopped.");
+                                    }
+
+                                    sr.Add(s);
                                 }
 
-                                sr.Add(s);
+                                sCur = sEnd + 1;
                             }
 
-                            sCur = sEnd + 1;
+                            return sr.ToArray();
                         }
-
-                        return sr.ToArray();
-                    }
-                    else
-                    {
-                        cb.Add((char)read[i]);
+                        else
+                        {
+                            cb.Add((char)read[i]);
+                        }
                     }
                 }
             }

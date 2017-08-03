@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Windows.Devices.Bluetooth.Rfcomm;
     using Windows.Devices.Enumeration;
@@ -167,36 +168,28 @@
         /// <summary>
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
+        /// <param name="token">The token.</param>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        public async Task OpenAsync()
+        public async Task OpenAsync(CancellationToken token)
         {
             try
             {
                 await this.connection.OpenAsync();
 
                 // Get some info about the device we just connected to.
-                string elmDeviceDesc = (await this.session.SendCommand("atz")).FirstOrDefault();
+                string elmDeviceDesc = (await this.session.SendCommandAsync("atz", token)).FirstOrDefault();
                 this.log.Trace("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
 
-                await this.SetDefaults();
+                await this.SetDefaults(token);
 
-                while (!(await this.session.SendCommand("atsp0")).Contains("OK")) ;
+                while (!(await this.session.SendCommandAsync("atsp0", token)).Contains("OK")) ;
 
                 this.log.Info("ELM327 device connected. ECU on.");
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!(ex is OperationCanceledException))
             {
                 throw new ConnectFailedException("Connect failed.", ex);
             }
-        }
-
-        /// <summary>
-        /// Closes the connection to the OBD2 ELM327 interface.
-        /// </summary>
-        /// <returns></returns>
-        public void Close()
-        {
-            this.connection.Close();
         }
 
         /// <summary>
@@ -214,9 +207,10 @@
         /// Gets the PID result for the specific PID request from the ECU.
         /// </summary>
         /// <param name="request">The PID request.</param>
+        /// <param name="token">The token.</param>
         /// <returns>A <see cref="PidResult"/> object.</returns>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        public async Task<PidResult> GetPidResultAsync(PidRequest request)
+        public async Task<PidResult> GetPidResultAsync(PidRequest request, CancellationToken token)
         {
             if (this.testMode)
             {
@@ -243,7 +237,7 @@
                     {
                         if (cPids > 0)
                         {
-                            await this.UpdatePidResult(sb.ToString());
+                            await this.UpdatePidResult(sb.ToString(), token);
                             cPids = 0;
                         }
 
@@ -258,7 +252,7 @@
 
                     if (cPids == this.config.MaxPidsAtOnce)
                     {
-                        await this.UpdatePidResult(sb.ToString());
+                        await this.UpdatePidResult(sb.ToString(), token);
                         cPids = 0;
                         mode = 0;
                     }
@@ -266,12 +260,12 @@
 
                 if (cPids > 0)
                 {
-                    await this.UpdatePidResult(sb.ToString());
+                    await this.UpdatePidResult(sb.ToString(), token);
                 }
 
                 return this.result;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!(ex is OperationCanceledException))
             {
                 throw new ConnectFailedException("Pid request failed.", ex);
             }
@@ -281,10 +275,11 @@
         /// Updates the <see cref="PidResult"/> object.
         /// </summary>
         /// <param name="pidRequest">The PID request.</param>
+        /// <param name="token">The token.</param>
         /// <returns>A PID result.</returns>
-        private async Task UpdatePidResult(string pidRequest)
+        private async Task UpdatePidResult(string pidRequest, CancellationToken token)
         {
-            List<int> pidResult = await this.session.RunPid(pidRequest);
+            List<int> pidResult = await this.session.RunPidAsync(pidRequest, token);
             try
             {
                 if (pidResult.Count > 0)
@@ -313,17 +308,17 @@
         /// Sets the defaults scantool settings for the ELM 327 driver.
         /// </summary>
         /// <returns></returns>
-        private async Task SetDefaults()
+        private async Task SetDefaults(CancellationToken token)
         {
-            await this.session.SendCommand("ate0");
-            await this.session.SendCommand("atsp0");
+            await this.session.SendCommandAsync("ate0", token);
+            await this.session.SendCommandAsync("atsp0", token);
 
             // Only talk to ECU #1, which in most cases is the engine. That's the only one that we really care about.
-            await this.session.SendCommand("atsh 7e0");
+            await this.session.SendCommandAsync("atsh 7e0", token);
 
             if (this.config.AggressiveTiming)
             {
-                await this.session.SendCommand("atat2");
+                await this.session.SendCommandAsync("atat2", token);
             }
         }
 

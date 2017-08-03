@@ -88,7 +88,7 @@
         /// <value>
         /// The test result timeout.
         /// </value>
-        public TimeSpan TestResultTimeout { get; set; } = TimeSpan.FromSeconds(600);
+        public TimeSpan TestResultTimeout { get; set; } = TimeSpan.FromSeconds(2500);
 
         /// <summary>
         /// Called when the test runner initializes.
@@ -137,7 +137,7 @@
 
                 if (s.Contains("Tests run: "))
                 {
-                    this.log.Debug("Test run complete.");
+                    this.log.Debug("Test run complete: {0}", s);
                     return s;
                 }
             }

@@ -6,6 +6,7 @@ namespace DP.Tinast.Tests
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Interfaces;
     using MetroLog;
@@ -21,8 +22,9 @@ namespace DP.Tinast.Tests
             get; set;
         }
 
-        public async Task OpenAsync()
+        public async Task OpenAsync(CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
             await Task.Delay(0);
             this.Connected = true;
         }
@@ -37,8 +39,9 @@ namespace DP.Tinast.Tests
             return new PidDebugData(string.Empty, new string[] { }, TimeSpan.Zero);
         }
 
-        public async Task<PidResult> GetPidResultAsync(PidRequest request)
+        public async Task<PidResult> GetPidResultAsync(PidRequest request, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
             await Task.Delay(0);
             return this.result;
         }

@@ -175,17 +175,6 @@
         }
 
         /// <summary>
-        /// Verifies the display view model reports a tick duration in the environment.
-        /// </summary>
-        [Fact]
-        public void DisplayViewModel_Reports_Tick_Duration()
-        {
-            MockDisplayDriver displayDriver = new MockDisplayDriver();
-            DisplayViewModel viewModel = new DisplayViewModel(displayDriver, new DisplayConfiguration());
-            Assert.True(viewModel.GetTickDuration().TotalMilliseconds > 0);
-        }
-
-        /// <summary>
         /// Verifies the display view model reports a fault.
         /// </summary>
         /// <returns></returns>
@@ -232,7 +221,12 @@
                 DisplayViewModel viewModel = new DisplayViewModel(driver, config);
                 for (int i = 0; i < numIterations; ++i)
                 {
+                    bool wasConnecting = viewModel.Obd2Connecting;
                     await viewModel.Tick();
+                    if (wasConnecting)
+                    {
+                        Assert.False(viewModel.Obd2Connecting);
+                    }
                 }
             }
         }

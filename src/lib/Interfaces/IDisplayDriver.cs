@@ -5,6 +5,7 @@ namespace DP.Tinast.Interfaces
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -15,22 +16,19 @@ namespace DP.Tinast.Interfaces
         /// <summary>
         /// Connects to the OBD2 ELM327 interface.
         /// </summary>
+        /// <param name="token">The token.</param>
         /// <returns>True if the connection was established.</returns>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        Task OpenAsync();
-
-        /// <summary>
-        /// Closes this instance.
-        /// </summary>
-        void Close();
+        Task OpenAsync(CancellationToken token);
 
         /// <summary>
         /// Gets the pid result.
         /// </summary>
         /// <param name="request">The request.</param>
+        /// <param name="token">The token.</param>
         /// <returns>The result of the PID request.</returns>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        Task<PidResult> GetPidResultAsync(PidRequest request);
+        Task<PidResult> GetPidResultAsync(PidRequest request, CancellationToken token);
 
         /// <summary>
         /// Gets the last transaction information, which in most cases will be the command sent to GetPidResultAsync.

@@ -172,7 +172,6 @@
                 {
                     await Task.Yield();
                     await this.viewModel.Tick()
-                                        .TimeoutAfter(this.viewModel.GetTickDuration())
                                         .ConfigureAwait(false);
 
                     //// This is a brutal hack to work around intermittent connection failures on the Raspberry pi with our Bluetooth interface.
@@ -198,7 +197,7 @@
                         }
                     }
                 }
-                catch (TimeoutException)
+                catch (OperationCanceledException)
                 {
                     this.log.Error("Tick update timed out.");
                     tickError = true;

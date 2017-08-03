@@ -6,12 +6,14 @@ namespace DP.Tinast.Elm327
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Runtime.InteropServices.WindowsRuntime;
     using System.Text;
     using System.Threading.Tasks;
     using Windows.Devices.Bluetooth.Rfcomm;
     using Windows.Devices.Enumeration;
     using Windows.Foundation;
+    using Windows.Networking;
     using Windows.Networking.Sockets;
     using Windows.Storage;
     using Windows.Storage.Streams;
@@ -42,6 +44,16 @@ namespace DP.Tinast.Elm327
         private string deviceName;
 
         /// <summary>
+        /// The host name
+        /// </summary>
+        private HostName hostName;
+
+        /// <summary>
+        /// The service name
+        /// </summary>
+        private string serviceName;
+
+        /// <summary>
         /// The socket connected
         /// </summary>
         private bool socketConnected = false;
@@ -55,9 +67,13 @@ namespace DP.Tinast.Elm327
         /// Initializes a new instance of the <see cref="BluetoothElm327Connection"/> class.
         /// </summary>
         /// <param name="deviceName">Name of the device.</param>
-        private BluetoothElm327Connection(string deviceName)
+        /// <param name="hostName">The connection hostname.</param>
+        /// <param name="serviceName">The connection service name.</param>
+        private BluetoothElm327Connection(string deviceName, HostName hostName, string serviceName)
         {
             this.deviceName = deviceName;
+            this.hostName = hostName;
+            this.serviceName = serviceName;
         }
 
         /// <summary>
@@ -143,7 +159,7 @@ namespace DP.Tinast.Elm327
                     if (status == DeviceAccessStatus.Allowed)
                     {
                         DeviceInformation aepInfo = await DeviceInformation.CreateFromIdAsync((string)serviceInfo.Properties["System.Devices.AepService.AepId"]);
-                        ret.Add(new BluetoothElm327Connection(aepInfo.Name));
+                        ret.Add(new BluetoothElm327Connection(aepInfo.Name, service.ConnectionHostName, service.ConnectionServiceName));
                     }
                 }
             }
@@ -159,73 +175,36 @@ namespace DP.Tinast.Elm327
         {
             if (this.socketConnected)
             {
-                throw new InvalidOperationException("Socket already connected.");
+                this.socketConnected = false;
+                this.socket.Dispose();
+                this.socket = null;
             }
 
-            DeviceInformationCollection serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort), new string[] { "System.Devices.AepService.AepId" });
-            foreach (DeviceInformation serviceInfo in serviceInfoCollection)
-            {
-                DeviceInformation aepInfo = await DeviceInformation.CreateFromIdAsync((string)serviceInfo.Properties["System.Devices.AepService.AepId"]);
-
-                this.log.Debug("BT device {0}", aepInfo.Name);
-                if (aepInfo.Name == this.deviceName)
-                {
-                    DevicePairingResult pairingResult = await aepInfo.Pairing.Custom.PairAsync(DevicePairingKinds.ConfirmOnly, DevicePairingProtectionLevel.None);
-                    this.log.Debug("Device pairing status: {0}, protection level: {1}", pairingResult.Status, pairingResult.ProtectionLevelUsed);
-
-                    RfcommDeviceService service = await RfcommDeviceService.FromIdAsync(serviceInfo.Id);
-                    if (service == null)
-                    {
-                        throw new InvalidOperationException("Access to the OBD2 device was denied.");
-                    }
-
-                    this.socket = new StreamSocket();
-                    this.socket.Control.NoDelay = true;
-                    this.socket.Control.SerializeConnectionAttempts = true;
-
-                    Exception connectException = null;
-                    for (int i = 0; i < 3; ++i)
-                    {
-                        this.log.Info("Connecting to {0};{1}, attempt {2}", service.ConnectionHostName, service.ConnectionServiceName, i + 1);
-                        try
-                        {
-                            await this.socket.ConnectAsync(service.ConnectionHostName, service.ConnectionServiceName, SocketProtectionLevel.PlainSocket);
-                            this.socketConnected = true;
-                            break;
-                        }
-                        catch (Exception ex)
-                        {
-                            this.log.Error("Connect failed.", ex);
-                            ex = connectException;
-                        }
-                    }
-
-                    if (!this.socketConnected)
-                    {
-                        throw new ConnectFailedException("Failed to connect to the OBD2 adapter.", connectException);
-                    }
-
-                    return;
-                }
-            }
-
-            throw new ConnectFailedException("Device not found. It may have been removed.");
+            this.log.Info("Connecting to '{0}'", this.deviceName);
+            this.socket = new StreamSocket();
+            await this.socket.ConnectAsync(this.hostName, this.serviceName);
+            this.socketConnected = true;
+            return;
         }
 
         /// <summary>
-        /// Closes the connection asynchronously.
+        /// Cancels the IO asynchronously.
         /// </summary>
         /// <returns></returns>
-        public void Close()
+        public async Task CancelAsync()
         {
-            if (!this.socketConnected)
+            if (this.socket != null)
             {
-                throw new InvalidOperationException("Socket not opened.");
+                try
+                {
+                    await this.socket.CancelIOAsync();
+                }
+                catch (COMException ex)
+                {
+                    // COMException is probably okay, it just means the IO wasn't in a cancelable state..
+                    this.log.Warn("CancelIOAsync failed", ex);
+                }
             }
-
-            this.socketConnected = false;
-            this.socket.Dispose();
-            this.socket = null;
         }
 
         /// <summary>
@@ -257,10 +236,13 @@ namespace DP.Tinast.Elm327
             if (!this.disposed)
             {
                 this.disposed = true;
+                this.socketConnected = false;
                 if (disposing)
                 {
                     if (this.socket != null)
                     {
+                        this.log.Info("Closing connection to '{0}'", this.deviceName);
+                        this.socketConnected = false;
                         this.socket.Dispose();
                         this.socket = null;
                     }

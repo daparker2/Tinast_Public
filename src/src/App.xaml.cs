@@ -301,7 +301,7 @@
 
                 if (this.connection != null)
                 {
-                    this.connection.Close();
+                    this.connection.Dispose();
                 }
 
                 if (this.displayRequest != null)

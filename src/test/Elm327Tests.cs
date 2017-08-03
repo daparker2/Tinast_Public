@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Windows.UI.Xaml.Data;
     using Config;
@@ -44,6 +45,8 @@
             log.Info("Found BT device '{0}'", connections.FirstOrDefault().DeviceName);
         }
 
+        // The below stuff is expected to throw sometimes. We just verify that successive attempts don't produce the same failure.
+
         /// <summary>
         /// Verifies the elm327 connection connects and disconnects from the bluetooth device.
         /// </summary>
@@ -59,15 +62,123 @@
         {
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
             {
+                string lastExceptionMessage = null;
+                Assert.False(connection.Opened);
                 for (int i = 0; i < numIterations; ++i)
                 {
-                    Assert.False(connection.Opened);
-                    await connection.OpenAsync();
-                    Assert.True(connection.Opened);
-                    connection.Close();
-                }
+                    try
+                    {
+                        await connection.OpenAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Assert.NotEqual(lastExceptionMessage, ex.Message);
+                        lastExceptionMessage = ex.Message;
+                    }
 
-                Assert.False(connection.Opened);
+                    Assert.True(connection.Opened);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Verifies the parser can evaluate the given obd2 adapter message.
+        /// </summary>
+        /// <param name="numIterations">The number iterations.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="expectedResponse">The response.</param>
+        /// <returns></returns>
+        [Theory]
+        [InlineData(2, "atz", new string[] { "ELM327 v1.5" })]
+        [InlineData(100, "atz", new string[] { "ELM327 v1.5" })]
+        public async Task Elm327Session_Can_Cancel_Send_Obd2_Command(int numIterations, string message, string[] expectedResponse)
+        {
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            {
+                Elm327Session session = new Elm327Session(connection);
+                string lastExceptionMessage = null;
+                try
+                {
+                    await connection.OpenAsync();
+
+                    for (int i = 0; i < numIterations; ++i)
+                    {
+                        using (CancellationTokenSource cts = new CancellationTokenSource())
+                        {
+                            Task sendCommand = session.SendCommandAsync(message, cts.Token);
+                            cts.Cancel();
+                            try
+                            {
+                                await sendCommand;
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                // Expected.
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Assert.NotEqual(lastExceptionMessage, ex.Message);
+                    lastExceptionMessage = ex.Message;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Verifies the ELM 327 session can run a pid against the OBD2 adapter.
+        /// </summary>
+        /// <param name="numIterations">The number iterations.</param>
+        /// <param name="messages">The messages.</param>
+        /// <param name="pid">The pid.</param>
+        /// <returns></returns>
+        [Theory]
+        [InlineData(10, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "01010304")]
+        [InlineData(10, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0104")]
+        [InlineData(100, new string[] { "atz", "ate0", "atsh 7e0", "atat2" }, "0103")]
+        public async Task Elm327Session_Can_Cancel_Run_Pid_Against_Obd2_Adapter(int numIterations, string[] messages, string pid)
+        {
+            // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            {
+                Elm327Session session = new Elm327Session(connection);
+                string lastExceptionMessage = null;
+                try
+                {
+                    await connection.OpenAsync();
+
+                    if (messages != null)
+                    {
+                        foreach (string message in messages)
+                        {
+                            await session.SendCommandAsync(message, CancellationToken.None);
+                        }
+                    }
+
+                    while (!(await session.SendCommandAsync("atsp0", CancellationToken.None)).Contains("OK")) ;
+
+                    for (int i = 0; i < numIterations; ++i)
+                    {
+                        using (CancellationTokenSource cts = new CancellationTokenSource())
+                        {
+                            Task<List<int>> pidResponseTask = session.RunPidAsync(pid, CancellationToken.None);
+                            cts.Cancel();
+                            try
+                            {
+                                await pidResponseTask;
+                            }
+                            catch (OperationCanceledException)
+                            {
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Assert.NotEqual(lastExceptionMessage, ex.Message);
+                    lastExceptionMessage = ex.Message;
+                }
             }
         }
 
@@ -87,16 +198,23 @@
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
             {
                 Elm327Session session = new Elm327Session(connection);
-                await connection.OpenAsync();
-
-                for (int i = 0; i < numIterations; ++i)
+                string lastExceptionMessage = null;
+                try
                 {
-                    string[] actualResponse = await session.SendCommand(message);
-                    int toSkip = actualResponse.Length - expectedResponse.Length;
-                    Assert.True(expectedResponse.SequenceEqual(actualResponse.Skip(toSkip)), "Response mismatches expected.");
-                }
+                    await connection.OpenAsync();
 
-                connection.Close();
+                    for (int i = 0; i < numIterations; ++i)
+                    {
+                        string[] actualResponse = await session.SendCommandAsync(message, CancellationToken.None);
+                        int toSkip = actualResponse.Length - expectedResponse.Length;
+                        Assert.True(expectedResponse.SequenceEqual(actualResponse.Skip(toSkip)), "Response mismatches expected.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Assert.NotEqual(lastExceptionMessage, ex.Message);
+                    lastExceptionMessage = ex.Message;
+                }
             }
         }
 
@@ -126,37 +244,33 @@
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
             {
                 Elm327Session session = new Elm327Session(connection);
-                await connection.OpenAsync();
-
-                if (messages != null)
+                string lastExceptionMessage = null;
+                try
                 {
-                    foreach (string message in messages)
-                    {
-                        await session.SendCommand(message);
-                    }
-                }
+                    await connection.OpenAsync();
 
-                while (!(await session.SendCommand("atsp0")).Contains("OK")) ;
-
-                for (int i = 0; i < numIterations; ++i)
-                {
-                    List<int> pidResponse = await session.RunPid(pid);
-                    Assert.NotNull(pidResponse);
-                    for (int j = 0; i < 3; ++j)
+                    if (messages != null)
                     {
-                        if (expectedPidResponse.SequenceEqual(pidResponse))
+                        foreach (string message in messages)
                         {
-                            break;
+                            await session.SendCommandAsync(message, CancellationToken.None);
                         }
-
-                        pidResponse = await session.RunPid(pid);
-                        Assert.NotNull(pidResponse);
                     }
 
-                    Assert.True(expectedPidResponse.SequenceEqual(pidResponse), "PID response does not match expected.");
-                }
+                    while (!(await session.SendCommandAsync("atsp0", CancellationToken.None)).Contains("OK")) ;
 
-                connection.Close();
+                    for (int i = 0; i < numIterations; ++i)
+                    {
+                        List<int> pidResponse = await session.RunPidAsync(pid, CancellationToken.None);
+                        Assert.NotNull(pidResponse);
+                        Assert.True(expectedPidResponse.SequenceEqual(pidResponse), "PID response does not match expected.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Assert.NotEqual(lastExceptionMessage, ex.Message);
+                    lastExceptionMessage = ex.Message;
+                }
             }
         }
 
@@ -173,8 +287,16 @@
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
             {
                 Elm327Driver driver = new Elm327Driver(new DisplayConfiguration(), connection, testMode);
-                await driver.OpenAsync();
-                driver.Close();
+                string lastExceptionMessage = null;
+                try
+                {
+                    await driver.OpenAsync(CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    Assert.NotEqual(lastExceptionMessage, ex.Message);
+                    lastExceptionMessage = ex.Message;
+                }
             }
         }
 
@@ -210,38 +332,45 @@
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
             {
                 Elm327Driver driver = new Elm327Driver(new DisplayConfiguration(), connection, true);
-                await driver.OpenAsync();
-                for (int i = 0; i < numIterations; ++i)
+                string lastExceptionMessage = null;
+                try
                 {
-                    PidResult result = await driver.GetPidResultAsync(testCommand);
-                    Assert.NotNull(result);
-                    if (testCommand.HasFlag(PidRequest.Mode1Test1))
+                    await driver.OpenAsync(CancellationToken.None);
+                    for (int i = 0; i < numIterations; ++i)
                     {
-                        Assert.True(result.Mode1Test1Passed);
-                    }
+                        PidResult result = await driver.GetPidResultAsync(testCommand, CancellationToken.None);
+                        Assert.NotNull(result);
+                        if (testCommand.HasFlag(PidRequest.Mode1Test1))
+                        {
+                            Assert.True(result.Mode1Test1Passed);
+                        }
 
-                    if (testCommand.HasFlag(PidRequest.Mode1Test2))
-                    {
-                        Assert.True(result.Mode1Test2Passed);
-                    }
+                        if (testCommand.HasFlag(PidRequest.Mode1Test2))
+                        {
+                            Assert.True(result.Mode1Test2Passed);
+                        }
 
-                    if (testCommand.HasFlag(PidRequest.Mode1Test3))
-                    {
-                        Assert.True(result.Mode1Test3Passed);
-                    }
+                        if (testCommand.HasFlag(PidRequest.Mode1Test3))
+                        {
+                            Assert.True(result.Mode1Test3Passed);
+                        }
 
-                    if (testCommand.HasFlag(PidRequest.Mode9Test1))
-                    {
-                        Assert.True(result.Mode9Test1Passed);
-                    }
+                        if (testCommand.HasFlag(PidRequest.Mode9Test1))
+                        {
+                            Assert.True(result.Mode9Test1Passed);
+                        }
 
-                    if (testCommand.HasFlag(PidRequest.Mode9Test2))
-                    {
-                        Assert.True(result.Mode9Test2Passed);
+                        if (testCommand.HasFlag(PidRequest.Mode9Test2))
+                        {
+                            Assert.True(result.Mode9Test2Passed);
+                        }
                     }
                 }
-
-                driver.Close();
+                catch (Exception ex)
+                {
+                    Assert.NotEqual(lastExceptionMessage, ex.Message);
+                    lastExceptionMessage = ex.Message;
+                }
             }
         }
     }

@@ -1,0 +1,825 @@
+﻿1|2017-08-03T04:51:47.7781973+00:00|TRACE|3|Created Logger 'App'
+2|2017-08-03T04:51:49.3563350+00:00|INFO|3|App|In BreakBluetooth()
+3|2017-08-03T04:51:51.4344708+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+4|2017-08-03T04:51:51.8563486+00:00|INFO|3|App|Connecting
+5|2017-08-03T04:51:52.8407309+00:00|DEBUG|3|App|ConnectAsync() succeeded
+6|2017-08-03T04:51:52.8563704+00:00|DEBUG|3|App|Sending PID 0103
+7|2017-08-03T04:51:53.0126080+00:00|DEBUG|3|App|Got a valid response
+8|2017-08-03T04:51:53.0126080+00:00|DEBUG|3|App|Sending PID 0103
+9|2017-08-03T04:51:53.1219812+00:00|DEBUG|3|App|Got a valid response
+10|2017-08-03T04:51:53.1219812+00:00|DEBUG|3|App|Sending PID 0103
+11|2017-08-03T04:51:53.2313588+00:00|DEBUG|3|App|Got a valid response
+12|2017-08-03T04:51:53.2469831+00:00|DEBUG|3|App|Sending PID 0103
+13|2017-08-03T04:51:53.3563587+00:00|DEBUG|3|App|Got a valid response
+14|2017-08-03T04:51:53.3563587+00:00|DEBUG|3|App|Sending PID 0103
+15|2017-08-03T04:51:53.4657307+00:00|DEBUG|3|App|Got a valid response
+16|2017-08-03T04:51:53.4813865+00:00|DEBUG|3|App|Sending PID 0103
+17|2017-08-03T04:51:53.5907369+00:00|DEBUG|3|App|Got a valid response
+18|2017-08-03T04:51:53.5907369+00:00|DEBUG|3|App|Sending PID 0103
+19|2017-08-03T04:51:53.7001096+00:00|DEBUG|3|App|Got a valid response
+20|2017-08-03T04:51:53.7157586+00:00|DEBUG|3|App|Sending PID 0103
+21|2017-08-03T04:51:53.8094830+00:00|DEBUG|3|App|Got a valid response
+22|2017-08-03T04:51:53.8251123+00:00|DEBUG|3|App|Sending PID 0103
+23|2017-08-03T04:51:53.9344857+00:00|DEBUG|3|App|Got a valid response
+24|2017-08-03T04:51:53.9344857+00:00|DEBUG|3|App|Sending PID 0103
+25|2017-08-03T04:51:54.0282344+00:00|DEBUG|3|App|Got a valid response
+26|2017-08-03T04:51:54.0438728+00:00|DEBUG|3|App|Sending PID 0103
+27|2017-08-03T04:51:54.1532429+00:00|DEBUG|3|App|Got a valid response
+28|2017-08-03T04:51:54.1532429+00:00|DEBUG|3|App|Sending PID 0103
+29|2017-08-03T04:51:55.1688704+00:00|WARN|3|App|Timed out
+Exception thrown: 'System.TimeoutException' in Break Raspberry Pi Bluetooth.exe
+30|2017-08-03T04:51:57.2001527+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.TimeoutException: The operation has timed out.
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+31|2017-08-03T04:51:57.6063858+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+32|2017-08-03T04:51:57.6220110+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+33|2017-08-03T04:52:12.8721062+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+34|2017-08-03T04:52:13.3877373+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+35|2017-08-03T04:52:13.4033623+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+36|2017-08-03T04:52:28.6690812+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+37|2017-08-03T04:52:29.1065880+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+38|2017-08-03T04:52:29.1222134+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+39|2017-08-03T04:52:44.3410567+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+40|2017-08-03T04:52:44.7316900+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+41|2017-08-03T04:52:44.7473128+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+42|2017-08-03T04:53:00.0442865+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+43|2017-08-03T04:53:00.4036634+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+44|2017-08-03T04:53:00.4661625+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+45|2017-08-03T04:53:15.7162577+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+46|2017-08-03T04:53:16.0912638+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+47|2017-08-03T04:53:16.1068887+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+48|2017-08-03T04:53:31.4038581+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+49|2017-08-03T04:53:31.7944899+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+50|2017-08-03T04:53:31.7944899+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+51|2017-08-03T04:53:47.0914587+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+52|2017-08-03T04:53:47.4508399+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+53|2017-08-03T04:53:47.4664650+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+54|2017-08-03T04:54:02.6540583+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+55|2017-08-03T04:54:03.0290657+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+56|2017-08-03T04:54:03.0290657+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+57|2017-08-03T04:54:18.2322866+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+58|2017-08-03T04:54:18.6072890+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+59|2017-08-03T04:54:18.6229168+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+60|2017-08-03T04:54:33.9042586+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+61|2017-08-03T04:54:34.2792646+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+62|2017-08-03T04:54:34.2792646+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+63|2017-08-03T04:54:49.4668583+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+64|2017-08-03T04:54:49.8574908+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+65|2017-08-03T04:54:49.8731144+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+66|2017-08-03T04:55:05.1388336+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+67|2017-08-03T04:55:05.5138397+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+68|2017-08-03T04:55:05.5138397+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+69|2017-08-03T04:55:20.7014334+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+70|2017-08-03T04:55:21.0764403+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+71|2017-08-03T04:55:21.0764403+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+72|2017-08-03T04:55:36.2640332+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+73|2017-08-03T04:55:36.6390395+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+74|2017-08-03T04:55:36.6390395+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+75|2017-08-03T04:55:51.8422578+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+76|2017-08-03T04:55:52.2172654+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+77|2017-08-03T04:55:52.2172654+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+78|2017-08-03T04:56:07.4361116+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+79|2017-08-03T04:56:07.8423649+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+80|2017-08-03T04:56:07.8580108+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+81|2017-08-03T04:56:23.6761567+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+82|2017-08-03T04:56:24.1407619+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+83|2017-08-03T04:56:24.1407619+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+84|2017-08-03T04:56:41.0041084+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+85|2017-08-03T04:56:41.5031299+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+86|2017-08-03T04:56:41.5375502+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+87|2017-08-03T04:56:58.2632329+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+88|2017-08-03T04:56:58.7106336+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+89|2017-08-03T04:56:58.7106336+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+90|2017-08-03T04:57:15.4879442+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+91|2017-08-03T04:57:15.9697540+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+92|2017-08-03T04:57:15.9869618+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+93|2017-08-03T04:57:32.7986888+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+94|2017-08-03T04:57:33.2116735+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+95|2017-08-03T04:57:34.8463790+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+96|2017-08-03T04:57:51.6581088+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+97|2017-08-03T04:57:52.1055073+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+98|2017-08-03T04:57:52.1055073+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+99|2017-08-03T04:58:08.9344352+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+100|2017-08-03T04:58:09.4162566+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+101|2017-08-03T04:58:09.4334569+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+102|2017-08-03T04:58:26.2623943+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+103|2017-08-03T04:58:26.7442038+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+104|2017-08-03T04:58:26.7614141+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+105|2017-08-03T04:58:43.6419685+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+106|2017-08-03T04:58:44.0893650+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+107|2017-08-03T04:58:44.1065700+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+108|2017-08-03T04:59:00.8494632+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+109|2017-08-03T04:59:01.2452396+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+110|2017-08-03T04:59:01.2624458+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+111|2017-08-03T04:59:17.9881337+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+112|2017-08-03T04:59:18.4527437+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+113|2017-08-03T04:59:18.4699667+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+114|2017-08-03T04:59:35.2472606+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+115|2017-08-03T04:59:35.6774530+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+116|2017-08-03T04:59:35.6946635+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+117|2017-08-03T04:59:52.5235867+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+118|2017-08-03T04:59:52.9021632+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+119|2017-08-03T04:59:53.1258533+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+120|2017-08-03T05:00:09.9203730+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+121|2017-08-03T05:00:10.3161454+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+122|2017-08-03T05:00:10.3161454+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+123|2017-08-03T05:00:27.0934629+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+124|2017-08-03T05:00:27.5236478+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+125|2017-08-03T05:00:27.5408596+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+126|2017-08-03T05:00:44.3697854+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+127|2017-08-03T05:00:44.7827697+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+128|2017-08-03T05:00:44.7999768+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+129|2017-08-03T05:01:01.6289106+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+130|2017-08-03T05:01:02.0763066+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+131|2017-08-03T05:01:02.0935945+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+132|2017-08-03T05:01:18.8880312+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+133|2017-08-03T05:01:19.3354313+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+134|2017-08-03T05:01:19.3870532+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+135|2017-08-03T05:01:36.2159839+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+136|2017-08-03T05:01:36.6977983+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+137|2017-08-03T05:01:36.7150057+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+138|2017-08-03T05:01:53.0076828+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+139|2017-08-03T05:01:54.0076874+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+140|2017-08-03T05:01:54.0076874+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+141|2017-08-03T05:02:09.2889357+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+142|2017-08-03T05:02:09.6639368+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+143|2017-08-03T05:02:09.6639368+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+144|2017-08-03T05:02:24.8983118+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+145|2017-08-03T05:02:25.3514375+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+146|2017-08-03T05:02:25.3670730+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+147|2017-08-03T05:02:40.5858078+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+148|2017-08-03T05:02:40.9295609+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+149|2017-08-03T05:02:42.4764328+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+150|2017-08-03T05:02:57.8201858+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+151|2017-08-03T05:02:58.2264362+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+152|2017-08-03T05:02:58.2420766+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+153|2017-08-03T05:03:13.5389370+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+154|2017-08-03T05:03:13.9764376+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+155|2017-08-03T05:03:13.9920647+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+156|2017-08-03T05:03:29.2108115+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+157|2017-08-03T05:03:29.5701860+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+158|2017-08-03T05:03:29.7108126+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+159|2017-08-03T05:03:44.9295637+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+160|2017-08-03T05:03:45.3670614+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+161|2017-08-03T05:03:45.3826937+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+162|2017-08-03T05:04:00.7264328+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+163|2017-08-03T05:04:01.1170688+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+164|2017-08-03T05:04:01.1326913+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+165|2017-08-03T05:04:16.4295615+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+166|2017-08-03T05:04:16.8514367+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+167|2017-08-03T05:04:16.8514367+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+168|2017-08-03T05:04:32.3983129+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+169|2017-08-03T05:04:32.8514435+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+170|2017-08-03T05:04:32.8670665+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+171|2017-08-03T05:04:48.1795581+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+172|2017-08-03T05:04:48.5701890+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+173|2017-08-03T05:04:48.5701890+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+174|2017-08-03T05:05:03.8670584+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+175|2017-08-03T05:05:04.2264371+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+176|2017-08-03T05:05:04.2420646+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+177|2017-08-03T05:05:19.5545587+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+178|2017-08-03T05:05:19.9764396+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+179|2017-08-03T05:05:19.9920661+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+180|2017-08-03T05:05:35.2420611+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+181|2017-08-03T05:05:35.6795629+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+182|2017-08-03T05:05:35.6951918+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+183|2017-08-03T05:05:50.9139355+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+184|2017-08-03T05:05:51.2733116+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+185|2017-08-03T05:05:51.2733116+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+186|2017-08-03T05:06:06.4764365+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+187|2017-08-03T05:06:06.9139383+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+188|2017-08-03T05:06:06.9295935+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+189|2017-08-03T05:06:22.1639330+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+190|2017-08-03T05:06:22.5389369+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+191|2017-08-03T05:06:22.5545629+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+192|2017-08-03T05:06:37.8670635+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+193|2017-08-03T05:06:38.2889435+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+194|2017-08-03T05:06:38.2889435+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+195|2017-08-03T05:06:53.9920618+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+196|2017-08-03T05:06:54.4139377+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+197|2017-08-03T05:06:54.4295663+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+198|2017-08-03T05:07:09.7108146+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+199|2017-08-03T05:07:10.1639409+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+200|2017-08-03T05:07:10.1795727+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+201|2017-08-03T05:07:25.4764372+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+202|2017-08-03T05:07:25.9139373+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+203|2017-08-03T05:07:25.9295645+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+204|2017-08-03T05:07:41.1483078+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+205|2017-08-03T05:07:41.5233138+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+206|2017-08-03T05:07:41.5389401+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+207|2017-08-03T05:07:56.8358113+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+208|2017-08-03T05:07:57.2420620+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+209|2017-08-03T05:07:57.2576937+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+210|2017-08-03T05:08:12.5076873+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+211|2017-08-03T05:08:12.9764415+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+212|2017-08-03T05:08:12.9920778+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+213|2017-08-03T05:08:28.2264373+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+214|2017-08-03T05:08:28.6326867+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+215|2017-08-03T05:08:28.6483150+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+216|2017-08-03T05:08:43.9295611+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+217|2017-08-03T05:08:44.3358116+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+218|2017-08-03T05:08:44.3514373+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+219|2017-08-03T05:08:59.6014374+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+220|2017-08-03T05:08:59.9920626+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+221|2017-08-03T05:09:00.0076860+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+222|2017-08-03T05:09:15.2108113+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+223|2017-08-03T05:09:15.5858136+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+224|2017-08-03T05:09:15.5858136+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+225|2017-08-03T05:09:30.7889365+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+226|2017-08-03T05:09:31.1951932+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+227|2017-08-03T05:09:31.2108134+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+228|2017-08-03T05:09:46.4608090+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+229|2017-08-03T05:09:46.8826885+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+230|2017-08-03T05:09:46.8826885+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+231|2017-08-03T05:10:02.1014363+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+232|2017-08-03T05:10:02.7108134+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+233|2017-08-03T05:10:02.7108134+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+234|2017-08-03T05:10:17.9920601+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+235|2017-08-03T05:10:18.3826893+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+236|2017-08-03T05:10:18.3983164+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+237|2017-08-03T05:10:33.6639384+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+238|2017-08-03T05:10:34.0389369+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+239|2017-08-03T05:10:34.0545608+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+240|2017-08-03T05:10:49.2733079+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+241|2017-08-03T05:10:49.7264382+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+242|2017-08-03T05:10:49.7420610+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+243|2017-08-03T05:11:04.9451859+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+244|2017-08-03T05:11:05.3983142+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+245|2017-08-03T05:11:05.4139397+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+246|2017-08-03T05:11:20.6795579+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+247|2017-08-03T05:11:21.3514365+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+248|2017-08-03T05:11:21.3514365+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+249|2017-08-03T05:11:36.5858089+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+250|2017-08-03T05:11:36.9920646+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+251|2017-08-03T05:11:37.0076911+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+252|2017-08-03T05:11:52.2889363+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+253|2017-08-03T05:11:52.6951882+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+254|2017-08-03T05:11:52.7108162+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+255|2017-08-03T05:12:07.9139360+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+256|2017-08-03T05:12:08.3045635+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+257|2017-08-03T05:12:08.3201887+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+258|2017-08-03T05:12:23.6014330+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+259|2017-08-03T05:12:24.0389390+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+260|2017-08-03T05:12:24.0545638+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+261|2017-08-03T05:12:39.2733078+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+262|2017-08-03T05:12:39.6170626+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+263|2017-08-03T05:12:40.9295612+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+264|2017-08-03T05:12:56.1795619+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+265|2017-08-03T05:12:56.5389365+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+266|2017-08-03T05:12:56.5389365+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+267|2017-08-03T05:13:11.7889393+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+268|2017-08-03T05:13:12.2420627+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+269|2017-08-03T05:13:12.2420627+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+270|2017-08-03T05:13:27.5389341+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+271|2017-08-03T05:13:27.9451873+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+272|2017-08-03T05:13:27.9608113+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+273|2017-08-03T05:13:43.2264332+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+274|2017-08-03T05:13:43.6639370+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+275|2017-08-03T05:13:43.6795662+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+276|2017-08-03T05:13:58.9139369+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+277|2017-08-03T05:13:59.3983170+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+278|2017-08-03T05:13:59.4139513+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+279|2017-08-03T05:14:14.7264366+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+280|2017-08-03T05:14:15.1483130+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+281|2017-08-03T05:14:15.1639366+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+282|2017-08-03T05:14:30.4139374+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+283|2017-08-03T05:14:30.8514385+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+284|2017-08-03T05:14:30.8670711+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+285|2017-08-03T05:14:46.1170602+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+286|2017-08-03T05:14:46.5545682+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+287|2017-08-03T05:14:46.5545682+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+288|2017-08-03T05:15:01.8045581+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+289|2017-08-03T05:15:02.4295616+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+290|2017-08-03T05:15:02.4451944+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+291|2017-08-03T05:15:17.7576886+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+292|2017-08-03T05:15:18.1795677+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+293|2017-08-03T05:15:18.1795677+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+294|2017-08-03T05:15:33.4608127+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+295|2017-08-03T05:15:33.8983114+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+296|2017-08-03T05:15:33.9139377+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+297|2017-08-03T05:15:49.1483123+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+298|2017-08-03T05:15:49.5389364+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+299|2017-08-03T05:15:49.5389364+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+300|2017-08-03T05:16:04.7264362+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+301|2017-08-03T05:16:05.1483177+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+302|2017-08-03T05:16:05.1639389+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+303|2017-08-03T05:16:20.3983103+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+304|2017-08-03T05:16:20.8201873+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+305|2017-08-03T05:16:20.8358205+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+306|2017-08-03T05:16:36.0701830+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+307|2017-08-03T05:16:36.4608171+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+308|2017-08-03T05:16:36.4764365+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+309|2017-08-03T05:16:51.6951864+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+310|2017-08-03T05:16:52.1639383+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+311|2017-08-03T05:16:52.1795624+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+312|2017-08-03T05:17:07.4139385+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+313|2017-08-03T05:17:07.8514407+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+314|2017-08-03T05:17:07.8670671+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+315|2017-08-03T05:17:23.1014354+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+316|2017-08-03T05:17:23.5076882+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+317|2017-08-03T05:17:23.5233210+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+318|2017-08-03T05:17:38.8358110+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+319|2017-08-03T05:17:39.2264386+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+320|2017-08-03T05:17:39.2420669+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+321|2017-08-03T05:17:54.4608118+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+322|2017-08-03T05:17:54.8514373+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+323|2017-08-03T05:17:54.8514373+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+324|2017-08-03T05:18:10.1483111+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+325|2017-08-03T05:18:10.5389378+00:00|DEBUG|3|App|Getting RFCOMM service for host (00:1D:A5:18:A2:7B)
+326|2017-08-03T05:18:10.5545680+00:00|INFO|3|App|Connecting
+Exception thrown: 'System.Exception' in mscorlib.ni.dll
+327|2017-08-03T05:18:25.8045587+00:00|ERROR|3|App|Exception in BreakBluetooth() --> System.Exception: No more data is available. (Exception from HRESULT: 0x80070103)
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   at Break_Raspberry_Pi_Bluetooth.MainPage.<BreakBluetooth>d__8.MoveNext()
+328|2017-08-03T05:18:25.8358111+00:00|INFO|3|App|Leaving BreakBluetooth(), 100 fails

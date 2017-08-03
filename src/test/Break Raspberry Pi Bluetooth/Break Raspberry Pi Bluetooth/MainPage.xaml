@@ -1,0 +1,18 @@
+﻿<Page
+    x:Class="Break_Raspberry_Pi_Bluetooth.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Break_Raspberry_Pi_Bluetooth"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0" x:Name="button" Content="Break Raspberry Pi Bluetooth" HorizontalAlignment="Center" Click="OnBreakBluetooth"/>
+        <TextBlock Grid.Row="1" x:Name="status" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    </Grid>
+</Page>

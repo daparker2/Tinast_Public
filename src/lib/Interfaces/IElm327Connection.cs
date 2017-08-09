@@ -42,11 +42,5 @@ namespace DP.Tinast.Interfaces
         /// </summary>
         /// <returns></returns>
         Task OpenAsync();
-
-        /// <summary>
-        /// Cancels the IO asynchronously.
-        /// </summary>
-        /// <returns></returns>
-        Task CancelAsync();
     }
 }

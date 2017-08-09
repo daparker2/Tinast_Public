@@ -168,21 +168,20 @@
         /// <summary>
         /// Tries connecting to the OBD2 ELM327 interface.
         /// </summary>
-        /// <param name="token">The token.</param>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        public async Task OpenAsync(CancellationToken token)
+        public async Task OpenAsync()
         {
             try
             {
                 await this.connection.OpenAsync();
 
                 // Get some info about the device we just connected to.
-                string elmDeviceDesc = (await this.session.SendCommandAsync("atz", token)).FirstOrDefault();
+                string elmDeviceDesc = (await this.session.SendCommandAsync("atz")).FirstOrDefault();
                 this.log.Trace("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
 
-                await this.SetDefaults(token);
+                await this.SetDefaults();
 
-                while (!(await this.session.SendCommandAsync("atsp0", token)).Contains("OK")) ;
+                while (!(await this.session.SendCommandAsync("atsp0")).Contains("OK")) ;
 
                 this.log.Info("ELM327 device connected. ECU on.");
             }
@@ -207,10 +206,9 @@
         /// Gets the PID result for the specific PID request from the ECU.
         /// </summary>
         /// <param name="request">The PID request.</param>
-        /// <param name="token">The token.</param>
         /// <returns>A <see cref="PidResult"/> object.</returns>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        public async Task<PidResult> GetPidResultAsync(PidRequest request, CancellationToken token)
+        public async Task<PidResult> GetPidResultAsync(PidRequest request)
         {
             if (this.testMode)
             {
@@ -237,7 +235,7 @@
                     {
                         if (cPids > 0)
                         {
-                            await this.UpdatePidResult(sb.ToString(), token);
+                            await this.UpdatePidResult(sb.ToString());
                             cPids = 0;
                         }
 
@@ -252,7 +250,7 @@
 
                     if (cPids == this.config.MaxPidsAtOnce)
                     {
-                        await this.UpdatePidResult(sb.ToString(), token);
+                        await this.UpdatePidResult(sb.ToString());
                         cPids = 0;
                         mode = 0;
                     }
@@ -260,7 +258,7 @@
 
                 if (cPids > 0)
                 {
-                    await this.UpdatePidResult(sb.ToString(), token);
+                    await this.UpdatePidResult(sb.ToString());
                 }
 
                 return this.result;
@@ -275,11 +273,10 @@
         /// Updates the <see cref="PidResult"/> object.
         /// </summary>
         /// <param name="pidRequest">The PID request.</param>
-        /// <param name="token">The token.</param>
         /// <returns>A PID result.</returns>
-        private async Task UpdatePidResult(string pidRequest, CancellationToken token)
+        private async Task UpdatePidResult(string pidRequest)
         {
-            List<int> pidResult = await this.session.RunPidAsync(pidRequest, token);
+            List<int> pidResult = await this.session.RunPidAsync(pidRequest);
             try
             {
                 if (pidResult.Count > 0)
@@ -308,17 +305,17 @@
         /// Sets the defaults scantool settings for the ELM 327 driver.
         /// </summary>
         /// <returns></returns>
-        private async Task SetDefaults(CancellationToken token)
+        private async Task SetDefaults()
         {
-            await this.session.SendCommandAsync("ate0", token);
-            await this.session.SendCommandAsync("atsp0", token);
+            await this.session.SendCommandAsync("ate0");
+            await this.session.SendCommandAsync("atsp0");
 
             // Only talk to ECU #1, which in most cases is the engine. That's the only one that we really care about.
-            await this.session.SendCommandAsync("atsh 7e0", token);
+            await this.session.SendCommandAsync("atsh 7e0");
 
             if (this.config.AggressiveTiming)
             {
-                await this.session.SendCommandAsync("atat2", token);
+                await this.session.SendCommandAsync("atat2");
             }
         }
 

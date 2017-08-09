@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Windows.UI.Xaml.Data;
     using Config;
@@ -40,19 +41,26 @@
         [InlineData(1)]
         [InlineData(10)]
         [InlineData(20)]
-        public async Task DisplayViewModel_Will_Connect_Driver_On_First_Tick_And_Stay_Connected(int numIterations)
+        public async Task DisplayViewModel_Will_Connect_Driver_On_First_Tick_And_Stay_Connected(ulong numIterations)
         {
             MockDisplayDriver displayDriver = new MockDisplayDriver();
             Assert.False(displayDriver.Connected);
             DisplayViewModel viewModel = new DisplayViewModel(displayDriver, new DisplayConfiguration());
             Assert.True(viewModel.Obd2Connecting);
             displayDriver.SetPidResult(new PidResult());
-            await viewModel.Tick();
-            Assert.False(viewModel.Obd2Connecting);
-            Assert.True(displayDriver.Connected);
-            for (int i = 0; i < numIterations; ++i)
+            using (CancellationTokenSource cts = new CancellationTokenSource())
             {
-                await viewModel.Tick();
+                Task updateTask = viewModel.UpdateViewModelAsync(cts.Token);
+                while (viewModel.Ticks <= numIterations) ;
+                cts.Cancel();
+                try
+                {
+                    await updateTask;
+                }
+                catch (OperationCanceledException)
+                {
+                }
+
                 Assert.False(viewModel.Obd2Connecting);
                 Assert.True(displayDriver.Connected);
             }
@@ -70,36 +78,44 @@
         [InlineData("EngineAfr", "Afr", 14.7, 20)]
         [InlineData("EngineAfr", "Afr", 11, 20)]
         [InlineData("EngineLoad", "Load", 25, 20)]
-        public async Task DisplayViewModel_Will_Fire_Value_Type_Events(string viewModelPropertyName, string pidResultPropertyName, object pidResultValue, int numIterations)
+        public async Task DisplayViewModel_Will_Fire_Value_Type_Events(string viewModelPropertyName, string pidResultPropertyName, object pidResultValue, ulong numIterations)
         {
             MockDisplayDriver displayDriver = new MockDisplayDriver();
             DisplayViewModel viewModel = new DisplayViewModel(displayDriver, new DisplayConfiguration());
 
             displayDriver.SetPidResult(new PidResult());
-            await viewModel.Tick();
-
-            PidResult nextResult = new PidResult();
-            PropertyInfo pidResultPropertyInfo = nextResult.GetType().GetProperty(pidResultPropertyName);
-            pidResultPropertyInfo.SetValue(nextResult, pidResultValue);
-            bool propSet = false;
-            viewModel.PropertyChanged += (o, e) =>
+            using (CancellationTokenSource cts = new CancellationTokenSource())
             {
-                if (e.PropertyName == viewModelPropertyName)
+                PidResult nextResult = new PidResult();
+                PropertyInfo pidResultPropertyInfo = nextResult.GetType().GetProperty(pidResultPropertyName);
+                pidResultPropertyInfo.SetValue(nextResult, pidResultValue);
+                bool propSet = false;
+                viewModel.PropertyChanged += (o, e) =>
                 {
-                    propSet = true;
+                    if (e.PropertyName == viewModelPropertyName)
+                    {
+                        propSet = true;
+                    }
+                };
+
+                displayDriver.SetPidResult(nextResult);
+                Task updateTask = viewModel.UpdateViewModelAsync(cts.Token);
+                while (viewModel.Ticks <= numIterations) ;
+
+                cts.Cancel();
+                try
+                {
+                    await updateTask;
                 }
-            };
+                catch (OperationCanceledException)
+                {
+                }
 
-            displayDriver.SetPidResult(nextResult);
-            for (int i = 0; i < numIterations; ++i)
-            {
-                await viewModel.Tick();
+                Assert.True(propSet);
+                PropertyInfo viewModelPropertyInfo = viewModel.GetType().GetProperty(viewModelPropertyName);
+                object actual = viewModelPropertyInfo.GetValue(viewModel);
+                Assert.Equal(pidResultValue.ToString(), actual.ToString());
             }
-
-            Assert.True(propSet);
-            PropertyInfo viewModelPropertyInfo = viewModel.GetType().GetProperty(viewModelPropertyName);
-            object actual = viewModelPropertyInfo.GetValue(viewModel);
-            Assert.Equal(pidResultValue.ToString(), actual.ToString());
         }
 
         /// <summary>
@@ -129,7 +145,7 @@
         [InlineData("AfrTooRich", "Afr", 14.7, 20, false, "MaxIdleLoad", 25, null, null)]
         [InlineData("IdleLoad", "Load", 1, 20, true, "MaxIdleLoad", 25, null, null)]
         [InlineData("IdleLoad", "Load", 50, 20, false, "MaxIdleLoad", 25, null, null)]
-        public async Task DisplayViewModel_Will_Set_Warning_Property_When_Value_Out_Of_Range(string viewModelPropertyName, string pidResultPropertyName, object pidResultValue, int numIterations, bool expectedState, string configProperty1, object configValue1, string configProperty2, object configValue2)
+        public async Task DisplayViewModel_Will_Set_Warning_Property_When_Value_Out_Of_Range(string viewModelPropertyName, string pidResultPropertyName, object pidResultValue, ulong numIterations, bool expectedState, string configProperty1, object configValue1, string configProperty2, object configValue2)
         {
             DisplayConfiguration config = new DisplayConfiguration();
             PropertyInfo configPropInfo = config.GetType().GetProperty(configProperty1);
@@ -142,44 +158,51 @@
 
             MockDisplayDriver displayDriver = new MockDisplayDriver();
             DisplayViewModel viewModel = new DisplayViewModel(displayDriver, config);
-
-            PropertyInfo viewModelPropertyInfo = viewModel.GetType().GetProperty(viewModelPropertyName);
-            object warningStatus = viewModelPropertyInfo.GetValue(viewModel);
-            Assert.Equal(false, warningStatus);
-
-            PidResult nextResult = new PidResult();
-            PropertyInfo pidResultPropertyInfo = nextResult.GetType().GetProperty(pidResultPropertyName);
-            pidResultPropertyInfo.SetValue(nextResult, pidResultValue);
-            displayDriver.SetPidResult(nextResult);
-            bool propSet = false;
-            viewModel.PropertyChanged += (o, e) =>
+            using (CancellationTokenSource cts = new CancellationTokenSource())
             {
-                if (e.PropertyName == viewModelPropertyName)
+                PropertyInfo viewModelPropertyInfo = viewModel.GetType().GetProperty(viewModelPropertyName);
+                object warningStatus = viewModelPropertyInfo.GetValue(viewModel);
+                Assert.Equal(false, warningStatus);
+
+                PidResult nextResult = new PidResult();
+                PropertyInfo pidResultPropertyInfo = nextResult.GetType().GetProperty(pidResultPropertyName);
+                pidResultPropertyInfo.SetValue(nextResult, pidResultValue);
+                displayDriver.SetPidResult(nextResult);
+                bool propSet = false;
+                viewModel.PropertyChanged += (o, e) =>
                 {
-                    propSet = true;
+                    if (e.PropertyName == viewModelPropertyName)
+                    {
+                        propSet = true;
+                    }
+                };
+
+                Task updateTask = viewModel.UpdateViewModelAsync(cts.Token);
+                while (viewModel.Ticks <= numIterations) ;
+
+                cts.Cancel();
+                try
+                {
+                    await updateTask;
                 }
-            };
+                catch (OperationCanceledException)
+                {
+                }
 
-            await viewModel.Tick();
-            for (int i = 0; i < numIterations; ++i)
-            {
-                await viewModel.Tick();
-            }
-
-            warningStatus = viewModelPropertyInfo.GetValue(viewModel);
-            Assert.Equal(expectedState, warningStatus);
-            if (expectedState)
-            {
-                Assert.True(propSet);
+                warningStatus = viewModelPropertyInfo.GetValue(viewModel);
+                Assert.Equal(expectedState, warningStatus);
+                if (expectedState)
+                {
+                    Assert.True(propSet);
+                }
             }
         }
 
         /// <summary>
         /// Verifies the display view model reports a fault.
         /// </summary>
-        /// <returns></returns>
         [Fact]
-        public async Task DisplayViewModel_Reports_Fault()
+        public void DisplayViewModel_Reports_Fault()
         {
             MockDisplayDriver displayDriver = new MockDisplayDriver();
             DisplayViewModel viewModel = new DisplayViewModel(displayDriver, new DisplayConfiguration());
@@ -195,7 +218,6 @@
             };
 
             viewModel.Fault();
-            await viewModel.Tick();
             Assert.True(viewModel.Faulted);
             Assert.True(propSet);
         }
@@ -211,7 +233,7 @@
         [InlineData(10)]
         [InlineData(100)]
         [InlineData(1000)]
-        public async Task DisplayView_Model_Ticks_Against_Obd2_Adapter(int numIterations)
+        public async Task DisplayView_Model_Ticks_Against_Obd2_Adapter(ulong numIterations)
         {
             // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
@@ -219,14 +241,22 @@
                 DisplayConfiguration config = new DisplayConfiguration();
                 Elm327Driver driver = new Elm327Driver(config, connection);
                 DisplayViewModel viewModel = new DisplayViewModel(driver, config);
-                for (int i = 0; i < numIterations; ++i)
+                using (CancellationTokenSource cts = new CancellationTokenSource())
                 {
                     bool wasConnecting = viewModel.Obd2Connecting;
-                    await viewModel.Tick();
-                    if (wasConnecting)
+                    Task updateTask = viewModel.UpdateViewModelAsync(cts.Token);
+                    while (viewModel.Ticks <= numIterations) ;
+
+                    cts.Cancel();
+                    try
                     {
-                        Assert.False(viewModel.Obd2Connecting);
+                        await updateTask;
                     }
+                    catch (OperationCanceledException)
+                    {
+                    }
+
+                    Assert.False(viewModel.Obd2Connecting);
                 }
             }
         }

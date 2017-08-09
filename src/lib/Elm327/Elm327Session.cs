@@ -73,14 +73,13 @@
         /// Sends the command.
         /// </summary>
         /// <param name="commandString">The command string.</param>
-        /// <param name="token">The token.</param>
         /// <returns></returns>
-        public async Task<string[]> SendCommandAsync(string commandString, CancellationToken token)
+        public async Task<string[]> SendCommandAsync(string commandString)
         {
             DateTime start = DateTime.Now;
             byte[] outBuf = Encoding.ASCII.GetBytes(commandString + "\r");
             await this.connection.OutputStream.WriteAsync(outBuf.AsBuffer());
-            string[] ret = await this.ReadResponseAsync(token);
+            string[] ret = await this.ReadResponseAsync();
             this.debugData = new PidDebugData(commandString, ret, DateTime.Now - start);
             this.log.Trace(this.debugData.ToString());
             return ret;
@@ -90,12 +89,11 @@
         /// Runs a PID against the ECU.
         /// </summary>
         /// <param name="pid">The PID string.</param>
-        /// <param name="token">The cancellation token.</param>
         /// <returns>An array of pid values.</returns>
-        public async Task<List<int>> RunPidAsync(string pid, CancellationToken token)
+        public async Task<List<int>> RunPidAsync(string pid)
         {
             List<int> pr = new List<int>();
-            string[] r = await this.SendCommandAsync(pid, token);
+            string[] r = await this.SendCommandAsync(pid);
             if (!r[r.Length - 1].Equals("UNABLE TO CONNECT") && !r[r.Length - 1].Equals("NO DATA"))
             {
                 bool multiline = false;
@@ -144,52 +142,48 @@
         /// Reads a line off the input socket.
         /// </summary>
         /// <returns></returns>
-        private async Task<string[]> ReadResponseAsync(CancellationToken token)
+        private async Task<string[]> ReadResponseAsync()
         {
-            using (CancellationTokenRegistration ctr = token.Register(async () => await this.connection.CancelAsync()))
+            List<char> cb = new List<char>();
+            List<string> sr = new List<string>();
+            for (;;)
             {
-                List<char> cb = new List<char>();
-                List<string> sr = new List<string>();
-                for (;;)
+                byte[] read = (await this.connection.InputStream.ReadAsync(this.readBuffer, this.readBuffer.Capacity, InputStreamOptions.Partial))
+                                            .ToArray();
+                for (int i = 0; i < read.Length; ++i)
                 {
-                    byte[] read = (await this.connection.InputStream.ReadAsync(this.readBuffer, this.readBuffer.Capacity, InputStreamOptions.Partial))
-                                                .ToArray();
-                    token.ThrowIfCancellationRequested();
-                    for (int i = 0; i < read.Length; ++i)
+                    if (read[i] == '>')
                     {
-                        if (read[i] == '>')
+                        int sCur = 0;
+                        while (sCur < cb.Count)
                         {
-                            int sCur = 0;
-                            while (sCur < cb.Count)
+                            int sEnd = cb.IndexOf('\r', sCur);
+                            if (sEnd < 0)
                             {
-                                int sEnd = cb.IndexOf('\r', sCur);
-                                if (sEnd < 0)
+                                break;
+                            }
+                            else if (sEnd > sCur)
+                            {
+                                int sLen = sEnd - sCur;
+                                char[] sa = new char[sLen];
+                                cb.CopyTo(sCur, sa, 0, sLen);
+                                string s = new string(sa, 0, sLen);
+                                if (s.Equals("STOPPED"))
                                 {
-                                    break;
-                                }
-                                else if (sEnd > sCur)
-                                {
-                                    int sLen = sEnd - sCur;
-                                    char[] sa = new char[sLen];
-                                    cb.CopyTo(sCur, sa, 0, sLen);
-                                    string s = new string(sa, 0, sLen);
-                                    if (s.Equals("STOPPED"))
-                                    {
-                                        throw new IOException("ELM327 device stopped.");
-                                    }
-
-                                    sr.Add(s);
+                                    throw new IOException("ELM327 device stopped.");
                                 }
 
-                                sCur = sEnd + 1;
+                                sr.Add(s);
                             }
 
-                            return sr.ToArray();
+                            sCur = sEnd + 1;
                         }
-                        else
-                        {
-                            cb.Add((char)read[i]);
-                        }
+
+                        return sr.ToArray();
+                    }
+                    else
+                    {
+                        cb.Add((char)read[i]);
                     }
                 }
             }

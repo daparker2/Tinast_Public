@@ -103,19 +103,7 @@
 
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        using (CancellationTokenSource cts = new CancellationTokenSource())
-                        {
-                            Task sendCommand = session.SendCommandAsync(message, cts.Token);
-                            cts.Cancel();
-                            try
-                            {
-                                await sendCommand;
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                // Expected.
-                            }
-                        }
+                        await session.SendCommandAsync(message);
                     }
                 }
                 catch (Exception ex)
@@ -152,26 +140,16 @@
                     {
                         foreach (string message in messages)
                         {
-                            await session.SendCommandAsync(message, CancellationToken.None);
+                            await session.SendCommandAsync(message);
                         }
                     }
 
-                    while (!(await session.SendCommandAsync("atsp0", CancellationToken.None)).Contains("OK")) ;
+                    while (!(await session.SendCommandAsync("atsp0")).Contains("OK")) ;
 
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        using (CancellationTokenSource cts = new CancellationTokenSource())
-                        {
-                            Task<List<int>> pidResponseTask = session.RunPidAsync(pid, CancellationToken.None);
-                            cts.Cancel();
-                            try
-                            {
-                                await pidResponseTask;
-                            }
-                            catch (OperationCanceledException)
-                            {
-                            }
-                        }
+                        Task<List<int>> pidResponseTask = session.RunPidAsync(pid);
+                        await pidResponseTask;
                     }
                 }
                 catch (Exception ex)
@@ -205,7 +183,7 @@
 
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        string[] actualResponse = await session.SendCommandAsync(message, CancellationToken.None);
+                        string[] actualResponse = await session.SendCommandAsync(message);
                         int toSkip = actualResponse.Length - expectedResponse.Length;
                         Assert.True(expectedResponse.SequenceEqual(actualResponse.Skip(toSkip)), "Response mismatches expected.");
                     }
@@ -253,15 +231,15 @@
                     {
                         foreach (string message in messages)
                         {
-                            await session.SendCommandAsync(message, CancellationToken.None);
+                            await session.SendCommandAsync(message);
                         }
                     }
 
-                    while (!(await session.SendCommandAsync("atsp0", CancellationToken.None)).Contains("OK")) ;
+                    while (!(await session.SendCommandAsync("atsp0")).Contains("OK")) ;
 
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        List<int> pidResponse = await session.RunPidAsync(pid, CancellationToken.None);
+                        List<int> pidResponse = await session.RunPidAsync(pid);
                         Assert.NotNull(pidResponse);
                         Assert.True(expectedPidResponse.SequenceEqual(pidResponse), "PID response does not match expected.");
                     }
@@ -290,7 +268,7 @@
                 string lastExceptionMessage = null;
                 try
                 {
-                    await driver.OpenAsync(CancellationToken.None);
+                    await driver.OpenAsync();
                 }
                 catch (Exception ex)
                 {
@@ -335,10 +313,10 @@
                 string lastExceptionMessage = null;
                 try
                 {
-                    await driver.OpenAsync(CancellationToken.None);
+                    await driver.OpenAsync();
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        PidResult result = await driver.GetPidResultAsync(testCommand, CancellationToken.None);
+                        PidResult result = await driver.GetPidResultAsync(testCommand);
                         Assert.NotNull(result);
                         if (testCommand.HasFlag(PidRequest.Mode1Test1))
                         {

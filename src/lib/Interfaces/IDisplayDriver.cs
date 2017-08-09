@@ -19,7 +19,7 @@ namespace DP.Tinast.Interfaces
         /// <param name="token">The token.</param>
         /// <returns>True if the connection was established.</returns>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        Task OpenAsync(CancellationToken token);
+        Task OpenAsync();
 
         /// <summary>
         /// Gets the pid result.
@@ -28,7 +28,7 @@ namespace DP.Tinast.Interfaces
         /// <param name="token">The token.</param>
         /// <returns>The result of the PID request.</returns>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        Task<PidResult> GetPidResultAsync(PidRequest request, CancellationToken token);
+        Task<PidResult> GetPidResultAsync(PidRequest request);
 
         /// <summary>
         /// Gets the last transaction information, which in most cases will be the command sent to GetPidResultAsync.

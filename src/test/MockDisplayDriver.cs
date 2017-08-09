@@ -22,9 +22,8 @@ namespace DP.Tinast.Tests
             get; set;
         }
 
-        public async Task OpenAsync(CancellationToken token)
+        public async Task OpenAsync()
         {
-            token.ThrowIfCancellationRequested();
             await Task.Delay(0);
             this.Connected = true;
         }
@@ -39,9 +38,8 @@ namespace DP.Tinast.Tests
             return new PidDebugData(string.Empty, new string[] { }, TimeSpan.Zero);
         }
 
-        public async Task<PidResult> GetPidResultAsync(PidRequest request, CancellationToken token)
+        public async Task<PidResult> GetPidResultAsync(PidRequest request)
         {
-            token.ThrowIfCancellationRequested();
             await Task.Delay(0);
             return this.result;
         }

@@ -65,16 +65,6 @@ namespace DP.Tinast.ViewModel
         private bool flashedGauges = false;
 
         /// <summary>
-        /// The debugger attached
-        /// </summary>
-        private bool debuggerAttached = Debugger.IsAttached;
-
-        /// <summary>
-        /// The is connected
-        /// </summary>
-        private bool isConnected = false;
-
-        /// <summary>
         /// The property changed event.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
@@ -88,6 +78,20 @@ namespace DP.Tinast.ViewModel
         {
             this.driver = driver;
             this.config = config;
+        }
+
+        /// <summary>
+        /// Gets the ticks.
+        /// </summary>
+        /// <value>
+        /// The ticks.
+        /// </value>
+        public ulong Ticks
+        {
+            get
+            {
+                return this.ticks;
+            }
         }
 
         /// <summary>
@@ -211,46 +215,52 @@ namespace DP.Tinast.ViewModel
         public bool Obd2Connecting { get; set; } = true;
 
         /// <summary>
-        /// Ticks an update of the display view model.
+        /// Updates the view-model asynchronously until the token is canceled.
         /// </summary>
-        /// <returns>A task object.</returns>
-        public async Task Tick()
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public async Task UpdateViewModelAsync(CancellationToken token)
         {
-            using (CancellationTokenSource cts = new CancellationTokenSource(this.GetTickDuration()))
+            for (;;)
             {
-                Task<bool> shouldTickTask = this.ShouldTick(cts.Token);
-                if (await shouldTickTask)
+                token.ThrowIfCancellationRequested();
+
+                try
                 {
-                    // So basically, we want to share the bus time between boost+AFR (which always get updated every tick)
-                    // and every other tick update one of the other 4 things: oil temp, coolant temp, intake temp, engine load
-                    // This is to try and keep the frame-rate for boost and AFR as high as possible.
+                    await this.OpenConnectionAsync();
 
-                    PidRequest request = PidRequest.Boost | PidRequest.Afr;
-                    switch (this.ticks++ % 20)
+                    for (;;)
                     {
-                        case 4:
-                            request |= PidRequest.CoolantTemp;
-                            break;
+                        token.ThrowIfCancellationRequested();
 
-                        case 8:
-                            request |= PidRequest.IntakeTemp;
-                            break;
+                        // So basically, we want to share the bus time between boost+AFR (which always get updated every tick)
+                        // and every other tick update one of the other 4 things: oil temp, coolant temp, intake temp, engine load
+                        // This is to try and keep the frame-rate for boost and AFR as high as possible.
 
-                        case 12:
-                            request |= PidRequest.Load;
-                            break;
+                        PidRequest request = PidRequest.Boost | PidRequest.Afr;
+                        switch (this.ticks++ % 20)
+                        {
+                            case 4:
+                                request |= PidRequest.CoolantTemp;
+                                break;
 
-                        case 19:
-                            request |= PidRequest.OilTemp;
-                            break;
+                            case 8:
+                                request |= PidRequest.IntakeTemp;
+                                break;
 
-                        default:
-                            break;
-                    }
+                            case 12:
+                                request |= PidRequest.Load;
+                                break;
 
-                    try
-                    {
-                        PidResult result = await this.driver.GetPidResultAsync(request, cts.Token);
+                            case 19:
+                                request |= PidRequest.OilTemp;
+                                break;
+
+                            default:
+                                break;
+                        }
+
+                        PidResult result = await this.driver.GetPidResultAsync(request).TimeoutAfter(TimeSpan.FromSeconds(5));
 
                         bool propertyChanged;
                         this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
@@ -297,12 +307,12 @@ namespace DP.Tinast.ViewModel
                         this.TempWarning = this.SetProperty("TempWarning", this.TempWarning, this.IntakeTempWarn || this.OilTempWarn || this.CoolantTempWarn, out propertyChanged);
                         await this.OnPropertiesChanged();
                     }
-                    catch (ConnectFailedException ex)
-                    {
-                        this.log.Error("OBD2 connection failed", ex);
-                        this.isConnected = false;
-                        return;
-                    }
+                }
+                catch (Exception ex) when (!(ex is OperationCanceledException))
+                {
+                    this.log.Error("ViewModel update failed", ex);
+                    PidDebugData transactionResult = this.driver.GetLastTransactionInfo();
+                    this.log.Debug("Last transaction: {0}", transactionResult.ToString().Replace('\n', ','));
                 }
             }
         }
@@ -475,56 +485,24 @@ namespace DP.Tinast.ViewModel
         /// <summary>
         /// Get if we should do the rest of the tick.
         /// </summary>
-        /// <param name="token">The token.</param>
         /// <returns></returns>
-        private async Task<bool> ShouldTick(CancellationToken token)
+        private async Task OpenConnectionAsync()
         {
-            if (!this.isConnected)
+
+            bool propertyChanged;
+            this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, true, out propertyChanged);
+            await this.OnPropertiesChanged();
+
+            if (!this.flashedGauges)
             {
-                if (!this.flashedGauges)
-                {
-                    this.flashedGauges = true;
-                    await this.FlashGauges();
-                }
-
-                try
-                {
-                    await this.driver.OpenAsync(token);
-                    this.isConnected = true;
-                }
-                catch (ConnectFailedException ex)
-                {
-                    this.log.Error("OBD2 connection failed", ex);
-                    this.isConnected = false;
-                }
-
-                bool propertyChanged;
-                this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, !this.isConnected, out propertyChanged);
-                await this.OnPropertiesChanged();
-                return this.isConnected;
+                this.flashedGauges = true;
+                await this.FlashGauges();
             }
 
-            return true;
-        }
+            await this.driver.OpenAsync().TimeoutAfter(TimeSpan.FromSeconds(60));
 
-        /// <summary>
-        /// Gets the expected duration of the tick based on the current step state.
-        /// </summary>
-        /// <returns></returns>
-        private TimeSpan GetTickDuration()
-        {
-            if (this.debuggerAttached)
-            {
-                return TimeSpan.FromMilliseconds(120000);
-            }
-            else if (this.Obd2Connecting)
-            {
-                return TimeSpan.FromMilliseconds(120000);
-            }
-            else
-            {
-                return TimeSpan.FromMilliseconds(1000);
-            }
+            this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, false, out propertyChanged);
+            await this.OnPropertiesChanged();
         }
 
         /// <summary>

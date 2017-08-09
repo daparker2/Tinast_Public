@@ -49,6 +49,11 @@
         private DisplayViewModel viewModel;
 
         /// <summary>
+        /// The tick CTS
+        /// </summary>
+        private CancellationTokenSource tickCts;
+
+        /// <summary>
         /// The viewmodel tick task
         /// </summary>
         private Task tickTask;
@@ -62,21 +67,6 @@
         /// The driver
         /// </summary>
         private IDisplayDriver driver;
-
-        /// <summary>
-        /// The loaded
-        /// </summary>
-        private bool resumed;
-
-        /// <summary>
-        /// The was ever connected
-        /// </summary>
-        private bool wasEverConnected = false;
-
-        /// <summary>
-        /// The is iot
-        /// </summary>
-        private bool isIot = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -103,7 +93,6 @@
             if (versionInfo.DeviceFamily == "Windows.IoT")
             {
                 this.log.Debug("Device is IoT.");
-                this.isIot = true;
             }
 
             this.config = await ((App)Application.Current).GetConfigAsync();
@@ -130,8 +119,19 @@
         /// <param name="e">The <see cref="SuspendingEventArgs"/> instance containing the event data.</param>
         private async void Current_Suspending(object sender, SuspendingEventArgs e)
         {
-            this.resumed = false;
-            await this.tickTask;
+            this.tickCts.Cancel();
+            try
+            {
+                await this.tickTask;
+            }
+            catch (OperationCanceledException)
+            {
+            }
+
+            if (this.tickCts != null)
+            {
+                this.tickCts.Dispose();
+            }
         }
 
         /// <summary>
@@ -152,67 +152,10 @@
         /// </summary>
         private void StartTicking()
         {
-            if (!this.resumed)
+            if (this.tickCts == null)
             {
-                this.resumed = true;
-                this.tickTask = this.TickLoopAsync();
-            }
-        }
-
-        /// <summary>
-        /// The async tick loop.
-        /// </summary>
-        /// <returns></returns>
-        private async Task TickLoopAsync()
-        {
-            while (this.resumed)
-            {
-                bool tickError = false;
-                try
-                {
-                    await Task.Yield();
-                    await this.viewModel.Tick()
-                                        .ConfigureAwait(false);
-
-                    //// This is a brutal hack to work around intermittent connection failures on the Raspberry pi with our Bluetooth interface.
-                    //// If we were ever connected to the OBD2 interface, and we become disconnected,
-                    //// Show a toast for 5 seconds and then reboot the system.
-
-                    if (!this.viewModel.Obd2Connecting)
-                    {
-                        if (!this.wasEverConnected)
-                        {
-                            this.log.Debug("OBD2 connected.");
-                            this.wasEverConnected = true;
-                        }
-                    }
-                    else
-                    {
-                        if (this.wasEverConnected && this.isIot)
-                        {
-                            await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                            {
-                                await this.RebootSystem();
-                            });
-                        }
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    this.log.Error("Tick update timed out.");
-                    tickError = true;
-                }
-                catch (ConnectFailedException ex)
-                {
-                    this.log.Error("Tick update error.", ex);
-                    tickError = true;
-                }
-
-                if (tickError)
-                {
-                    PidDebugData transactionResult = driver.GetLastTransactionInfo();
-                    this.log.Debug("Last transaction: {0}; {1}", transactionResult.ToString().Replace('\n', ','), this.viewModel);
-                }
+                this.tickCts = new CancellationTokenSource();
+                this.tickTask = this.viewModel.UpdateViewModelAsync(this.tickCts.Token);
             }
         }
 

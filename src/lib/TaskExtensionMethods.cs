@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Threading;
@@ -32,14 +33,24 @@
         /// <param name="timeout">The timeout.</param>
         /// <returns></returns>
         /// <exception cref="System.TimeoutException">The operation has timed out.</exception>
+        [DebuggerNonUserCode]
         public static async Task TimeoutAfter(this Task task, TimeSpan timeout)
         {
             using (var timeoutCancellationTokenSource = new CancellationTokenSource())
             {
-                var completedTask = await Task.WhenAny(task, Task.Delay(timeout, timeoutCancellationTokenSource.Token));
+                Task delayTask = Task.Delay(timeout, timeoutCancellationTokenSource.Token);
+                var completedTask = await Task.WhenAny(task, delayTask);
                 if (completedTask == task)
                 {
                     timeoutCancellationTokenSource.Cancel();
+                    try
+                    {
+                        await delayTask;
+                    }
+                    catch (OperationCanceledException)
+                    {
+                    }
+
                     await task;  // Very important in order to propagate exceptions
                 }
                 else

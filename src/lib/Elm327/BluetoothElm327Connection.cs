@@ -12,6 +12,7 @@ namespace DP.Tinast.Elm327
     using System.Threading.Tasks;
     using Windows.Devices.Bluetooth.Rfcomm;
     using Windows.Devices.Enumeration;
+    using Windows.Devices.Radios;
     using Windows.Foundation;
     using Windows.Networking;
     using Windows.Networking.Sockets;
@@ -152,14 +153,16 @@ namespace DP.Tinast.Elm327
             DeviceInformationCollection serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort), new string[] { "System.Devices.AepService.AepId" });
             foreach (DeviceInformation serviceInfo in serviceInfoCollection)
             {
-                RfcommDeviceService service = await RfcommDeviceService.FromIdAsync(serviceInfo.Id);
-                if (service != null)
+                using (RfcommDeviceService service = await RfcommDeviceService.FromIdAsync(serviceInfo.Id))
                 {
-                    DeviceAccessStatus status = await service.RequestAccessAsync();
-                    if (status == DeviceAccessStatus.Allowed)
+                    if (service != null)
                     {
-                        DeviceInformation aepInfo = await DeviceInformation.CreateFromIdAsync((string)serviceInfo.Properties["System.Devices.AepService.AepId"]);
-                        ret.Add(new BluetoothElm327Connection(aepInfo.Name, service.ConnectionHostName, service.ConnectionServiceName));
+                        DeviceAccessStatus status = await service.RequestAccessAsync();
+                        if (status == DeviceAccessStatus.Allowed)
+                        {
+                            DeviceInformation aepInfo = await DeviceInformation.CreateFromIdAsync((string)serviceInfo.Properties["System.Devices.AepService.AepId"]);
+                            ret.Add(new BluetoothElm327Connection(aepInfo.Name, service.ConnectionHostName, service.ConnectionServiceName));
+                        }
                     }
                 }
             }
@@ -182,27 +185,52 @@ namespace DP.Tinast.Elm327
 
             this.log.Info("Connecting to '{0}'", this.deviceName);
             this.socket = new StreamSocket();
-            await this.socket.ConnectAsync(this.hostName, this.serviceName);
-            this.socketConnected = true;
-            return;
+            try
+            {
+                await this.socket.ConnectAsync(this.hostName, this.serviceName);
+                this.socketConnected = true;
+            }
+            catch (Exception ex)
+            {
+                this.log.Error("Socket connect failed", ex);
+                await this.ResetRadioAsync();
+                throw;
+            }
         }
 
         /// <summary>
-        /// Cancels the IO asynchronously.
+        /// Resets the radio.
         /// </summary>
         /// <returns></returns>
-        public async Task CancelAsync()
+        private async Task ResetRadioAsync()
         {
-            if (this.socket != null)
+            foreach (Radio radio in await Radio.GetRadiosAsync())
             {
-                try
+                if (radio.Kind == RadioKind.Bluetooth)
                 {
-                    await this.socket.CancelIOAsync();
-                }
-                catch (COMException ex)
-                {
-                    // COMException is probably okay, it just means the IO wasn't in a cancelable state..
-                    this.log.Warn("CancelIOAsync failed", ex);
+                    this.log.Debug("Found BT radio '{0}', state {1}", radio.Name, radio.State);
+                    if (radio.State == RadioState.On || radio.State == RadioState.Off)
+                    {
+                        RadioState originalState = radio.State;
+                        this.log.Info("Toggling BT radio '{0}'", radio.Name);
+                        RadioAccessStatus offStatus = await radio.SetStateAsync(RadioState.Off);
+                        await Task.Delay(200);
+                        if (radio.State != RadioState.Off)
+                        {
+                            this.log.Debug("Failed to turn radio off. Reason: {0}", offStatus);
+                        }
+
+                        RadioAccessStatus onStatus = await radio.SetStateAsync(RadioState.On);
+                        if (radio.State == RadioState.On)
+                        {
+                            this.log.Debug("Radio state toggled from {0} -> {1}", originalState, radio.State);
+                            await Task.Delay(200);
+                        }
+                        else
+                        {
+                            this.log.Debug("Failed to turn radio on. Reason: {0}", onStatus);
+                        }
+                    }
                 }
             }
         }

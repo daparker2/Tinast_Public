@@ -30,5 +30,6 @@
     <uap:Capability Name="removableStorage" />
     <iot:Capability Name="systemManagement" />
     <DeviceCapability Name="bluetooth" />
+    <DeviceCapability Name="radios" />
   </Capabilities>
 </Package>

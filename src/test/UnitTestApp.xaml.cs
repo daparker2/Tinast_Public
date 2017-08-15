@@ -125,6 +125,7 @@
         private async Task<string> GetTestResultAsync()
         {
             DateTime end = DateTime.Now + this.TestResultTimeout;
+            int read = 0;
             for (;;)
             {
                 if (DateTime.Now >= end)
@@ -132,13 +133,20 @@
                     throw new TimeoutException("Test results not available within the configured timeout.");
                 }
 
-                string s = this.writer.ToString();
                 await Task.Delay(1000);
-
+                string s = this.writer.ToString();
                 if (s.Contains("Tests run: "))
                 {
-                    this.log.Debug("Test run complete: {0}", s);
+                    this.log.Info("Test run complete: {0}", s);
                     return s;
+                }
+                else
+                {
+                    string[] lines = s.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    while (read < lines.Length)
+                    {
+                        this.log.Info("{0}", lines[read++]);
+                    }
                 }
             }
         }

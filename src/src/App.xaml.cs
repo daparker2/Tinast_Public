@@ -98,7 +98,7 @@
             this.InitializeComponent();
             this.Suspending += OnSuspending;
             this.UnhandledException += UnhandledExceptionHandler;
-            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Info, LogLevel.Fatal, new StreamingFileTarget());
+            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Debug, LogLevel.Fatal, new StreamingFileTarget());
             HockeyClient.Current.Configure("97e8a58ba9a74a2bb9a8b8d46a464b7b");
         }
 

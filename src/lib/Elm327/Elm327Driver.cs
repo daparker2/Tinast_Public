@@ -177,7 +177,7 @@
 
                 // Get some info about the device we just connected to.
                 string elmDeviceDesc = (await this.session.SendCommandAsync("atz")).FirstOrDefault();
-                this.log.Trace("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
+                this.log.Debug("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
 
                 await this.SetDefaults();
 

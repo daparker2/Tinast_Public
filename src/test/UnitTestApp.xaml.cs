@@ -113,7 +113,7 @@
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="UnhandledExceptionEventArgs"/> instance containing the event data.</param>
-        private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private void UnhandledExceptionHandler(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             this.log.Fatal("Unhandled exception in app", e.Exception);
         }

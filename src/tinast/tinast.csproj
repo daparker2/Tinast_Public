@@ -106,19 +106,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\AfrControl.xaml.cs">
-      <DependentUpon>AfrControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\BoostControl.xaml.cs">
-      <DependentUpon>BoostControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ColorPalette.cs" />
-    <Compile Include="Controls\MalfunctionControl.xaml.cs">
-      <DependentUpon>MalfunctionControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\TemperatureControl.xaml.cs">
-      <DependentUpon>TemperatureControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -195,22 +182,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\AfrControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\BoostControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\MalfunctionControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TemperatureControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

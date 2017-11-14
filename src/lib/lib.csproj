@@ -108,8 +108,23 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="MainPageBase.cs" />
+    <Compile Include="TinastApp.cs" />
     <Compile Include="Config\DisplayConfiguration.cs" />
     <Compile Include="Config\PidType.cs" />
+    <Compile Include="Controls\AfrControl.xaml.cs">
+      <DependentUpon>AfrControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BoostControl.xaml.cs">
+      <DependentUpon>BoostControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ColorPalette.cs" />
+    <Compile Include="Controls\MalfunctionControl.xaml.cs">
+      <DependentUpon>MalfunctionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TemperatureControl.xaml.cs">
+      <DependentUpon>TemperatureControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\AfrConverter.cs" />
     <Compile Include="Converters\BoostConverter.cs" />
     <Compile Include="Converters\TemperatureConverter.cs" />
@@ -142,6 +157,29 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Controls\AfrControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\BoostControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\MalfunctionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\TemperatureControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="WindowsIoT, Version=10.0.15063.0">
+      <Name>Windows IoT Extensions for the UWP</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

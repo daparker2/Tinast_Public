@@ -50,7 +50,7 @@
         public TemperatureControl()
         {
             this.InitializeComponent();
-            ((App)Application.Current).IndicatorTick += UpdateTimer_Tick;
+            ((TinastApp)Application.Current).IndicatorTick += UpdateTimer_Tick;
             this.DataContext = this;
             this.temp.Foreground = ColorPalette.IndicatorColor;
             this.text.Foreground = ColorPalette.IndicatorColor;

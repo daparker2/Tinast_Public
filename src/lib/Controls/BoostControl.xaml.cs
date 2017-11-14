@@ -187,7 +187,7 @@
                 if (!this.isBlinking)
                 {
                     this.isBlinking = true;
-                    ((App)Application.Current).GaugeTick += UpdateTimer_Tick;
+                    ((TinastApp)Application.Current).GaugeTick += UpdateTimer_Tick;
                 }
             }
             else
@@ -195,7 +195,7 @@
                 if (this.isBlinking)
                 {
                     this.isBlinking = false;
-                    ((App)Application.Current).GaugeTick -= UpdateTimer_Tick;
+                    ((TinastApp)Application.Current).GaugeTick -= UpdateTimer_Tick;
                 }
             }
 
@@ -238,7 +238,7 @@
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private async void BoostControl_Loaded(object sender, RoutedEventArgs e)
         {
-            DisplayConfiguration config = await ((App)Application.Current).GetConfigAsync();
+            DisplayConfiguration config = await ((TinastApp)Application.Current).GetConfigAsync();
             this.boostOffset = config.BoostOffset;
             this.maxBoost = config.MaxBoost;
             this.absMaxBoost = this.maxBoost - this.boostOffset;

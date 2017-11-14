@@ -89,9 +89,9 @@
         /// <param name="expectedResponse">The response.</param>
         /// <returns></returns>
         [Theory]
-        [InlineData(2, "atz", new string[] { "ELM327 v1.5" })]
-        [InlineData(100, "atz", new string[] { "ELM327 v1.5" })]
-        public async Task Elm327Session_Can_Cancel_Send_Obd2_Command(int numIterations, string message, string[] expectedResponse)
+        [InlineData(2, "atz")]
+        [InlineData(100, "atz")]
+        public async Task Elm327Session_Can_Cancel_Send_Obd2_Command(int numIterations, string message)
         {
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
             {

@@ -162,7 +162,7 @@
             {
                 PropertyInfo viewModelPropertyInfo = viewModel.GetType().GetProperty(viewModelPropertyName);
                 object warningStatus = viewModelPropertyInfo.GetValue(viewModel);
-                Assert.Equal(false, warningStatus);
+                Assert.False((bool)warningStatus);
 
                 PidResult nextResult = new PidResult();
                 PropertyInfo pidResultPropertyInfo = nextResult.GetType().GetProperty(pidResultPropertyName);

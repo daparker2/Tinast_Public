@@ -3,11 +3,11 @@
     "HockeySDK.UWP": "4.1.6",
     "MetroLog": "1.0.1",
     "Microsoft.AnalyzerPowerPack": "1.1.0",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.4.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "6.0.1",
     "Newtonsoft.Json": "10.0.3"
   },
   "frameworks": {
-    "uap10.0": {}
+    "uap10.0.14393": {}
   },
   "runtimes": {
     "win10-arm": {},

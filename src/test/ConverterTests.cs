@@ -49,11 +49,11 @@
         public void String_Converter_Of_Type_Converts_Value_Correctly(Type converterType, object value, object parameter, string language, string expectedText)
         {
             object converterObject = Activator.CreateInstance(converterType);
-            Assert.IsAssignableFrom(typeof(IValueConverter), converterObject);
+            Assert.IsType(converterType, converterObject);
             MethodInfo convertMethod = converterType.GetMethod("Convert");
             MethodInfo convertBackMethod = converterType.GetMethod("ConvertBack");
             object text = convertMethod.Invoke(converterObject, new object[] { value, typeof(string), parameter, language });
-            Assert.IsAssignableFrom(typeof(string), text);
+            Assert.IsType<string>(text);
             Assert.Equal(expectedText, text.ToString());
             object actualValue = convertBackMethod.Invoke(converterObject, new object[] { text.ToString(), value.GetType(), parameter, language });
             Assert.IsAssignableFrom(value.GetType(), actualValue);

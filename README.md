@@ -1,4 +1,4 @@
-## Heck yeah!! [Latest release](https://github.com/daparker2/Tinast_Public/releases/tag/v1.0.56.1.16) has some fixes to the layout and stability enhancements that make it look nicer than the video one. Quick screenshot below:
+## Heck yeah!! [Latest release](https://github.com/daparker2/Tinast_Public/releases/tag/v1.0.70.1.17) has some fixes to the layout and stability enhancements that make it look nicer than the video one. Quick screenshot below:
 
 <img src="https://github.com/daparker2/Tinast_Public/blob/master/img/Screenshot_2017-08-09_19-23-27.jpg"></img>
 

@@ -31,7 +31,7 @@
     /// <summary>
     /// Base class for gauge applications.
     /// </summary>
-    public class TinastApp : Application, IDisposable
+    public abstract class TinastApp : Application, IDisposable
     {
         /// <summary>
         /// The logger.
@@ -74,6 +74,11 @@
         private DisplayRequest displayRequest;
 
         /// <summary>
+        /// The root page type.
+        /// </summary>
+        private Type mainPageType;
+
+        /// <summary>
         /// Occurs when faulted.
         /// </summary>
         public event EventHandler Faulted;
@@ -92,11 +97,17 @@
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
-        public TinastApp()
+        /// <param name="pageType">The main page type.</param>
+        public TinastApp(Type pageType)
         {
+            if (pageType == null)
+            {
+                throw new ArgumentNullException("pageType");
+            }
+
             this.Suspending += OnSuspending;
             this.UnhandledException += UnhandledExceptionHandler;
-            LogManagerFactory.DefaultConfiguration.AddTarget(LogLevel.Debug, LogLevel.Fatal, new StreamingFileTarget());
+            this.mainPageType = pageType;
         }
 
         /// <summary>
@@ -222,7 +233,7 @@
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(TinastApp), e.Arguments);
+                    rootFrame.Navigate(this.mainPageType, e.Arguments);
                 }
 
                 Window.Current.Activate();
@@ -239,10 +250,16 @@
             EventArgs eventArgs = new EventArgs();
             if (tick++ % 16 == 0)
             {
-                this.IndicatorTick(this, eventArgs);
+                if (this.IndicatorTick != null)
+                {
+                    this.IndicatorTick(this, eventArgs);
+                }
             }
 
-            this.GaugeTick(this, eventArgs);
+            if (this.GaugeTick != null)
+            {
+                this.GaugeTick(this, eventArgs);
+            }
         }
 
         /// <summary>
@@ -253,7 +270,10 @@
         private void UnhandledExceptionHandler(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             this.log.Fatal("Unhandled exception in app", e.Exception);
-            this.Faulted(this, new EventArgs());
+            if (this.Faulted != null)
+            {
+                this.Faulted(this, new EventArgs());
+            }
 
             // So we can show the fault indicator
             e.Handled = !Debugger.IsAttached;

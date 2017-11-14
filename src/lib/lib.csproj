@@ -108,7 +108,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="MainPageBase.cs" />
+    <Compile Include="Controls\BoostControlBase.cs" />
+    <Compile Include="TinastMainPage.cs" />
     <Compile Include="TinastApp.cs" />
     <Compile Include="Config\DisplayConfiguration.cs" />
     <Compile Include="Config\PidType.cs" />

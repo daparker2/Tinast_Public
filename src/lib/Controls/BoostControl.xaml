@@ -1,5 +1,6 @@
-﻿<UserControl
+﻿<dptc:BoostControlBase
     x:Class="DP.Tinast.Controls.BoostControl"
+    xmlns:dptc="using:DP.Tinast.Controls"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DP.Tinast.Controls"
@@ -71,4 +72,4 @@
         <TextBlock x:Name="label" Text="Boost" FontSize="15" FontFamily="Courier New" Width="60" Height="15" Canvas.Top="143" Canvas.Left="509" Margin="0,0,0,0" TextAlignment="Center" />
         <TextBlock x:Name="label2" Text="PSI" FontSize="15" FontFamily="Courier New" Width="60" Height="15" Canvas.Top="96" Canvas.Left="108" Margin="0,0,0,0" TextAlignment="Right" />
     </Canvas>
-</UserControl>
+</dptc:BoostControlBase>

@@ -12,6 +12,7 @@
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
+            : base(typeof(MainPage))
         {
             this.InitializeComponent();
             HockeyClient.Current.Configure("97e8a58ba9a74a2bb9a8b8d46a464b7b");

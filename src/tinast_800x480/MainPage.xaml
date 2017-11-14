@@ -1,4 +1,4 @@
-﻿<dpt:MainPageBase xmlns:Controls="using:DP.Tinast.Controls" 
+﻿<dpt:TinastMainPage xmlns:Controls="using:DP.Tinast.Controls" 
     x:Class="DP.Tinast.MainPage"
     xmlns:dpt="using:DP.Tinast"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -18,4 +18,4 @@
         <Controls:MalfunctionControl Canvas.Left="580" Canvas.Top="390" x:Name="faultMil" Malfunctioning="{Binding ElementName=_this, Path=DataContext.Faulted, UpdateSourceTrigger=PropertyChanged}" LampSource="Assets/fault.png" />
         <Controls:MalfunctionControl Canvas.Left="680" Canvas.Top="390" x:Name="tempMil" Malfunctioning="{Binding ElementName=_this, Path=DataContext.TempWarning, UpdateSourceTrigger=PropertyChanged}" LampSource="Assets/temp.png" />
     </Canvas>
-</dpt:MainPageBase>
+</dpt:TinastMainPage>

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Tinast")]
-[assembly: AssemblyDescription("Tinast (1080x600 Display Mode)")]
+[assembly: AssemblyDescription("Tinast (800x480 Display Mode)")]
 [assembly: AssemblyCompany("SLSW")]
 [assembly: AssemblyProduct("src")]
 [assembly: AssemblyCopyright("Copyright © SLSW 2017")]

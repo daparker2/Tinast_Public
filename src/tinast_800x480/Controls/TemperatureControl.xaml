@@ -1,0 +1,22 @@
+﻿<UserControl
+    x:Class="DP.Tinast.Controls.TemperatureControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DP.Tinast.Controls"
+    xmlns:conv="using:DP.Tinast.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Name="_this"
+    d:DesignHeight="80"
+    d:DesignWidth="380">
+    <UserControl.Resources>
+        <conv:TemperatureConverter x:Key="tempConverter" />
+    </UserControl.Resources>
+    <Border Width="380" Height="80" BorderThickness="3" BorderBrush="Transparent">
+        <Canvas Width="380" Height="80">
+            <TextBlock x:Name="text" Text="{Binding Path=Text, ElementName=_this}" FontSize="35" FontFamily="Courier New" FontWeight="Bold" Width="180" Height="50" Canvas.Top="20" Canvas.Left="0" Margin="0,0,0,0" />
+            <TextBlock x:Name="temp" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=tempConverter}}" FontSize="35" FontWeight="Bold" FontFamily="Courier New" Width="190" Height="50" Canvas.Top="20" Canvas.Left="180" Margin="0,0,0,0"  />
+        </Canvas>
+    </Border>
+</UserControl>

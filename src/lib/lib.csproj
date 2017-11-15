@@ -109,6 +109,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Controls\BoostControlBase.cs" />
+    <Compile Include="Controls\BoostControl_800x480.xaml.cs">
+      <DependentUpon>BoostControl_800x480.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TinastMainPage.cs" />
     <Compile Include="TinastApp.cs" />
     <Compile Include="Config\DisplayConfiguration.cs" />
@@ -167,6 +170,10 @@
     <Page Include="Controls\BoostControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\BoostControl_800x480.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\MalfunctionControl.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -20,7 +20,7 @@
     <HockeyAppResourceId>97e8a58ba9a74a2bb9a8b8d46a464b7b</HockeyAppResourceId>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>47D3485A7CC89C421356E57137312EF69DBB1826</PackageCertificateThumbprint>
     <AppxPackageDir>C:\github\Tinast_Public\src\AppPackages\</AppxPackageDir>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>

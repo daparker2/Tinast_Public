@@ -98,6 +98,10 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="bolt.png" />
+    <Content Include="..\lib\displayConfiguration.json">
+      <Link>displayConfiguration.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="tinast_800x480_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

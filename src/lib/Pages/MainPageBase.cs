@@ -1,4 +1,4 @@
-﻿namespace DP.Tinast
+﻿namespace DP.Tinast.Pages
 {
     using System;
     using System.Collections.Generic;
@@ -38,7 +38,7 @@
 
     // Just let the GC clean up the cancellation token source.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    public abstract class TinastMainPage : Page
+    public abstract class MainPageBase : Page
     {
         /// <summary>
         /// The logger.
@@ -73,7 +73,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
         /// </summary>
-        public TinastMainPage()
+        public MainPageBase()
         {
             ((TinastApp)Application.Current).Faulted += MainPage_Faulted;
             this.Loaded += MainPage_Loaded;

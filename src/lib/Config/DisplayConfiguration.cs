@@ -27,6 +27,14 @@
         /// The logger
         /// </summary>
         private ILogger log = LogManagerFactory.DefaultLogManager.GetLogger<DisplayConfiguration>();
+
+        /// <summary>
+        /// Gets or sets the head unit.
+        /// </summary>
+        /// <value>
+        /// The head unit.
+        /// </value>
+        public HeadUnitType HeadUnit { get; set; } 
         
         /// <summary>
         /// Gets or sets the type of the boost pid.

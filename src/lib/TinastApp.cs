@@ -6,6 +6,7 @@
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Text;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
@@ -26,6 +27,7 @@
     using Interfaces;
     using MetroLog;
     using MetroLog.Targets;
+    using Pages;
     using ViewModel;
 
     /// <summary>
@@ -74,11 +76,6 @@
         private DisplayRequest displayRequest;
 
         /// <summary>
-        /// The root page type.
-        /// </summary>
-        private Type mainPageType;
-
-        /// <summary>
         /// Occurs when faulted.
         /// </summary>
         public event EventHandler Faulted;
@@ -98,16 +95,10 @@
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         /// <param name="pageType">The main page type.</param>
-        public TinastApp(Type pageType)
+        public TinastApp()
         {
-            if (pageType == null)
-            {
-                throw new ArgumentNullException("pageType");
-            }
-
             this.Suspending += OnSuspending;
             this.UnhandledException += UnhandledExceptionHandler;
-            this.mainPageType = pageType;
         }
 
         /// <summary>
@@ -168,7 +159,7 @@
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
             if (Debugger.IsAttached)
@@ -230,14 +221,34 @@
 
                 if (rootFrame.Content == null)
                 {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(this.mainPageType, e.Arguments);
+                    Type mainPageType = await this.GetMainpageType();
+                    this.log.Debug("Selected head unit type: {0}", mainPageType);
+                    rootFrame.Navigate(mainPageType, e.Arguments);
                 }
 
                 Window.Current.Activate();
             }
+        }
+
+        /// <summary>
+        /// Gets the type of the mainpage.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">Unsupported head unit.</exception>
+        private async Task<Type> GetMainpageType()
+        {
+            DisplayConfiguration displayConfig = await this.GetConfigAsync();
+            Type mainPageType = typeof(MainPage);
+            if (displayConfig.HeadUnit == HeadUnitType.Head_800x480)
+            {
+                mainPageType = typeof(MainPage_800x480);
+            }
+            else if (displayConfig.HeadUnit != HeadUnitType.Default)
+            {
+                throw new InvalidOperationException("Unsupported head unit.");
+            }
+
+            return mainPageType;
         }
 
         /// <summary>

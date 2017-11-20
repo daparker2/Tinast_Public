@@ -454,13 +454,14 @@ namespace DP.Tinast.ViewModel
         {
             bool propertyChanged;
             this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, true, out propertyChanged);
-            await Task.WhenAll(Task.Delay(250), this.OnPropertiesChanged());
+            await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
 
             for (double i = 18; i >= 11; i -= 0.25)
             {
                 if (i == 17.75)
                 {
                     this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, false, out propertyChanged);
+                    await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
                 }
 
                 this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
@@ -468,7 +469,9 @@ namespace DP.Tinast.ViewModel
             }
 
             this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, true, out propertyChanged);
-            await Task.WhenAll(Task.Delay(250), this.OnPropertiesChanged());
+            await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
+            this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, false, out propertyChanged);
+            await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
 
             for (double i = 11; i <= 14.5; i += 0.5)
             {

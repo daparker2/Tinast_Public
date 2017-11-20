@@ -17,7 +17,7 @@
         /// <summary>
         /// The gauge color
         /// </summary>
-        public static readonly Brush GaugeColor = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+        public static readonly Brush GaugeColor = new SolidColorBrush(Color.FromArgb(0xff, 255, 80, 80));
 
         /// <summary>
         /// The inactive color
@@ -32,7 +32,7 @@
         /// <summary>
         /// The indicator color
         /// </summary>
-        public static readonly Brush IndicatorColor = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+        public static readonly Brush IndicatorColor = new SolidColorBrush(Color.FromArgb(0xff, 247, 4, 0));
 
         /// <summary>
         /// The warning color
@@ -42,6 +42,6 @@
         /// <summary>
         /// The outline color
         /// </summary>
-        public static readonly Brush OutlineColor = new SolidColorBrush(Color.FromArgb(0xff, 0x7f, 0x7f, 0xff));
+        public static readonly Brush OutlineColor = new SolidColorBrush(Color.FromArgb(0xff, 0x39, 0x2e, 0x00));
     }
 }

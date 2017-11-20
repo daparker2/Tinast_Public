@@ -108,11 +108,18 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Config\HeadUnitType.cs" />
     <Compile Include="Controls\BoostControlBase.cs" />
     <Compile Include="Controls\BoostControl_800x480.xaml.cs">
       <DependentUpon>BoostControl_800x480.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TinastMainPage.cs" />
+    <Compile Include="Pages\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MainPage_800x480.xaml.cs">
+      <DependentUpon>MainPage_800x480.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MainPageBase.cs" />
     <Compile Include="TinastApp.cs" />
     <Compile Include="Config\DisplayConfiguration.cs" />
     <Compile Include="Config\PidType.cs" />
@@ -180,6 +187,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TemperatureControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\MainPage_800x480.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

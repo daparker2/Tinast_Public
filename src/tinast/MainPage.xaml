@@ -1,5 +1,5 @@
 ﻿<dptp:MainPageBase
-    x:Class="DP.Tinast.Pages.MainPage" 
+    x:Class="DP.Tinast.MainPage" 
     xmlns:Controls="using:DP.Tinast.Controls" 
     xmlns:dptp="using:DP.Tinast.Pages"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

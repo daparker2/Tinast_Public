@@ -113,14 +113,8 @@
     <Compile Include="Controls\BoostControl_800x480.xaml.cs">
       <DependentUpon>BoostControl_800x480.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\MainPage_800x480.xaml.cs">
-      <DependentUpon>MainPage_800x480.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Interfaces\ITinastApp.cs" />
     <Compile Include="Pages\MainPageBase.cs" />
-    <Compile Include="TinastApp.cs" />
     <Compile Include="Config\DisplayConfiguration.cs" />
     <Compile Include="Config\PidType.cs" />
     <Compile Include="Controls\AfrControl.xaml.cs">
@@ -187,14 +181,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TemperatureControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\MainPage_800x480.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

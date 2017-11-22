@@ -16,6 +16,7 @@
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Shapes;
     using Config;
+    using Interfaces;
 
     /// <summary>
     /// The boost gauge goes from the bottom left of the display to the top right of the display. At 0 psi, the gauge is empty. 
@@ -129,7 +130,7 @@
                 if (!this.isBlinking)
                 {
                     this.isBlinking = true;
-                    ((TinastApp)Application.Current).GaugeTick += UpdateTimer_Tick;
+                    ((ITinastApp)Application.Current).GaugeTick += UpdateTimer_Tick;
                 }
             }
             else
@@ -137,7 +138,7 @@
                 if (this.isBlinking)
                 {
                     this.isBlinking = false;
-                    ((TinastApp)Application.Current).GaugeTick -= UpdateTimer_Tick;
+                    ((ITinastApp)Application.Current).GaugeTick -= UpdateTimer_Tick;
                 }
             }
 
@@ -188,7 +189,7 @@
                 led.Stroke = ColorPalette.OutlineColor;
             }
 
-            DisplayConfiguration config = await ((TinastApp)Application.Current).GetConfigAsync();
+            DisplayConfiguration config = await ((ITinastApp)Application.Current).GetConfigAsync();
             this.boostOffset = config.BoostOffset;
             this.maxBoost = config.MaxBoost;
             this.absMaxBoost = this.maxBoost - this.boostOffset;

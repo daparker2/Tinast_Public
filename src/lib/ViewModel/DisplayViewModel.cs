@@ -50,14 +50,14 @@ namespace DP.Tinast.ViewModel
         private ulong ticks = 0;
 
         /// <summary>
-        /// The properties changed
+        /// The properties lock
         /// </summary>
-        private ConcurrentBag<string> propertiesChanged = new ConcurrentBag<string>();
+        private object propertiesLock = new object();
 
         /// <summary>
-        /// The property task
+        /// The properties changed
         /// </summary>
-        private Task propertyTask;
+        private HashSet<string> propertiesChanged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The flashed gauges
@@ -348,33 +348,33 @@ namespace DP.Tinast.ViewModel
         /// <summary>
         /// Called when a set of properties change on the view model.
         /// </summary>
+        /// <param name="pipelineWithUi">True if we should pipeline notifications with UI updates.</param>
         /// <returns>A task object.</returns>
         protected virtual async Task OnPropertiesChanged()
         {
-            HashSet<string> props = new HashSet<string>();
-            string prop;
-            while (this.propertiesChanged.TryTake(out prop))
+            Task dispatchTask = null;
+            lock (this.propertiesLock)
             {
-                props.Add(prop);
-            }
-
-            if (this.propertyTask != null)
-            {
-                await this.propertyTask;
-            }
-
-            if (props.Count > 0)
-            {
-                this.propertyTask = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                if (this.propertiesChanged.Count > 0)
                 {
-                    if (this.PropertyChanged != null)
+                    dispatchTask = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        foreach (string propertyName in props)
+                        if (this.PropertyChanged != null)
                         {
-                            this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                            foreach (string propertyName in this.propertiesChanged)
+                            {
+                                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                            }
                         }
-                    }
-                }).AsTask();
+
+                        this.propertiesChanged.Clear();
+                    }).AsTask();
+                }
+            }
+
+            if (dispatchTask != null)
+            {
+                await dispatchTask;
             }
         }
 
@@ -453,36 +453,55 @@ namespace DP.Tinast.ViewModel
         private async Task FlashAfrGauge()
         {
             bool propertyChanged;
-            this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, true, out propertyChanged);
-            await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
+            this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, false, out propertyChanged);
+            this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, false, out propertyChanged);
+            await this.OnPropertiesChanged();
 
-            for (double i = 18; i >= 11; i -= 0.25)
+            for (double i = 14.5; i <= 18; i += 0.5)
             {
-                if (i == 17.75)
+                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
+                if (i == 18)
                 {
-                    this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, false, out propertyChanged);
+                    this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, true, out propertyChanged);
                     await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
                 }
-
-                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
-                await Task.WhenAll(Task.Delay(33), this.OnPropertiesChanged());
+                else
+                {
+                    await Task.WhenAll(Task.Delay(33), this.OnPropertiesChanged());
+                }
             }
 
+            this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, false, out propertyChanged);
+            this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, false, out propertyChanged);
+            await this.OnPropertiesChanged();
+
+            for (double i = 14.5; i >= 11; i -= 0.5)
+            {
+                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
+                if (i == 11)
+                {
+                    this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, true, out propertyChanged);
+                    await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
+                }
+                else
+                {
+                    await Task.WhenAll(Task.Delay(33), this.OnPropertiesChanged());
+                }
+            }
+
+            this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, true, out propertyChanged);
+            this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, 11, out propertyChanged);
             this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, true, out propertyChanged);
+            this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, false, out propertyChanged);
             await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
+            this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, 18, out propertyChanged);
+            this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, true, out propertyChanged);
             this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, false, out propertyChanged);
             await Task.WhenAll(Task.Delay(500), this.OnPropertiesChanged());
-
-            for (double i = 11; i <= 14.5; i += 0.5)
-            {
-                if (i == 11.5)
-                {
-                    this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, false, out propertyChanged);
-                }
-
-                this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, i, out propertyChanged);
-                await Task.WhenAll(Task.Delay(33), this.OnPropertiesChanged());
-            }
+            this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, 14.7, out propertyChanged);
+            this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, false, out propertyChanged);
+            this.AfrTooRich = this.SetProperty("AfrTooRich", this.AfrTooRich, false, out propertyChanged);
+            await this.OnPropertiesChanged();
         }
 
         /// <summary>
@@ -521,9 +540,12 @@ namespace DP.Tinast.ViewModel
             propertyChanged = false;
             if (!propertyValue.Equals(newValue))
             {
-                this.propertiesChanged.Add(propertyName);
-                propertyChanged = true;
-                return newValue;
+                lock (this.propertiesLock)
+                {
+                    this.propertiesChanged.Add(propertyName);
+                    propertyChanged = true;
+                    return newValue;
+                }
             }
 
             return propertyValue;

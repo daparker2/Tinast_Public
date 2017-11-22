@@ -75,7 +75,7 @@
         /// </summary>
         public MainPageBase()
         {
-            ((TinastApp)Application.Current).Faulted += MainPage_Faulted;
+            ((ITinastApp)Application.Current).Faulted += MainPage_Faulted;
             this.Loaded += MainPage_Loaded;
             Application.Current.Suspending += Current_Suspending;
             Application.Current.Resuming += Current_Resuming;
@@ -88,7 +88,7 @@
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            this.log = LogManagerFactory.DefaultLogManager.GetLogger<TinastApp>();
+            this.log = LogManagerFactory.DefaultLogManager.GetLogger<MainPageBase>();
             AnalyticsVersionInfo versionInfo = AnalyticsInfo.VersionInfo;
             this.log.Info("Device Family: {0}, Version: {1}", versionInfo.DeviceFamily, versionInfo.DeviceFamilyVersion);
             if (versionInfo.DeviceFamily == "Windows.IoT")
@@ -96,8 +96,8 @@
                 this.log.Debug("Device is IoT.");
             }
 
-            this.config = await ((TinastApp)Application.Current).GetConfigAsync();
-            this.driver = await ((TinastApp)Application.Current).GetDriverAsync();
+            this.config = await ((ITinastApp)Application.Current).GetConfigAsync();
+            this.driver = await ((ITinastApp)Application.Current).GetDriverAsync();
             this.viewModel = new DisplayViewModel(this.driver, this.config);
             this.DataContext = this.viewModel;
             this.StartTicking();

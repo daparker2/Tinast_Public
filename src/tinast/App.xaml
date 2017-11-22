@@ -1,9 +1,8 @@
-﻿<dpt:TinastApp
+﻿<Application
     x:Class="DP.Tinast.App"
-    xmlns:dpt="using:DP.Tinast"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:src"
     RequestedTheme="Dark">
 
-</dpt:TinastApp>
+</Application>

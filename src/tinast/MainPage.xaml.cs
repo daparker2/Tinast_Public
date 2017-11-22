@@ -1,16 +1,17 @@
-﻿namespace DP.Tinast.Pages
+﻿namespace DP.Tinast
 {
     using System;
+    using Pages;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage_800x480 : MainPageBase
+    public sealed partial class MainPage : MainPageBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainPage_800x480"/> class.
+        /// Initializes a new instance of the <see cref="MainPage"/> class.
         /// </summary>
-        public MainPage_800x480()
+        public MainPage()
         {
             this.InitializeComponent();
         }

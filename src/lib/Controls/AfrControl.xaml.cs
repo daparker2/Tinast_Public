@@ -214,11 +214,11 @@
         {
             get
             {
-                return (bool)this.GetValue(TooLeanProperty);
+                return (bool)this.GetValue(IdleProperty);
             }
             set
             {
-                this.SetValue(TooLeanProperty, value);
+                this.SetValue(IdleProperty, value);
                 this.Redraw();
             }
         }
@@ -279,20 +279,20 @@
                 startIndex = endIndex;
                 endIndex = t;
             }
-
+            
             for (int i = 0; i < this.allLeds.Length; ++i)
             {
                 if (i >= startIndex && i < endIndex)
                 {
-                    if (this.warning != shouldWarn)
-                    {
-                        this.allLeds[i].Fill = ColorPalette.NeedleColor;
-                        this.allLeds[i].Stroke = ColorPalette.OutlineColor;
-                    }
                     if (shouldWarn)
                     {
                         this.allLeds[i].Stroke = ColorPalette.WarningColor;
                         this.allLeds[i].Fill = ColorPalette.WarningColor;
+                    }
+                    else if ((afrLevel < 14.7 && i == startIndex) || (afrLevel > 14.7 && i == endIndex - 1))
+                    {
+                        this.allLeds[i].Fill = ColorPalette.NeedleColor;
+                        this.allLeds[i].Stroke = ColorPalette.OutlineColor;
                     }
                     else
                     {

@@ -15,6 +15,7 @@
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Navigation;
+    using Interfaces;
 
     /// <summary>
     /// The oil temp, coolant temp, and intake temp indicators on the right side of the display will display the temperature levels as well as blink a warning indicator if one of the temperature levels is outside operating condition, by either being too low or too high.
@@ -50,7 +51,7 @@
         public TemperatureControl()
         {
             this.InitializeComponent();
-            ((TinastApp)Application.Current).IndicatorTick += UpdateTimer_Tick;
+            ((ITinastApp)Application.Current).IndicatorTick += UpdateTimer_Tick;
             this.DataContext = this;
             this.temp.Foreground = ColorPalette.IndicatorColor;
             this.text.Foreground = ColorPalette.IndicatorColor;

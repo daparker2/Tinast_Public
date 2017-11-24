@@ -263,16 +263,10 @@
             EventArgs eventArgs = new EventArgs();
             if (tick++ % 16 == 0)
             {
-                if (this.IndicatorTick != null)
-                {
-                    this.IndicatorTick(this, eventArgs);
-                }
+                this.IndicatorTick?.Invoke(this, eventArgs);
             }
 
-            if (this.GaugeTick != null)
-            {
-                this.GaugeTick(this, eventArgs);
-            }
+            this.GaugeTick?.Invoke(this, eventArgs);
         }
 
         /// <summary>
@@ -283,10 +277,7 @@
         private void UnhandledExceptionHandler(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             this.log.Fatal("Unhandled exception in app", e.Exception);
-            if (this.Faulted != null)
-            {
-                this.Faulted(this, new EventArgs());
-            }
+            this.Faulted?.Invoke(this, new EventArgs());
 
             // So we can show the fault indicator
             e.Handled = !Debugger.IsAttached;

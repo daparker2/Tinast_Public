@@ -73,8 +73,7 @@
         /// <returns>The pid handler for the mode.</returns>
         public PidHandler GetHandler(int pidMode)
         {
-            PidHandler ret;
-            if (this.ip.TryGetValue(pidMode, out ret))
+            if (this.ip.TryGetValue(pidMode, out PidHandler ret))
             {
                 return ret;
             }
@@ -89,8 +88,7 @@
         /// <returns>The pid handler for the mode.</returns>
         public PidHandler GetHandler(PidRequest pidRequest)
         {
-            PidHandler ret;
-            if (this.pp.TryGetValue(pidRequest, out ret))
+            if (this.pp.TryGetValue(pidRequest, out PidHandler ret))
             {
                 return ret;
             }

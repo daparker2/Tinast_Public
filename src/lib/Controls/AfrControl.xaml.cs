@@ -289,7 +289,8 @@
                         this.allLeds[i].Stroke = ColorPalette.WarningColor;
                         this.allLeds[i].Fill = ColorPalette.WarningColor;
                     }
-                    else if ((afrLevel < 14.7 && i == startIndex) || (afrLevel > 14.7 && i == endIndex - 1))
+                    else if (!this.Idle && !this.TooRich && !this.TooLean 
+                        && ((afrLevel >= 11 && afrLevel <= 14.7 && i == startIndex) || (afrLevel > 14.7 && afrLevel <= 18 && i == endIndex - 1)))
                     {
                         this.allLeds[i].Fill = ColorPalette.NeedleColor;
                         this.allLeds[i].Stroke = ColorPalette.OutlineColor;

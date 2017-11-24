@@ -50,14 +50,14 @@ namespace DP.Tinast.ViewModel
         private ulong ticks = 0;
 
         /// <summary>
-        /// The properties lock
-        /// </summary>
-        private object propertiesLock = new object();
-
-        /// <summary>
         /// The properties changed
         /// </summary>
-        private HashSet<string> propertiesChanged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private ConcurrentBag<string> propertiesChanged = new ConcurrentBag<string>();
+
+        /// <summary>
+        /// The property task
+        /// </summary>
+        private Task propertyTask;
 
         /// <summary>
         /// The flashed gauges
@@ -262,8 +262,7 @@ namespace DP.Tinast.ViewModel
 
                         PidResult result = await this.driver.GetPidResultAsync(request).TimeoutAfter(TimeSpan.FromSeconds(5));
 
-                        bool propertyChanged;
-                        this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out propertyChanged);
+                        this.EngineBoost = this.SetProperty("EngineBoost", this.EngineBoost, result.Boost, out bool propertyChanged);
                         this.EngineAfr = this.SetProperty("EngineAfr", this.EngineAfr, Math.Round(result.Afr, 2), out propertyChanged);
                         if (propertyChanged)
                         {
@@ -325,10 +324,7 @@ namespace DP.Tinast.ViewModel
             if (!this.Faulted)
             {
                 this.Faulted = true;
-                if (this.PropertyChanged != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs("Faulted"));
-                }
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Faulted"));
             }
         }
 
@@ -348,33 +344,32 @@ namespace DP.Tinast.ViewModel
         /// <summary>
         /// Called when a set of properties change on the view model.
         /// </summary>
-        /// <param name="pipelineWithUi">True if we should pipeline notifications with UI updates.</param>
         /// <returns>A task object.</returns>
         protected virtual async Task OnPropertiesChanged()
         {
-            Task dispatchTask = null;
-            lock (this.propertiesLock)
+            HashSet<string> props = new HashSet<string>();
+            while (this.propertiesChanged.TryTake(out string prop))
             {
-                if (this.propertiesChanged.Count > 0)
-                {
-                    dispatchTask = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        if (this.PropertyChanged != null)
-                        {
-                            foreach (string propertyName in this.propertiesChanged)
-                            {
-                                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                            }
-                        }
-
-                        this.propertiesChanged.Clear();
-                    }).AsTask();
-                }
+                props.Add(prop);
             }
 
-            if (dispatchTask != null)
+            if (this.propertyTask != null)
             {
-                await dispatchTask;
+                await this.propertyTask;
+            }
+
+            if (props.Count > 0)
+            {
+                this.propertyTask = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    if (this.PropertyChanged != null)
+                    {
+                        foreach (string propertyName in props)
+                        {
+                            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                    }
+                }).AsTask();
             }
         }
 
@@ -396,8 +391,7 @@ namespace DP.Tinast.ViewModel
         /// <returns></returns>
         private async Task FlashTempGauges()
         {
-            bool propertyChanged;
-            this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, true, out propertyChanged);
+            this.IntakeTempWarn = this.SetProperty("IntakeTempWarn", this.IntakeTempWarn, true, out bool propertyChanged);
             this.CoolantTempWarn = this.SetProperty("CoolantTempWarn", this.CoolantTempWarn, true, out propertyChanged);
             this.OilTempWarn = this.SetProperty("OilTempWarn", this.OilTempWarn, true, out propertyChanged);
             await this.OnPropertiesChanged();
@@ -452,8 +446,7 @@ namespace DP.Tinast.ViewModel
         /// <returns></returns>
         private async Task FlashAfrGauge()
         {
-            bool propertyChanged;
-            this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, false, out propertyChanged);
+            this.IdleLoad = this.SetProperty("IdleLoad", this.IdleLoad, false, out bool propertyChanged);
             this.AfrTooLean = this.SetProperty("AfrTooLean", this.AfrTooLean, false, out propertyChanged);
             await this.OnPropertiesChanged();
 
@@ -511,8 +504,7 @@ namespace DP.Tinast.ViewModel
         private async Task OpenConnectionAsync()
         {
 
-            bool propertyChanged;
-            this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, true, out propertyChanged);
+            this.Obd2Connecting = this.SetProperty("Obd2Connecting", this.Obd2Connecting, true, out bool propertyChanged);
             await this.OnPropertiesChanged();
 
             if (!this.flashedGauges)
@@ -540,12 +532,9 @@ namespace DP.Tinast.ViewModel
             propertyChanged = false;
             if (!propertyValue.Equals(newValue))
             {
-                lock (this.propertiesLock)
-                {
-                    this.propertiesChanged.Add(propertyName);
-                    propertyChanged = true;
-                    return newValue;
-                }
+                this.propertiesChanged.Add(propertyName);
+                propertyChanged = true;
+                return newValue;
             }
 
             return propertyValue;

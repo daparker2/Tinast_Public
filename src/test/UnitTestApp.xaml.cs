@@ -32,7 +32,7 @@
     /// </summary>
     /// <seealso cref="Xunit.Runners.UI.RunnerApplication" />
     /// <seealso cref="Windows.UI.Xaml.Markup.IXamlMetadataProvider" />
-    sealed partial class App : RunnerApplication
+    sealed partial class App : RunnerApplication, IDisposable
     {
         /// <summary>
         /// The test results text file name.
@@ -58,6 +58,11 @@
         /// The wait for run task
         /// </summary>
         private Task<string> waitForRunTask;
+
+        /// <summary>
+        /// The disposed value
+        /// </summary>
+        private bool disposed = false;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -89,6 +94,14 @@
         /// The test result timeout.
         /// </value>
         public TimeSpan TestResultTimeout { get; set; } = TimeSpan.FromSeconds(2500);
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
 
         /// <summary>
         /// Called when the test runner initializes.
@@ -203,6 +216,32 @@
                 }
 
                 sw.WriteLine(fileData);
+            }
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        private void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                this.disposed = true;
+                if (disposing)
+                {
+                    if (this.writer != null)
+                    {
+                        this.writer.Dispose();
+                        this.writer = null;
+                    }
+
+                    if (this.listener != null)
+                    {
+                        this.listener.Dispose();
+                        this.listener = null;
+                    }
+                }
             }
         }
     }

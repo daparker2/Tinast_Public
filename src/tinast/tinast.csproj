@@ -20,7 +20,7 @@
     <HockeyAppResourceId>97e8a58ba9a74a2bb9a8b8d46a464b7b</HockeyAppResourceId>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
     <PackageCertificateThumbprint>42FDFA111FD47F5F98DD5C53459BD21E091C9AC6</PackageCertificateThumbprint>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
   </PropertyGroup>

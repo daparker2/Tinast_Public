@@ -60,6 +60,11 @@ namespace DP.Tinast.Elm327
         private bool socketConnected = false;
 
         /// <summary>
+        /// Was the socket ever connected to apply our magic workaround
+        /// </summary>
+        private bool wasEverConnected = false;
+
+        /// <summary>
         /// The disposed
         /// </summary>
         private bool disposed = false;
@@ -188,12 +193,17 @@ namespace DP.Tinast.Elm327
             try
             {
                 await this.socket.ConnectAsync(this.hostName, this.serviceName);
-                this.socketConnected = true;
+                this.wasEverConnected = this.socketConnected = true;
             }
             catch (Exception ex)
             {
                 this.log.Error("Socket connect failed", ex);
-                await this.ResetRadioAsync();
+                if (this.wasEverConnected)
+                {
+                    this.log.Info("Trying magic BT workaround");
+                    await this.ResetRadioAsync();
+                }
+
                 throw;
             }
         }

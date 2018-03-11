@@ -148,16 +148,16 @@ module front(width,height) {
 translate([-(overall_width / 2),-(overall_length / 2), overall_height])
 	union() {
 		top(overall_width, overall_length);
-//		translate([0, overall_length, 0]) 
-//			rotate([180, 90, 0]) 
-//			right(overall_length, overall_height);
-//		translate([overall_width + thickness, overall_length, 0]) 
-//			rotate([180, 90, 0])
-//			left(overall_length, overall_height);
-//		translate([-.1,thickness,.1])
-//			rotate([0,90,-90])
-//			back(overall_width + .2, overall_height);
-//		translate([overall_width,overall_length,0])
-//			rotate([-90,0,180])
-//			front(overall_width,overall_height);
+		translate([0, overall_length, 0]) 
+			rotate([180, 90, 0]) 
+			right(overall_length, overall_height);
+		translate([overall_width + thickness, overall_length, 0]) 
+			rotate([180, 90, 0])
+			left(overall_length, overall_height);
+		translate([-.1,thickness,.1])
+			rotate([0,90,-90])
+			back(overall_width + .2, overall_height);
+		translate([overall_width,overall_length,0])
+			rotate([-90,0,180])
+			front(overall_width,overall_height);
 	}

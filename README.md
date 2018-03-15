@@ -1,6 +1,6 @@
-## [Newest release works with 5" backpack type HDMI displays](https://github.com/daparker2/Tinast_Public/releases/tag/v1.0.85.1.18). See below pic for how I positioned it in a reasonable place in my vehicle:
+## [Newest release works with 5" backpack type HDMI displays](https://github.com/daparker2/Tinast_Public/releases/tag/v1.0.85.1.18). Here's what it looks like:
 
-<img src="https://github.com/daparker2/Tinast_Public/blob/master/img/update2.jpg"></img>
+<img src="https://github.com/daparker2/Tinast_Public/blob/master/img/completed.jpg"></img>
 
 Also, [3D printable gauge pod model](src/pod.scad).
 

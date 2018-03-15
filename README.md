@@ -2,6 +2,10 @@
 
 <img src="https://github.com/daparker2/Tinast_Public/blob/master/img/update2.jpg"></img>
 
+Also, [3D printable gauge pod model](src/pod.scad).
+
+<img src="https://github.com/daparker2/Tinast_Public/blob/master/img/pod.png"></img>
+
 Coool.
 
 # Introduction 

@@ -46,15 +46,22 @@
         private int lastLevel = 0;
 
         /// <summary>
+        /// The ticks.
+        /// </summary>
+        private ulong ticks = 0;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TemperatureControl"/> class.
         /// </summary>
         public TemperatureControl()
         {
             this.InitializeComponent();
-            ((ITinastApp)Application.Current).IndicatorTick += UpdateTimer_Tick;
+            TinastGlobal.Current.IndicatorTick += UpdateTimer_Tick;
             this.DataContext = this;
             this.temp.Foreground = ColorPalette.IndicatorColor;
+            this.tempBackground.Background = ColorPalette.IndicatorBackground;
             this.text.Foreground = ColorPalette.IndicatorColor;
+            this.textBackground.Background = ColorPalette.IndicatorBackground;
         }
 
         /// <summary>
@@ -127,17 +134,21 @@
             int level = this.Level;
             if (lastLevel != level)
             {
-                this.temp.Foreground = ColorPalette.NeedleColor;
+                this.textBackground.Background = this.tempBackground.Background = ColorPalette.IndicatorWarningBackground;
+                this.text.Foreground = this.temp.Foreground = ColorPalette.NeedleColor;
             }
-            else if (this.Warning)
+            else if (this.Warning && (this.ticks % 2) == 0)
             {
-                this.temp.Foreground = ColorPalette.WarningColor;
+                this.textBackground.Background = this.tempBackground.Background = ColorPalette.IndicatorWarningBackground;
+                this.text.Foreground = this.temp.Foreground = ColorPalette.WarningColor;
             }
             else
             {
-                this.temp.Foreground = ColorPalette.IndicatorColor;
+                this.textBackground.Background = this.tempBackground.Background = ColorPalette.IndicatorBackground;
+                this.text.Foreground = this.temp.Foreground = ColorPalette.IndicatorColor;
             }
 
+            ++this.ticks;
             lastLevel = this.Level;
         }
     }

@@ -34,27 +34,12 @@
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application, ITinastApp, IDisposable
+    sealed partial class App : Application
     {
         /// <summary>
         /// The logger.
         /// </summary>
         private ILogger log;
-
-        /// <summary>
-        /// The display configuration
-        /// </summary>
-        private DisplayConfiguration config;
-
-        /// <summary>
-        /// The ELM 327 driver
-        /// </summary>
-        private Elm327Driver driver;
-
-        /// <summary>
-        /// The connection
-        /// </summary>
-        private BluetoothElm327Connection connection;
 
         /// <summary>
         /// The update timer
@@ -67,29 +52,9 @@
         private uint tick = 0;
 
         /// <summary>
-        /// The disposed value
-        /// </summary>
-        private bool disposed = false;
-
-        /// <summary>
         /// The display request
         /// </summary>
         private DisplayRequest displayRequest;
-
-        /// <summary>
-        /// Occurs when faulted.
-        /// </summary>
-        public event EventHandler Faulted;
-
-        /// <summary>
-        /// Occurs when the short tick for updating gauges occurs.
-        /// </summary>
-        public event EventHandler GaugeTick;
-
-        /// <summary>
-        /// Occurs when the long tick for blinking indicators occurs.
-        /// </summary>
-        public event EventHandler IndicatorTick;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -101,59 +66,6 @@
             this.Suspending += OnSuspending;
             HockeyClient.Current.Configure("97e8a58ba9a74a2bb9a8b8d46a464b7b");
             this.UnhandledException += UnhandledExceptionHandler;
-        }
-
-        /// <summary>
-        /// Gets the driver asynchronously.
-        /// </summary>
-        /// <returns>A <see cref="IDisplayDriver"/> object.</returns>
-        public async Task<IDisplayDriver> GetDriverAsync()
-        {
-            if (this.connection == null)
-            {
-                this.connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync())
-                                                                  .FirstOrDefault();
-                if (this.connection == null)
-                {
-                    this.log.Error("App launch failed. Couldn't access the OBD2 scantool.");
-                    MessageDialog dialog = new MessageDialog(string.Format("App launch failed for the following reason. You must pair the system with the OBD2 scantool before launching the app again. Press OK to quit the app."));
-                    dialog.Commands.Add(new UICommand("OK") { Id = 0 });
-                    dialog.DefaultCommandIndex = 0;
-                    dialog.CancelCommandIndex = 0;
-                    IUICommand result = await dialog.ShowAsync();
-                    this.Exit();
-                    return null;
-                }
-            }
-
-            if (this.driver == null)
-            {
-                this.driver = new Elm327Driver(await this.GetConfigAsync(), this.connection);
-            }
-
-            return this.driver;
-        }
-
-        /// <summary>
-        /// Gets the configuration asynchronously.
-        /// </summary>
-        /// <returns>An <see cref="DisplayConfiguration"/> object.</returns>
-        public async Task<DisplayConfiguration> GetConfigAsync()
-        {
-            if (this.config == null)
-            {
-                this.config = await DisplayConfiguration.Load();
-            }
-
-            return this.config;
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
         }
 
         /// <summary>
@@ -214,7 +126,7 @@
 
                 if (this.updateTimer == null)
                 {
-                    this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+                    this.updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
                     this.updateTimer.Tick += UpdateTimer_Tick;
                     this.updateTimer.Start();
                 }
@@ -223,7 +135,7 @@
 
                 if (rootFrame.Content == null)
                 {
-                    Type mainPageType = await this.GetMainpageType();
+                    Type mainPageType = await GetMainpageType().ConfigureAwait(true);
                     this.log.Debug("Selected head unit type: {0}", mainPageType);
                     rootFrame.Navigate(mainPageType, e.Arguments);
                 }
@@ -237,13 +149,14 @@
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">Unsupported head unit.</exception>
-        private async Task<Type> GetMainpageType()
+        private static async Task<Type> GetMainpageType()
         {
-            DisplayConfiguration displayConfig = await this.GetConfigAsync();
+            DisplayConfiguration displayConfig = await TinastGlobal.Current.GetConfigAsync()
+                                                                           .ConfigureAwait(true);
             Type mainPageType = typeof(MainPage);
-            if (displayConfig.HeadUnit == HeadUnitType.Head_800x480)
+            if (displayConfig.HeadUnit == HeadUnitType.Head800x480)
             {
-                mainPageType = typeof(MainPage_800x480);
+                mainPageType = typeof(MainPage800x480);
             }
             else if (displayConfig.HeadUnit != HeadUnitType.Default)
             {
@@ -263,10 +176,10 @@
             EventArgs eventArgs = new EventArgs();
             if (tick++ % 16 == 0)
             {
-                this.IndicatorTick?.Invoke(this, eventArgs);
+                TinastGlobal.Current.OnIndicatorTick();
             }
 
-            this.GaugeTick?.Invoke(this, eventArgs);
+            TinastGlobal.Current.OnGaugeTick();
         }
 
         /// <summary>
@@ -277,7 +190,7 @@
         private void UnhandledExceptionHandler(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             this.log.Fatal("Unhandled exception in app", e.Exception);
-            this.Faulted?.Invoke(this, new EventArgs());
+            TinastGlobal.Current.OnFaulted();
 
             // So we can show the fault indicator
             e.Handled = !Debugger.IsAttached;
@@ -311,10 +224,7 @@
                     this.updateTimer.Stop();
                 }
 
-                if (this.connection != null)
-                {
-                    this.connection.Dispose();
-                }
+                TinastGlobal.Current.Suspend();
 
                 if (this.displayRequest != null)
                 {
@@ -324,27 +234,6 @@
             finally
             {
                 deferral.Complete();
-            }
-        }
-
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        private void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                this.disposed = true;
-
-                if (disposing)
-                {
-                    if (this.driver != null)
-                    {
-                        this.connection.Dispose();
-                        this.driver = null;
-                    }
-                }
             }
         }
     }

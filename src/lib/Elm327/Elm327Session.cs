@@ -44,7 +44,7 @@
         /// <summary>
         /// The debug data task
         /// </summary>
-        private PidDebugData debugData = new PidDebugData(string.Empty, new string[0], TimeSpan.Zero);
+        private PidDebugData debugData = new PidDebugData(string.Empty, Array.Empty<string>(), TimeSpan.Zero);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Elm327Session"/> class.
@@ -79,7 +79,7 @@
             DateTime start = DateTime.Now;
             byte[] outBuf = Encoding.ASCII.GetBytes(commandString + "\r");
             await this.connection.OutputStream.WriteAsync(outBuf.AsBuffer());
-            string[] ret = await this.ReadResponseAsync();
+            string[] ret = await this.ReadResponseAsync().ConfigureAwait(false);
             this.debugData = new PidDebugData(commandString, ret, DateTime.Now - start);
             this.log.Trace(this.debugData.ToString());
             return ret;
@@ -93,8 +93,8 @@
         public async Task<List<int>> RunPidAsync(string pid)
         {
             List<int> pr = new List<int>();
-            string[] r = await this.SendCommandAsync(pid);
-            if (!r[r.Length - 1].Equals("UNABLE TO CONNECT") && !r[r.Length - 1].Equals("NO DATA"))
+            string[] r = await this.SendCommandAsync(pid).ConfigureAwait(false);
+            if (!r[r.Length - 1].Equals("UNABLE TO CONNECT", StringComparison.OrdinalIgnoreCase) && !r[r.Length - 1].Equals("NO DATA", StringComparison.OrdinalIgnoreCase))
             {
                 bool multiline = false;
                 for (int i = 0; i < r.Length; ++i)
@@ -168,7 +168,7 @@
                                 char[] sa = new char[sLen];
                                 cb.CopyTo(sCur, sa, 0, sLen);
                                 string s = new string(sa, 0, sLen);
-                                if (s.Equals("STOPPED"))
+                                if (s.Equals("STOPPED", StringComparison.OrdinalIgnoreCase))
                                 {
                                     throw new IOException("ELM327 device stopped.");
                                 }

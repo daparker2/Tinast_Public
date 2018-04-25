@@ -202,7 +202,7 @@
             try
             {
                 StorageFolder appFolder = ApplicationData.Current.LocalFolder;
-                return await ReadConfig(log, appFolder);
+                return await ReadConfig(log, appFolder).ConfigureAwait(false);
             }
             catch (FileNotFoundException)
             {
@@ -210,7 +210,7 @@
                 try
                 {
                     StorageFolder installFolder = Package.Current.InstalledLocation;
-                    return await ReadConfig(log, installFolder);
+                    return await ReadConfig(log, installFolder).ConfigureAwait(false);
                 }
                 catch (FileNotFoundException)
                 {
@@ -219,7 +219,7 @@
                     DisplayConfiguration ret = new DisplayConfiguration();
 
                     // Make sure we can save the default configuration that we just created.
-                    await ret.Save();
+                    await ret.Save().ConfigureAwait(false);
                     return ret;
 #else
                     throw;

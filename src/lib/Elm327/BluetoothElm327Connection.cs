@@ -201,7 +201,7 @@ namespace DP.Tinast.Elm327
                 if (this.wasEverConnected)
                 {
                     this.log.Info("Trying magic BT workaround");
-                    await this.ResetRadioAsync();
+                    await this.ResetRadioAsync().ConfigureAwait(false);
                 }
 
                 throw;
@@ -224,7 +224,7 @@ namespace DP.Tinast.Elm327
                         RadioState originalState = radio.State;
                         this.log.Info("Toggling BT radio '{0}'", radio.Name);
                         RadioAccessStatus offStatus = await radio.SetStateAsync(RadioState.Off);
-                        await Task.Delay(200);
+                        await Task.Delay(200).ConfigureAwait(false);
                         if (radio.State != RadioState.Off)
                         {
                             this.log.Debug("Failed to turn radio off. Reason: {0}", offStatus);
@@ -234,7 +234,7 @@ namespace DP.Tinast.Elm327
                         if (radio.State == RadioState.On)
                         {
                             this.log.Debug("Radio state toggled from {0} -> {1}", originalState, radio.State);
-                            await Task.Delay(200);
+                            await Task.Delay(200).ConfigureAwait(false);
                         }
                         else
                         {
@@ -251,6 +251,7 @@ namespace DP.Tinast.Elm327
         public void Dispose()
         {
             this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -261,7 +262,7 @@ namespace DP.Tinast.Elm327
         /// </returns>
         public override string ToString()
         {
-            return string.Format("{0} ({1})", base.ToString(), this.deviceName);
+            return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", base.ToString(), this.deviceName);
         }
 
         /// <summary>

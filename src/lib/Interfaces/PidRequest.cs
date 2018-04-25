@@ -6,7 +6,7 @@
     /// Represent a PID request
     /// </summary>
     [Flags]
-    public enum PidRequest
+    public enum PidRequests
     {
         /// <summary>
         /// The none

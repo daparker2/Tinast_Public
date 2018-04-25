@@ -3,6 +3,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -21,21 +22,21 @@
         /// <summary>
         /// The ip
         /// </summary>
-        private Dictionary<PidRequest, PidHandler> pp = new Dictionary<PidRequest, PidHandler>();
+        private Dictionary<PidRequests, PidHandler> pp = new Dictionary<PidRequests, PidHandler>();
 
         /// <summary>
         /// The keys
         /// </summary>
-        private List<PidRequest> keys = new List<PidRequest>();
+        private List<PidRequests> keys = new List<PidRequests>();
 
         /// <summary>
         /// Gets the PID handlers for request.
         /// </summary>
         /// <param name="request">The PID request.</param>
         /// <returns></returns>
-        public IEnumerable<PidHandler> GetHandlersForRequest(PidRequest request)
+        public IEnumerable<PidHandler> GetHandlersForRequest(PidRequests request)
         {
-            foreach (PidRequest key in this.keys)
+            foreach (PidRequests key in this.keys)
             {
                 if (request.HasFlag(key))
                 {
@@ -58,7 +59,7 @@
 
             if (this.ip.ContainsKey(handler.Mode) || this.pp.ContainsKey(handler.Request))
             {
-                throw new ArgumentException("PID request: " + handler.Request + " or handler: " + handler.Mode.ToString("X") + " already exists.");
+                throw new ArgumentException("PID request: " + handler.Request + " or handler: " + handler.Mode.ToString("X", CultureInfo.CurrentCulture) + " already exists.");
             }
 
             this.ip[handler.Mode] = handler;
@@ -86,7 +87,7 @@
         /// </summary>
         /// <param name="pidRequest">The pid request.</param>
         /// <returns>The pid handler for the mode.</returns>
-        public PidHandler GetHandler(PidRequest pidRequest)
+        public PidHandler GetHandler(PidRequests pidRequest)
         {
             if (this.pp.TryGetValue(pidRequest, out PidHandler ret))
             {
@@ -101,7 +102,7 @@
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns></returns>
-        private static int CountBits(PidRequest request)
+        private static int CountBits(PidRequests request)
         {
             int cBits = 0;
             int sh = 32;

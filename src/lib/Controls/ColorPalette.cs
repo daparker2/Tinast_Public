@@ -17,31 +17,41 @@
         /// <summary>
         /// The gauge color
         /// </summary>
-        public static readonly Brush GaugeColor = new SolidColorBrush(Color.FromArgb(0xff, 255, 71, 71));
+        public static readonly Brush GaugeColor = new SolidColorBrush(Color.FromArgb(0xff, 255, 255, 255));
 
         /// <summary>
         /// The inactive color
         /// </summary>
-        public static readonly Brush InactiveColor = new SolidColorBrush(Color.FromArgb(0xff, 138, 30, 30));
+        public static readonly Brush InactiveColor = new SolidColorBrush(Color.FromArgb(0x77, 128, 255, 128));
 
         /// <summary>
         /// The needle color
         /// </summary>
-        public static readonly Brush NeedleColor = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+        public static readonly Brush NeedleColor = new SolidColorBrush(Color.FromArgb(0xff, 0x77, 0xff, 0x77));
 
         /// <summary>
         /// The indicator color
         /// </summary>
-        public static readonly Brush IndicatorColor = new SolidColorBrush(Color.FromArgb(0xff, 255, 71, 71));
+        public static readonly Brush IndicatorColor = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
+
+        /// <summary>
+        /// The indicator background
+        /// </summary>
+        public static readonly Brush IndicatorBackground = new SolidColorBrush(Color.FromArgb(0xdd, 0, 255, 0));
+
+        /// <summary>
+        /// The indicator background
+        /// </summary>
+        public static readonly Brush IndicatorWarningBackground = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
 
         /// <summary>
         /// The warning color
         /// </summary>
-        public static readonly Brush WarningColor = new SolidColorBrush(Color.FromArgb(0xff, 0x00, 0xff, 0xff));
+        public static readonly Brush WarningColor = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
 
         /// <summary>
         /// The outline color
         /// </summary>
-        public static readonly Brush OutlineColor = new SolidColorBrush(Color.FromArgb(0xff, 190, 65, 65));
+        public static readonly Brush OutlineColor = new SolidColorBrush(Color.FromArgb(0xff, 128, 255, 128));
     }
 }

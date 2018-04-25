@@ -22,7 +22,7 @@
         /// <returns></returns>
         public static async Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, TimeSpan timeout)
         {
-            await TimeoutAfter((Task)task, timeout);
+            await TimeoutAfter((Task)task, timeout).ConfigureAwait(false);
             return task.Result;
         }
 
@@ -39,19 +39,19 @@
             using (var timeoutCancellationTokenSource = new CancellationTokenSource())
             {
                 Task delayTask = Task.Delay(timeout, timeoutCancellationTokenSource.Token);
-                var completedTask = await Task.WhenAny(task, delayTask);
+                var completedTask = await Task.WhenAny(task, delayTask).ConfigureAwait(false);
                 if (completedTask == task)
                 {
                     timeoutCancellationTokenSource.Cancel();
                     try
                     {
-                        await delayTask;
+                        await delayTask.ConfigureAwait(false);
                     }
                     catch (OperationCanceledException)
                     {
                     }
 
-                    await task;  // Very important in order to propagate exceptions
+                    await task.ConfigureAwait(false);  // Very important in order to propagate exceptions
                 }
                 else
                 {

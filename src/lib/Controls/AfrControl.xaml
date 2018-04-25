@@ -14,59 +14,64 @@
     <UserControl.Resources>
         <conv:AfrConverter x:Key="afrConverter" />
     </UserControl.Resources>
-    <Border Width="315" Height="335" BorderThickness="3" BorderBrush="Transparent">
-        <Canvas Width="313" Height="333">
-            <shapes:Ellipse x:Name="afrOutline" Width="320" Height="320" Stroke="White" StrokeThickness="1" Canvas.Top="-3" Canvas.Left="-3"/>
-            <shapes:Ellipse x:Name="led0" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="0" Canvas.Left="144" />
-            <shapes:Ellipse x:Name="led1" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="2" Canvas.Left="124" />
-            <shapes:Ellipse x:Name="led2" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="7" Canvas.Left="105" />
-            <shapes:Ellipse x:Name="led3" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="14" Canvas.Left="86" />
-            <shapes:Ellipse x:Name="led4" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="24" Canvas.Left="69" />
-            <shapes:Ellipse x:Name="led5" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="36" Canvas.Left="53" />
-            <shapes:Ellipse x:Name="led6" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="50" Canvas.Left="39" />
-            <shapes:Ellipse x:Name="led7" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="66" Canvas.Left="26" />
-            <shapes:Ellipse x:Name="led8" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="83" Canvas.Left="16" />
-            <shapes:Ellipse x:Name="led9" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="101" Canvas.Left="8" />
-            <shapes:Ellipse x:Name="led10" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="120" Canvas.Left="3" />
-            <shapes:Ellipse x:Name="led11" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="140" Canvas.Left="0" />
-            <shapes:Ellipse x:Name="led12" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="160" Canvas.Left="0" />
-            <shapes:Ellipse x:Name="led13" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="180" Canvas.Left="2" />
-            <shapes:Ellipse x:Name="led14" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="199" Canvas.Left="7" />
-            <shapes:Ellipse x:Name="led15" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="218" Canvas.Left="14" />
-            <shapes:Ellipse x:Name="led16" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="235" Canvas.Left="24" />
-            <shapes:Ellipse x:Name="led17" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="251" Canvas.Left="36" />
-            <shapes:Ellipse x:Name="led18" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="265" Canvas.Left="50" />
-            <shapes:Ellipse x:Name="led19" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="278" Canvas.Left="66" />
-            <shapes:Ellipse x:Name="led20" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="288" Canvas.Left="83" />
-            <shapes:Ellipse x:Name="led21" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="296" Canvas.Left="101" />
-            <shapes:Ellipse x:Name="led22" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="301" Canvas.Left="120" />
-            <shapes:Ellipse x:Name="led23" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="304" Canvas.Left="140" />
-            <shapes:Ellipse x:Name="led24" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="304" Canvas.Left="160" />
-            <shapes:Ellipse x:Name="led25" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="302" Canvas.Left="180" />
-            <shapes:Ellipse x:Name="led26" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="297" Canvas.Left="199" />
-            <shapes:Ellipse x:Name="led27" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="290" Canvas.Left="218" />
-            <shapes:Ellipse x:Name="led28" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="280" Canvas.Left="235" />
-            <shapes:Ellipse x:Name="led29" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="268" Canvas.Left="251" />
-            <shapes:Ellipse x:Name="led30" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="254" Canvas.Left="265" />
-            <shapes:Ellipse x:Name="led31" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="238" Canvas.Left="278" />
-            <shapes:Ellipse x:Name="led32" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="221" Canvas.Left="288" />
-            <shapes:Ellipse x:Name="led33" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="203" Canvas.Left="296" />
-            <shapes:Ellipse x:Name="led34" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="184" Canvas.Left="301" />
-            <shapes:Ellipse x:Name="led35" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="164" Canvas.Left="304" />
-            <shapes:Ellipse x:Name="led36" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="144" Canvas.Left="304" />
-            <shapes:Ellipse x:Name="led37" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="124" Canvas.Left="302" />
-            <shapes:Ellipse x:Name="led38" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="105" Canvas.Left="297" />
-            <shapes:Ellipse x:Name="led39" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="86" Canvas.Left="290" />
-            <shapes:Ellipse x:Name="led40" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="69" Canvas.Left="280" />
-            <shapes:Ellipse x:Name="led41" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="53" Canvas.Left="268" />
-            <shapes:Ellipse x:Name="led42" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="39" Canvas.Left="254" />
-            <shapes:Ellipse x:Name="led43" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="26" Canvas.Left="238" />
-            <shapes:Ellipse x:Name="led44" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="16" Canvas.Left="221" />
-            <shapes:Ellipse x:Name="led45" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="8" Canvas.Left="203" />
-            <shapes:Ellipse x:Name="led46" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="3" Canvas.Left="184" />
-            <shapes:Ellipse x:Name="led47" Width="10" Height="10" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="0" Canvas.Left="164" />
-            <TextBlock x:Name="level" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=afrConverter}}" FontSize="45" FontFamily="Courier New" FontWeight="Bold" Width="239" Height="52" Canvas.Top="131" Canvas.Left="39" Margin="0,0,0,0" TextAlignment="Center" />
-            <TextBlock x:Name="label" Text="AFR" FontSize="15" FontFamily="Courier New" Width="30" Height="15" Canvas.Top="318" Canvas.Left="143" Margin="0,0,0,0" TextAlignment="Center" />
+    <Border Height="335" BorderThickness="3" BorderBrush="Transparent" Margin="0,0,-22.8,0.2">
+        <Canvas Margin="9.8,-3.2,-27.8,-4">
+            <shapes:Ellipse x:Name="afrOutline" Width="323" Height="323" Stroke="White" StrokeThickness="1" Canvas.Top="-3" Canvas.Left="-3"/>
+            <shapes:Ellipse x:Name="led0" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="0" Canvas.Left="144" />
+            <shapes:Ellipse x:Name="led1" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="2" Canvas.Left="124" />
+            <shapes:Ellipse x:Name="led2" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="7" Canvas.Left="105" />
+            <shapes:Ellipse x:Name="led3" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="14" Canvas.Left="86" />
+            <shapes:Ellipse x:Name="led4" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="24" Canvas.Left="69" />
+            <shapes:Ellipse x:Name="led5" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="36" Canvas.Left="53" />
+            <shapes:Ellipse x:Name="led6" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="50" Canvas.Left="39" />
+            <shapes:Ellipse x:Name="led7" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="66" Canvas.Left="26" />
+            <shapes:Ellipse x:Name="led8" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="83" Canvas.Left="16" />
+            <shapes:Ellipse x:Name="led9" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="101" Canvas.Left="8" />
+            <shapes:Ellipse x:Name="led10" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="120" Canvas.Left="3" />
+            <shapes:Ellipse x:Name="led11" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="140" Canvas.Left="0" />
+            <shapes:Ellipse x:Name="led12" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="160" Canvas.Left="0" />
+            <shapes:Ellipse x:Name="led13" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="180" Canvas.Left="2" />
+            <shapes:Ellipse x:Name="led14" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="199" Canvas.Left="7" />
+            <shapes:Ellipse x:Name="led15" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="218" Canvas.Left="14" />
+            <shapes:Ellipse x:Name="led16" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="235" Canvas.Left="24" />
+            <shapes:Ellipse x:Name="led17" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="251" Canvas.Left="36" />
+            <shapes:Ellipse x:Name="led18" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="265" Canvas.Left="50" />
+            <shapes:Ellipse x:Name="led19" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="278" Canvas.Left="66" />
+            <shapes:Ellipse x:Name="led20" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="288" Canvas.Left="83" />
+            <shapes:Ellipse x:Name="led21" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="296" Canvas.Left="101" />
+            <shapes:Ellipse x:Name="led22" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="301" Canvas.Left="120" />
+            <shapes:Ellipse x:Name="led23" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="304" Canvas.Left="140" />
+            <shapes:Ellipse x:Name="led24" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="304" Canvas.Left="160" />
+            <shapes:Ellipse x:Name="led25" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="302" Canvas.Left="180" />
+            <shapes:Ellipse x:Name="led26" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="297" Canvas.Left="199" />
+            <shapes:Ellipse x:Name="led27" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="290" Canvas.Left="218" />
+            <shapes:Ellipse x:Name="led28" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="280" Canvas.Left="235" />
+            <shapes:Ellipse x:Name="led29" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="268" Canvas.Left="251" />
+            <shapes:Ellipse x:Name="led30" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="254" Canvas.Left="265" />
+            <shapes:Ellipse x:Name="led31" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="238" Canvas.Left="278" />
+            <shapes:Ellipse x:Name="led32" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="221" Canvas.Left="288" />
+            <shapes:Ellipse x:Name="led33" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="203" Canvas.Left="296" />
+            <shapes:Ellipse x:Name="led34" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="184" Canvas.Left="301" />
+            <shapes:Ellipse x:Name="led35" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="164" Canvas.Left="304" />
+            <shapes:Ellipse x:Name="led36" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="144" Canvas.Left="304" />
+            <shapes:Ellipse x:Name="led37" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="124" Canvas.Left="302" />
+            <shapes:Ellipse x:Name="led38" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="105" Canvas.Left="297" />
+            <shapes:Ellipse x:Name="led39" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="86" Canvas.Left="290" />
+            <shapes:Ellipse x:Name="led40" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="69" Canvas.Left="280" />
+            <shapes:Ellipse x:Name="led41" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="53" Canvas.Left="268" />
+            <shapes:Ellipse x:Name="led42" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="39" Canvas.Left="254" />
+            <shapes:Ellipse x:Name="led43" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="26" Canvas.Left="238" />
+            <shapes:Ellipse x:Name="led44" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="16" Canvas.Left="221" />
+            <shapes:Ellipse x:Name="led45" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="8" Canvas.Left="203" />
+            <shapes:Ellipse x:Name="led46" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="3" Canvas.Left="184" />
+            <shapes:Ellipse x:Name="led47" Width="13" Height="13" Stroke="White" Fill="White" StrokeThickness="1" Canvas.Top="0" Canvas.Left="164" />
+            <Border x:Name="levelBackground" Canvas.Top="122" Canvas.Left="55" Width="213" Height="70">
+                <TextBlock x:Name="level" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=afrConverter}}" FontSize="60" FontFamily="Courier New" FontWeight="Bold" Width="213" Height="55" Margin="-23,-10,0,0" TextAlignment="Center" />
+            </Border>
+            <Border x:Name="labelBackground" Canvas.Top="318" Canvas.Left="143" >
+                <TextBlock x:Name="label" Text="AFR" FontSize="15" FontFamily="Courier New" Width="30" Height="15" Margin="0,0,0,0" TextAlignment="Center" />
+            </Border>
+
         </Canvas>
     </Border>
 </UserControl>

@@ -15,8 +15,12 @@
     </UserControl.Resources>
     <Border Width="380" Height="80" BorderThickness="3" BorderBrush="Transparent">
         <Canvas Width="380" Height="80">
-            <TextBlock x:Name="text" Text="{Binding Path=Text, ElementName=_this}" FontSize="35" FontFamily="Courier New" FontWeight="Bold" Width="180" Height="50" Canvas.Top="20" Canvas.Left="0" Margin="0,0,0,0" />
-            <TextBlock x:Name="temp" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=tempConverter}}" FontSize="35" FontWeight="Bold" FontFamily="Courier New" Width="190" Height="50" Canvas.Top="20" Canvas.Left="180" Margin="0,0,0,0"  />
+            <Border x:Name="textBackground" Canvas.Top="14" Canvas.Left="0" Height="50" Width="191" >
+                <TextBlock x:Name="text" Text="{Binding Path=Text, ElementName=_this}" FontSize="35" FontFamily="Courier New" FontWeight="Bold" Height="50" Margin="5,5,0.2,-4.6" />
+            </Border>
+            <Border x:Name="tempBackground" Canvas.Top="14" Canvas.Left="195">
+                <TextBlock x:Name="temp" Text="{Binding Path=Level, ElementName=_this, Converter={StaticResource ResourceKey=tempConverter}}" FontSize="45" FontWeight="Bold" FontFamily="Courier New" Width="190" Height="50" Margin="0,0,0,0"  />
+            </Border>
         </Canvas>
     </Border>
 </UserControl>

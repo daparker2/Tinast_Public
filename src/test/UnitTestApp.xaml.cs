@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -117,7 +118,7 @@
             this.waitForRunTask = this.GetTestResultAsync();
             this.listener = new StreamSocketListener();
             this.listener.ConnectionReceived += Listener_ConnectionReceived;
-            await this.listener.BindServiceNameAsync(this.TestResultPort.ToString());
+            await this.listener.BindServiceNameAsync(this.TestResultPort.ToString(CultureInfo.InvariantCulture));
             this.log.Debug("Listening on {0}", this.listener.Information.LocalPort);
         }
 
@@ -146,9 +147,9 @@
                     throw new TimeoutException("Test results not available within the configured timeout.");
                 }
 
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(true);
                 string s = this.writer.ToString();
-                if (s.Contains("Tests run: "))
+                if (s.Contains("Tests run: ", StringComparison.OrdinalIgnoreCase))
                 {
                     this.log.Info("Test run complete: {0}", s);
                     return s;
@@ -203,7 +204,7 @@
                     string fileName = sr.ReadLine();
                     if (fileName == TestResultsTxt)
                     {
-                        fileData = await this.waitForRunTask;
+                        fileData = await this.waitForRunTask.ConfigureAwait(true);
                     }
                     else
                     {

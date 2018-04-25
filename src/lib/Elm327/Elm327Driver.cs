@@ -96,17 +96,17 @@
             if (this.testMode)
             {
                 // These are provided for test functionality only. Not guaranteed to work on anything but the ECUSIM 2000.
-                this.pt.Add(new PidHandler(0x0101, PidRequest.Mode1Test1, 4, (pd) => this.result.Mode1Test1Passed = pd.SequenceEqual(new int[] { 0x00, 0x07, 0xef, 0x80 })));
-                this.pt.Add(new PidHandler(0x0103, PidRequest.Mode1Test2, 2, (pd) => this.result.Mode1Test2Passed = pd.SequenceEqual(new int[] { 0x02, 0x01 })));
-                this.pt.Add(new PidHandler(0x0104, PidRequest.Mode1Test3, 1, (pd) => this.result.Mode1Test3Passed = pd.SequenceEqual(new int[] { 0x32 })));
-                this.pt.Add(new PidHandler(0x0902, PidRequest.Mode9Test1, TestVin.Length + 1, (pd) => this.result.Mode9Test1Passed = pd.Skip(1).SequenceEqual(TestVin)));
-                this.pt.Add(new PidHandler(0x0904, PidRequest.Mode9Test2, TestCalibrationId.Length + 1, (pd) => this.result.Mode9Test2Passed = pd.Skip(1).SequenceEqual(TestCalibrationId)));
+                this.pt.Add(new PidHandler(0x0101, PidRequests.Mode1Test1, 4, (pd) => this.result.Mode1Test1Passed = pd.SequenceEqual(new int[] { 0x00, 0x07, 0xef, 0x80 })));
+                this.pt.Add(new PidHandler(0x0103, PidRequests.Mode1Test2, 2, (pd) => this.result.Mode1Test2Passed = pd.SequenceEqual(new int[] { 0x02, 0x01 })));
+                this.pt.Add(new PidHandler(0x0104, PidRequests.Mode1Test3, 1, (pd) => this.result.Mode1Test3Passed = pd.SequenceEqual(new int[] { 0x32 })));
+                this.pt.Add(new PidHandler(0x0902, PidRequests.Mode9Test1, TestVin.Length + 1, (pd) => this.result.Mode9Test1Passed = pd.Skip(1).SequenceEqual(TestVin)));
+                this.pt.Add(new PidHandler(0x0904, PidRequests.Mode9Test2, TestCalibrationId.Length + 1, (pd) => this.result.Mode9Test2Passed = pd.Skip(1).SequenceEqual(TestCalibrationId)));
             }
             else
             {
                 if (this.config.AfrPidType == PidType.Obd2)
                 {
-                    this.pt.Add(new PidHandler(0x0134, PidRequest.Afr, 4, (pd) => this.result.Afr = (double)(pd[0] * 256 + pd[1]) / 32768.0 * 14.7));
+                    this.pt.Add(new PidHandler(0x0134, PidRequests.Afr, 4, (pd) => this.result.Afr = (double)(pd[0] * 256 + pd[1]) / 32768.0 * 14.7));
                 }
                 else
                 {
@@ -116,7 +116,7 @@
                 if (this.config.BoostPidType == PidType.Obd2)
                 {
                     // We could calculate this based on barometric pressure PID but this is slightly faster.
-                    this.pt.Add(new PidHandler(0x010b, PidRequest.Boost, 1, (pd) => this.result.Boost = (double)pd[0] * 0.145037738007 + this.config.BoostOffset));
+                    this.pt.Add(new PidHandler(0x010b, PidRequests.Boost, 1, (pd) => this.result.Boost = (double)pd[0] * 0.145037738007 + this.config.BoostOffset));
                 }
                 else
                 {
@@ -125,7 +125,7 @@
 
                 if (this.config.LoadPidType == PidType.Obd2)
                 {
-                    this.pt.Add(new PidHandler(0x0104, PidRequest.Load, 1, (pd) => this.result.Load = pd[0] * 100 / 255));
+                    this.pt.Add(new PidHandler(0x0104, PidRequests.Load, 1, (pd) => this.result.Load = pd[0] * 100 / 255));
                 }
                 else
                 {
@@ -134,11 +134,11 @@
 
                 if (this.config.OilTempPidType == PidType.Obd2)
                 {
-                    this.pt.Add(new PidHandler(0x015c, PidRequest.OilTemp, 1, (pd) => this.result.OilTemp = (int)this.CToF(pd[0] - 40)));
+                    this.pt.Add(new PidHandler(0x015c, PidRequests.OilTemp, 1, (pd) => this.result.OilTemp = (int)CToF(pd[0] - 40)));
                 }
                 else if (this.config.OilTempPidType == PidType.Subaru)
                 {
-                    this.pt.Add(new PidHandler(0x2101, PidRequest.OilTemp, 29, (pd) => this.result.OilTemp = (int)this.CToF(pd[28] - 40)));
+                    this.pt.Add(new PidHandler(0x2101, PidRequests.OilTemp, 29, (pd) => this.result.OilTemp = (int)CToF(pd[28] - 40)));
                 }
                 else
                 {
@@ -147,7 +147,7 @@
 
                 if (this.config.CoolantTempPidType == PidType.Obd2)
                 {
-                    this.pt.Add(new PidHandler(0x0105, PidRequest.CoolantTemp, 1, (pd) => this.result.CoolantTemp = (int)this.CToF(pd[0] - 40)));
+                    this.pt.Add(new PidHandler(0x0105, PidRequests.CoolantTemp, 1, (pd) => this.result.CoolantTemp = (int)CToF(pd[0] - 40)));
                 }
                 else
                 {
@@ -156,7 +156,7 @@
 
                 if (this.config.IntakeTempPidType == PidType.Obd2)
                 {
-                    this.pt.Add(new PidHandler(0x010f, PidRequest.IntakeTemp, 1, (pd) => this.result.IntakeTemp = (int)this.CToF(pd[0] - 40)));
+                    this.pt.Add(new PidHandler(0x010f, PidRequests.IntakeTemp, 1, (pd) => this.result.IntakeTemp = (int)CToF(pd[0] - 40)));
                 }
                 else
                 {
@@ -173,15 +173,15 @@
         {
             try
             {
-                await this.connection.OpenAsync();
+                await this.connection.OpenAsync().ConfigureAwait(false);
 
                 // Get some info about the device we just connected to.
-                string elmDeviceDesc = (await this.session.SendCommandAsync("atz")).FirstOrDefault();
+                string elmDeviceDesc = (await this.session.SendCommandAsync("atz").ConfigureAwait(false)).FirstOrDefault();
                 this.log.Debug("Connected to device: {0}", elmDeviceDesc ?? "<reconnected>");
 
-                await this.SetDefaults();
+                await this.SetDefaults().ConfigureAwait(false);
 
-                while (!(await this.session.SendCommandAsync("atsp0")).Contains("OK")) ;
+                while (!(await this.session.SendCommandAsync("atsp0").ConfigureAwait(false)).Contains("OK")) ;
 
                 this.log.Info("ELM327 device connected. ECU on.");
             }
@@ -208,7 +208,7 @@
         /// <param name="request">The PID request.</param>
         /// <returns>A <see cref="PidResult"/> object.</returns>
         /// <exception cref="ConnectFailedException">Occurs if the connection fails.</exception>
-        public async Task<PidResult> GetPidResultAsync(PidRequest request)
+        public async Task<PidResult> GetPidResultAsync(PidRequests request)
         {
             if (this.testMode)
             {
@@ -223,7 +223,7 @@
                 int mode = 0;
                 foreach (PidHandler ph in this.pt.GetHandlersForRequest(request))
                 {
-                    if (ph.Request == PidRequest.Mode1Test1 || ph.Request == PidRequest.Mode1Test2 || ph.Request == PidRequest.Mode1Test3 || ph.Request == PidRequest.Mode9Test1 || ph.Request == PidRequest.Mode9Test2)
+                    if (ph.Request == PidRequests.Mode1Test1 || ph.Request == PidRequests.Mode1Test2 || ph.Request == PidRequests.Mode1Test3 || ph.Request == PidRequests.Mode9Test1 || ph.Request == PidRequests.Mode9Test2)
                     {
                         // If a test command was executed this request, clear the PID result for the next one so we don't cache it.
                         this.testMode = true;
@@ -235,22 +235,22 @@
                     {
                         if (cPids > 0)
                         {
-                            await this.UpdatePidResult(sb.ToString());
+                            await this.UpdatePidResult(sb.ToString()).ConfigureAwait(false);
                             cPids = 0;
                         }
 
                         sb.Clear();
-                        sb.AppendFormat("{0:X2}", pidMode);
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0:X2}", pidMode);
                         mode = pidMode;
                     }
 
                     int pidValue = curPid & 0xFF;
-                    sb.AppendFormat("{0:X2}", pidValue);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0:X2}", pidValue);
                     ++cPids;
 
                     if (cPids == this.config.MaxPidsAtOnce)
                     {
-                        await this.UpdatePidResult(sb.ToString());
+                        await this.UpdatePidResult(sb.ToString()).ConfigureAwait(false);
                         cPids = 0;
                         mode = 0;
                     }
@@ -258,7 +258,7 @@
 
                 if (cPids > 0)
                 {
-                    await this.UpdatePidResult(sb.ToString());
+                    await this.UpdatePidResult(sb.ToString()).ConfigureAwait(false);
                 }
 
                 return this.result;
@@ -276,7 +276,7 @@
         /// <returns>A PID result.</returns>
         private async Task UpdatePidResult(string pidRequest)
         {
-            List<int> pidResult = await this.session.RunPidAsync(pidRequest);
+            List<int> pidResult = await this.session.RunPidAsync(pidRequest).ConfigureAwait(false);
             try
             {
                 if (pidResult.Count > 0)
@@ -307,15 +307,15 @@
         /// <returns></returns>
         private async Task SetDefaults()
         {
-            await this.session.SendCommandAsync("ate0");
-            await this.session.SendCommandAsync("atsp0");
+            await this.session.SendCommandAsync("ate0").ConfigureAwait(false);
+            await this.session.SendCommandAsync("atsp0").ConfigureAwait(false);
 
             // Only talk to ECU #1, which in most cases is the engine. That's the only one that we really care about.
-            await this.session.SendCommandAsync("atsh 7e0");
+            await this.session.SendCommandAsync("atsh 7e0").ConfigureAwait(false);
 
             if (this.config.AggressiveTiming)
             {
-                await this.session.SendCommandAsync("atat2");
+                await this.session.SendCommandAsync("atat2").ConfigureAwait(false);
             }
         }
 
@@ -324,7 +324,7 @@
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        private double CToF(double v)
+        private static double CToF(double v)
         {
             return v * 1.8 + 32.0;
         }

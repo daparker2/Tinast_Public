@@ -3,6 +3,7 @@ namespace DP.Tinast.Elm327
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -30,7 +31,7 @@ namespace DP.Tinast.Elm327
         /// <param name="mode">The mode.</param>
         /// <param name="request">The request.</param>
         /// <param name="action">The action.</param>
-        public PidHandler(int mode, PidRequest request, int numParameters, Action<int[]> action)
+        public PidHandler(int mode, PidRequests request, int numParameters, Action<int[]> action)
         {
             this.Mode = mode;
             this.Request = request;
@@ -52,7 +53,7 @@ namespace DP.Tinast.Elm327
         /// <value>
         /// The request.
         /// </value>
-        public PidRequest Request { get; private set; }
+        public PidRequests Request { get; private set; }
 
         /// <summary>
         /// Handles the specified pid data.
@@ -64,7 +65,7 @@ namespace DP.Tinast.Elm327
         {
             if (pidData.Count - start < numParameters)
             {
-                throw new IOException(string.Format("Invalid PID data size. Expected {0}; got {1} bytes instead.", numParameters, pidData.Count));
+                throw new IOException(string.Format(CultureInfo.CurrentCulture, "Invalid PID data size. Expected {0}; got {1} bytes instead.", numParameters, pidData.Count));
             }
 
             int[] pidParams = new int[numParameters];

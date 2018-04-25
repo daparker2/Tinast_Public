@@ -26,7 +26,7 @@
         /// </summary>
         /// <param name="outputHelper">The output helper.</param>
         /// <remarks>
-        /// Use the <see cref="!:CreateLogger&lt;TTest&gt;(LoggingConfiguration)" /> method to access a suitable logging context for the test. Don't use <see cref="F:DP.Tinast.Tests.TestBase`1.outputHelper" /> directly.
+        /// Use the <see cref="CreateLogger"/>&lt;TTest&gt;(<see cref="LoggingConfiguration"/>)" /> method to access a suitable logging context for the test. Don't use <see cref="DP.Tinast.Tests.TestBase"/> directly.
         /// </remarks>
         public Elm327Tests(ITestOutputHelper outputHelper) : base(outputHelper)
         {
@@ -38,7 +38,7 @@
         [Fact]
         public async Task BluetoothElm327Connection_Discovers_Bluetooth_Device()
         {
-            ICollection<BluetoothElm327Connection> connections = await BluetoothElm327Connection.GetAvailableConnectionsAsync();
+            ICollection<BluetoothElm327Connection> connections = await BluetoothElm327Connection.GetAvailableConnectionsAsync().ConfigureAwait(true);
             Assert.NotNull(connections);
             Assert.InRange(connections.Count, 1, int.MaxValue);
             ILogger log = this.CreateLogger();
@@ -60,7 +60,7 @@
         [InlineData(100)]
         public async Task BluetoothElm327Connection_Connects_And_Disconnects_From_Device(int numIterations)
         {
-            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync().ConfigureAwait(true)).FirstOrDefault())
             {
                 string lastExceptionMessage = null;
                 Assert.False(connection.Opened);
@@ -68,7 +68,7 @@
                 {
                     try
                     {
-                        await connection.OpenAsync();
+                        await connection.OpenAsync().ConfigureAwait(true);
                     }
                     catch (Exception ex)
                     {
@@ -93,17 +93,17 @@
         [InlineData(100, "atz")]
         public async Task Elm327Session_Can_Cancel_Send_Obd2_Command(int numIterations, string message)
         {
-            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync().ConfigureAwait(true)).FirstOrDefault())
             {
                 Elm327Session session = new Elm327Session(connection);
                 string lastExceptionMessage = null;
                 try
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync().ConfigureAwait(true);
 
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        await session.SendCommandAsync(message);
+                        await session.SendCommandAsync(message).ConfigureAwait(true);
                     }
                 }
                 catch (Exception ex)
@@ -128,28 +128,28 @@
         public async Task Elm327Session_Can_Cancel_Run_Pid_Against_Obd2_Adapter(int numIterations, string[] messages, string pid)
         {
             // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
-            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync().ConfigureAwait(true)).FirstOrDefault())
             {
                 Elm327Session session = new Elm327Session(connection);
                 string lastExceptionMessage = null;
                 try
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync().ConfigureAwait(true);
 
                     if (messages != null)
                     {
                         foreach (string message in messages)
                         {
-                            await session.SendCommandAsync(message);
+                            await session.SendCommandAsync(message).ConfigureAwait(true);
                         }
                     }
 
-                    while (!(await session.SendCommandAsync("atsp0")).Contains("OK")) ;
+                    while (!(await session.SendCommandAsync("atsp0").ConfigureAwait(true)).Contains("OK")) ;
 
                     for (int i = 0; i < numIterations; ++i)
                     {
                         Task<List<int>> pidResponseTask = session.RunPidAsync(pid);
-                        await pidResponseTask;
+                        await pidResponseTask.ConfigureAwait(true);
                     }
                 }
                 catch (Exception ex)
@@ -173,17 +173,17 @@
         [InlineData(10, "atz", new string[] { "ELM327 v1.5" })]
         public async Task Elm327Session_Can_Evaluate_Obd2_Adapter_Message(int numIterations, string message, string[] expectedResponse)
         {
-            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync().ConfigureAwait(true)).FirstOrDefault())
             {
                 Elm327Session session = new Elm327Session(connection);
                 string lastExceptionMessage = null;
                 try
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync().ConfigureAwait(true);
 
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        string[] actualResponse = await session.SendCommandAsync(message);
+                        string[] actualResponse = await session.SendCommandAsync(message).ConfigureAwait(true);
                         int toSkip = actualResponse.Length - expectedResponse.Length;
                         Assert.True(expectedResponse.SequenceEqual(actualResponse.Skip(toSkip)), "Response mismatches expected.");
                     }
@@ -219,27 +219,27 @@
         public async Task Elm327Session_Can_Run_Pid_Against_Obd2_Adapter(int numIterations, string[] messages, string pid, int[] expectedPidResponse)
         {
             // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
-            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync().ConfigureAwait(true)).FirstOrDefault())
             {
                 Elm327Session session = new Elm327Session(connection);
                 string lastExceptionMessage = null;
                 try
                 {
-                    await connection.OpenAsync();
+                    await connection.OpenAsync().ConfigureAwait(true);
 
                     if (messages != null)
                     {
                         foreach (string message in messages)
                         {
-                            await session.SendCommandAsync(message);
+                            await session.SendCommandAsync(message).ConfigureAwait(true);
                         }
                     }
 
-                    while (!(await session.SendCommandAsync("atsp0")).Contains("OK")) ;
+                    while (!(await session.SendCommandAsync("atsp0").ConfigureAwait(true)).Contains("OK")) ;
 
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        List<int> pidResponse = await session.RunPidAsync(pid);
+                        List<int> pidResponse = await session.RunPidAsync(pid).ConfigureAwait(true);
                         Assert.NotNull(pidResponse);
                         Assert.True(expectedPidResponse.SequenceEqual(pidResponse), "PID response does not match expected.");
                     }
@@ -262,13 +262,13 @@
         public async Task Elm327_Driver_Can_Construct_With_Test_Mode_Setting(bool testMode)
         {
             // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
-            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync().ConfigureAwait(true)).FirstOrDefault())
             {
                 Elm327Driver driver = new Elm327Driver(new DisplayConfiguration(), connection, testMode);
                 string lastExceptionMessage = null;
                 try
                 {
-                    await driver.OpenAsync();
+                    await driver.OpenAsync().ConfigureAwait(true);
                 }
                 catch (Exception ex)
                 {
@@ -285,60 +285,60 @@
         /// <param name="testCommand">The test command.</param>
         /// <returns></returns>
         [Theory]
-        [InlineData(1, PidRequest.Mode1Test1)]
-        [InlineData(1, PidRequest.Mode1Test2)]
-        [InlineData(1, PidRequest.Mode1Test3)]
-        [InlineData(10, PidRequest.Mode1Test1)]
-        [InlineData(100, PidRequest.Mode1Test2)]
-        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test2)]
-        [InlineData(10, PidRequest.Mode1Test1 | PidRequest.Mode1Test2)]
-        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test2 | PidRequest.Mode1Test3)]
-        [InlineData(1, PidRequest.Mode1Test2 | PidRequest.Mode1Test3)]
-        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test3)]
-        [InlineData(100, PidRequest.Mode1Test1 | PidRequest.Mode1Test3)]
-        [InlineData(1, PidRequest.Mode9Test1)]
-        [InlineData(1, PidRequest.Mode9Test2)]
-        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode9Test1)]
-        [InlineData(1, PidRequest.Mode1Test2 | PidRequest.Mode9Test2)]
-        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test2 | PidRequest.Mode9Test2)]
-        [InlineData(1, PidRequest.Mode1Test1 | PidRequest.Mode1Test2 | PidRequest.Mode1Test3 | PidRequest.Mode9Test1)]
-        [InlineData(10, PidRequest.Mode1Test1 | PidRequest.Mode1Test2 | PidRequest.Mode1Test3 | PidRequest.Mode9Test1)]
-        [InlineData(100, PidRequest.Mode1Test1 | PidRequest.Mode1Test2 | PidRequest.Mode1Test3 | PidRequest.Mode9Test1)]
-        public async Task Elm327Driver_Can_Get_Pid_Results_Against_Obd2_Adapter(int numIterations, PidRequest testCommand)
+        [InlineData(1, PidRequests.Mode1Test1)]
+        [InlineData(1, PidRequests.Mode1Test2)]
+        [InlineData(1, PidRequests.Mode1Test3)]
+        [InlineData(10, PidRequests.Mode1Test1)]
+        [InlineData(100, PidRequests.Mode1Test2)]
+        [InlineData(1, PidRequests.Mode1Test1 | PidRequests.Mode1Test2)]
+        [InlineData(10, PidRequests.Mode1Test1 | PidRequests.Mode1Test2)]
+        [InlineData(1, PidRequests.Mode1Test1 | PidRequests.Mode1Test2 | PidRequests.Mode1Test3)]
+        [InlineData(1, PidRequests.Mode1Test2 | PidRequests.Mode1Test3)]
+        [InlineData(1, PidRequests.Mode1Test1 | PidRequests.Mode1Test3)]
+        [InlineData(100, PidRequests.Mode1Test1 | PidRequests.Mode1Test3)]
+        [InlineData(1, PidRequests.Mode9Test1)]
+        [InlineData(1, PidRequests.Mode9Test2)]
+        [InlineData(1, PidRequests.Mode1Test1 | PidRequests.Mode9Test1)]
+        [InlineData(1, PidRequests.Mode1Test2 | PidRequests.Mode9Test2)]
+        [InlineData(1, PidRequests.Mode1Test1 | PidRequests.Mode1Test2 | PidRequests.Mode9Test2)]
+        [InlineData(1, PidRequests.Mode1Test1 | PidRequests.Mode1Test2 | PidRequests.Mode1Test3 | PidRequests.Mode9Test1)]
+        [InlineData(10, PidRequests.Mode1Test1 | PidRequests.Mode1Test2 | PidRequests.Mode1Test3 | PidRequests.Mode9Test1)]
+        [InlineData(100, PidRequests.Mode1Test1 | PidRequests.Mode1Test2 | PidRequests.Mode1Test3 | PidRequests.Mode9Test1)]
+        public async Task Elm327Driver_Can_Get_Pid_Results_Against_Obd2_Adapter(int numIterations, PidRequests testCommand)
         {
             // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
-            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+            using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync().ConfigureAwait(true)).FirstOrDefault())
             {
                 Elm327Driver driver = new Elm327Driver(new DisplayConfiguration(), connection, true);
                 string lastExceptionMessage = null;
                 try
                 {
-                    await driver.OpenAsync();
+                    await driver.OpenAsync().ConfigureAwait(true);
                     for (int i = 0; i < numIterations; ++i)
                     {
-                        PidResult result = await driver.GetPidResultAsync(testCommand);
+                        PidResult result = await driver.GetPidResultAsync(testCommand).ConfigureAwait(true);
                         Assert.NotNull(result);
-                        if (testCommand.HasFlag(PidRequest.Mode1Test1))
+                        if (testCommand.HasFlag(PidRequests.Mode1Test1))
                         {
                             Assert.True(result.Mode1Test1Passed);
                         }
 
-                        if (testCommand.HasFlag(PidRequest.Mode1Test2))
+                        if (testCommand.HasFlag(PidRequests.Mode1Test2))
                         {
                             Assert.True(result.Mode1Test2Passed);
                         }
 
-                        if (testCommand.HasFlag(PidRequest.Mode1Test3))
+                        if (testCommand.HasFlag(PidRequests.Mode1Test3))
                         {
                             Assert.True(result.Mode1Test3Passed);
                         }
 
-                        if (testCommand.HasFlag(PidRequest.Mode9Test1))
+                        if (testCommand.HasFlag(PidRequests.Mode9Test1))
                         {
                             Assert.True(result.Mode9Test1Passed);
                         }
 
-                        if (testCommand.HasFlag(PidRequest.Mode9Test2))
+                        if (testCommand.HasFlag(PidRequests.Mode9Test2))
                         {
                             Assert.True(result.Mode9Test2Passed);
                         }

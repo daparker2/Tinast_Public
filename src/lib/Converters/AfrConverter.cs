@@ -3,6 +3,7 @@ namespace DP.Tinast.Converters
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace DP.Tinast.Converters
         {
             if (targetType == typeof(string))
             {
-                return string.Format("{0: 00.0;-00.0;  0.0}%", value);
+                return string.Format(CultureInfo.CurrentCulture, "{0: 00.0;-00.0;  0.0}%", value);
             }
 
             throw new NotImplementedException();
@@ -44,7 +45,7 @@ namespace DP.Tinast.Converters
         {
             if (targetType == typeof(double))
             {
-                return double.Parse(((string)value).Substring(0, ((string)value).Length - 1));
+                return double.Parse(((string)value).Substring(0, ((string)value).Length - 1), CultureInfo.CurrentCulture);
             }
 
             throw new NotImplementedException();

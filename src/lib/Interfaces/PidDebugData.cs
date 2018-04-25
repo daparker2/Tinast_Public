@@ -3,6 +3,7 @@ namespace DP.Tinast.Interfaces
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace DP.Tinast.Interfaces
         /// <value>
         /// The response.
         /// </value>
-        public string[] Response
+        public IList<string> Response
         {
             get;
             private set;
@@ -69,7 +70,7 @@ namespace DP.Tinast.Interfaces
         /// </returns>
         public override string ToString()
         {
-            return string.Format("Command: '{0}' took {1}ms.\nResponse: {2}", this.Command, this.Latency.TotalMilliseconds, string.Join("\n", this.Response));
+            return string.Format(CultureInfo.CurrentCulture, "Command: '{0}' took {1}ms.\nResponse: {2}", this.Command, this.Latency.TotalMilliseconds, string.Join("\n", this.Response));
         }
     }
 }

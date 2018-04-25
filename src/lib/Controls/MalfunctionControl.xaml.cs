@@ -46,11 +46,6 @@
         public static readonly DependencyProperty OffIntervalProperty = DependencyProperty.Register("OffInterval", typeof(int), typeof(MalfunctionControl), new PropertyMetadata(600));
 
         /// <summary>
-        /// The tick count in ms
-        /// </summary>
-        const int TickInterval = 30;
-
-        /// <summary>
         /// The on timer
         /// </summary>
         private DispatcherTimer timer;

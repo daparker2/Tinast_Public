@@ -51,11 +51,6 @@
         Ellipse[] allLeds;
 
         /// <summary>
-        /// The warning flash
-        /// </summary>
-        const int WarningFlash = 200;
-
-        /// <summary>
         /// Control some animation properties of the gauge
         /// </summary>
         private bool warning;
@@ -71,6 +66,11 @@
         private DateTime whenChanged = DateTime.Now;
 
         /// <summary>
+        /// The ticks
+        /// </summary>
+        private ulong ticks = 0;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AfrControl"/> class.
         /// </summary>
         public AfrControl()
@@ -78,7 +78,9 @@
             this.InitializeComponent();
             this.DataContext = this;
             this.label.Foreground = ColorPalette.IndicatorColor;
+            this.labelBackground.Background = ColorPalette.IndicatorBackground;
             this.level.Foreground = ColorPalette.IndicatorColor;
+            this.levelBackground.Background = ColorPalette.IndicatorBackground;
             this.afrOutline.Stroke = ColorPalette.OutlineColor;
             this.allLeds = new Ellipse[]
             {
@@ -236,19 +238,39 @@
                 this.stateChanged = true;
                 this.whenChanged = DateTime.Now;
                 this.level.Foreground = ColorPalette.NeedleColor;
+                if (shouldWarn)
+                {
+                    TinastGlobal.Current.GaugeTick += UpdateTimer_Tick;
+                }
+                else
+                {
+                    TinastGlobal.Current.GaugeTick -= UpdateTimer_Tick;
+                }
             }
             else if (this.stateChanged && DateTime.Now > this.whenChanged)
             {
                 this.stateChanged = false;
                 if (this.warning)
                 {
-                    this.level.Foreground = ColorPalette.WarningColor;
+                    if (this.ticks % 2 == 0)
+                    {
+                        this.levelBackground.Background = ColorPalette.IndicatorWarningBackground;
+                        this.level.Foreground = ColorPalette.WarningColor;
+                    }
+                    else
+                    {
+                        this.levelBackground.Background = ColorPalette.IndicatorBackground;
+                        this.level.Foreground = ColorPalette.IndicatorColor;
+                    }
                 }
                 else
                 {
+                    this.levelBackground.Background = ColorPalette.IndicatorBackground;
                     this.level.Foreground = ColorPalette.IndicatorColor;
                 }
             }
+
+            ++this.ticks;
 
             // Now update and color the radial gauge. We just pick which ones should be visible and which should be hidden.
             double afrLevel = Math.Min(18.0, Math.Max(11.0, this.Level));
@@ -284,7 +306,7 @@
             {
                 if (i >= startIndex && i < endIndex)
                 {
-                    if (shouldWarn)
+                    if (shouldWarn && this.ticks % 2 == 0)
                     {
                         this.allLeds[i].Stroke = ColorPalette.WarningColor;
                         this.allLeds[i].Fill = ColorPalette.WarningColor;
@@ -320,6 +342,16 @@
         {
             AfrControl afrControl = (AfrControl)obj;
             afrControl.Redraw();
+        }
+
+        /// <summary>
+        /// Boost gauge update tick.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            this.Redraw();
         }
     }
 }

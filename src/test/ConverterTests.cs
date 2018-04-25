@@ -18,6 +18,8 @@
     /// <seealso cref="DP.Tinast.Tests.TestBase{DP.Tinast.Tests.ConfigTests}" />
     public class ConverterTests : TestBase<ConfigTests>
     {
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
         /// <summary>
         /// Initializes a new instance of the <see cref="ConverterTests"/> class.
         /// </summary>
@@ -26,6 +28,8 @@
         /// Use the <see cref="!:CreateLogger&lt;TTest&gt;(LoggingConfiguration)" /> method to access a suitable logging context for the test. Don't use <see cref="F:DP.Tinast.Tests.TestBase`1.outputHelper" /> directly.
         /// </remarks>
         public ConverterTests(ITestOutputHelper outputHelper) : base(outputHelper)
+#pragma warning restore CA1200 // Avoid using cref tags with a prefix
+#pragma warning restore CA1200 // Avoid using cref tags with a prefix
         {
         }
 
@@ -46,7 +50,11 @@
         [InlineData(typeof(TemperatureConverter), -14, null, "en", " -14°")]
         [InlineData(typeof(TemperatureConverter), 14, null, "en", "  14°")]
         [InlineData(typeof(TemperatureConverter), 0, null, "en", "   0°")]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable CA1822 // Mark members as static
         public void String_Converter_Of_Type_Converts_Value_Correctly(Type converterType, object value, object parameter, string language, string expectedText)
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             object converterObject = Activator.CreateInstance(converterType);
             Assert.IsType(converterType, converterObject);

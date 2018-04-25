@@ -58,7 +58,7 @@
         /// <summary>
         /// The viewmodel tick task
         /// </summary>
-        private Task tickTask;
+        private ConfiguredTaskAwaitable tickTask;
 
         /// <summary>
         /// The configuration
@@ -75,7 +75,7 @@
         /// </summary>
         public MainPageBase()
         {
-            ((ITinastApp)Application.Current).Faulted += MainPage_Faulted;
+            TinastGlobal.Current.Faulted += MainPage_Faulted;
             this.Loaded += MainPage_Loaded;
             Application.Current.Suspending += Current_Suspending;
             Application.Current.Resuming += Current_Resuming;
@@ -96,8 +96,10 @@
                 this.log.Debug("Device is IoT.");
             }
 
-            this.config = await ((ITinastApp)Application.Current).GetConfigAsync();
-            this.driver = await ((ITinastApp)Application.Current).GetDriverAsync();
+            this.config = await TinastGlobal.Current.GetConfigAsync()
+                                                    .ConfigureAwait(true);
+            this.driver = await TinastGlobal.Current.GetDriverAsync()
+                                                    .ConfigureAwait(true);
             this.viewModel = new DisplayViewModel(this.driver, this.config);
             this.DataContext = this.viewModel;
             this.StartTicking();
@@ -118,12 +120,13 @@
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="SuspendingEventArgs"/> instance containing the event data.</param>
-        private async void Current_Suspending(object sender, SuspendingEventArgs e)
+        private void Current_Suspending(object sender, SuspendingEventArgs e)
         {
             this.tickCts.Cancel();
             try
             {
-                await this.tickTask;
+                this.tickTask.GetAwaiter()
+                             .GetResult();
             }
             catch (OperationCanceledException)
             {
@@ -156,7 +159,8 @@
             if (this.tickCts == null)
             {
                 this.tickCts = new CancellationTokenSource();
-                this.tickTask = this.viewModel.UpdateViewModelAsync(this.tickCts.Token);
+                this.tickTask = this.viewModel.UpdateViewModelAsync(this.tickCts.Token)
+                                    .ConfigureAwait(false);
             }
         }
 
@@ -189,7 +193,7 @@
                 return;
             }
 
-            MessageDialog dialog = new MessageDialog(string.Format("The system will reboot in {0} seconds.", restartTimeout.TotalSeconds));
+            MessageDialog dialog = new MessageDialog($"The system will reboot in {restartTimeout.TotalSeconds} seconds.");
             dialog.Commands.Add(new UICommand("Abort Shutdown") { Id = 0 });
             dialog.DefaultCommandIndex = 0;
             dialog.CancelCommandIndex = 0;

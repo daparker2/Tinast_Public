@@ -17,6 +17,8 @@
     /// <seealso cref="DP.Tinast.Tests.TestBase{DP.Tinast.Tests.ConfigTests}" />
     public class ConfigTests : TestBase<ConfigTests>
     {
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigTests"/> class.
         /// </summary>
@@ -25,6 +27,8 @@
         /// Use the <see cref="!:CreateLogger&lt;TTest&gt;(LoggingConfiguration)" /> method to access a suitable logging context for the test. Don't use <see cref="F:DP.Tinast.Tests.TestBase`1.outputHelper" /> directly.
         /// </remarks>
         public ConfigTests(ITestOutputHelper outputHelper) : base(outputHelper)
+#pragma warning restore CA1200 // Avoid using cref tags with a prefix
+#pragma warning restore CA1200 // Avoid using cref tags with a prefix
         {
         }
 
@@ -48,7 +52,9 @@
         [InlineData("IntakeTempMin", "CoolantTempMin", -10)]
         [InlineData("AggressiveTiming", "IntakeTempMin", 1)]
         [InlineData("MaxPidsAtOnce", "AggressiveTiming", true)]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
         public async Task DisplayConfiguration_Value_Not_Mutated(string propertyName, string propertyName2, object value)
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             ILogger logger = this.CreateLogger();
             logger.Debug("Checking if '{0}' is mutated", propertyName);
@@ -57,8 +63,12 @@
             PropertyInfo propInfo2 = config.GetType().GetProperty(propertyName2);
             object expected = propInfo.GetValue(config);
             propInfo2.SetValue(config, value);
+#pragma warning disable CA2007 // Do not directly await a Task
             await config.Save();
+#pragma warning restore CA2007 // Do not directly await a Task
+#pragma warning disable CA2007 // Do not directly await a Task
             config = await DisplayConfiguration.Load();
+#pragma warning restore CA2007 // Do not directly await a Task
             object actual = propInfo.GetValue(config);
             Assert.Equal(expected.ToString(), actual.ToString());
         }
@@ -100,15 +110,21 @@
         [InlineData("AggressiveTiming", false)]
         [InlineData("MaxPidsAtOnce", 1)]
         [InlineData("MaxPidsAtOnce", 0)]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
         public async Task DisplayConfiguration_Stores_Parameter_Correctly(string propertyName, object expectedValue)
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             ILogger logger = this.CreateLogger();
             logger.Debug("Checking of '{0}' can be set to {1}", propertyName, expectedValue);
             DisplayConfiguration config = new DisplayConfiguration();
             PropertyInfo propInfo = config.GetType().GetProperty(propertyName);
             propInfo.SetValue(config, expectedValue);
+#pragma warning disable CA2007 // Do not directly await a Task
             await config.Save();
+#pragma warning restore CA2007 // Do not directly await a Task
+#pragma warning disable CA2007 // Do not directly await a Task
             config = await DisplayConfiguration.Load();
+#pragma warning restore CA2007 // Do not directly await a Task
             object actual = propInfo.GetValue(config);
             Assert.Equal(expectedValue.ToString(), actual.ToString());
         }

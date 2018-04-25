@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -48,7 +49,7 @@
         {
             if (targetType == typeof(int))
             {
-                return int.Parse(((string)value).Substring(0, ((string)value).Length - 1));
+                return int.Parse(((string)value).Substring(0, ((string)value).Length - 1), CultureInfo.CurrentCulture);
             }
 
             throw new NotImplementedException();

@@ -19,6 +19,6 @@
         /// <summary>
         /// The 800X480 head unit
         /// </summary>
-        Head_800x480 = 1
+        Head800x480 = 1
     }
 }

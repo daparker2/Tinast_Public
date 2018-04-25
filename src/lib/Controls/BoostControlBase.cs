@@ -130,7 +130,7 @@
                 if (!this.isBlinking)
                 {
                     this.isBlinking = true;
-                    ((ITinastApp)Application.Current).GaugeTick += UpdateTimer_Tick;
+                    TinastGlobal.Current.GaugeTick += UpdateTimer_Tick;
                 }
             }
             else
@@ -138,7 +138,7 @@
                 if (this.isBlinking)
                 {
                     this.isBlinking = false;
-                    ((ITinastApp)Application.Current).GaugeTick -= UpdateTimer_Tick;
+                    TinastGlobal.Current.GaugeTick -= UpdateTimer_Tick;
                 }
             }
 
@@ -189,7 +189,8 @@
                 led.Stroke = ColorPalette.OutlineColor;
             }
 
-            DisplayConfiguration config = await ((ITinastApp)Application.Current).GetConfigAsync();
+            DisplayConfiguration config = await TinastGlobal.Current.GetConfigAsync()
+                                                                    .ConfigureAwait(false);
             this.boostOffset = config.BoostOffset;
             this.maxBoost = config.MaxBoost;
             this.absMaxBoost = this.maxBoost - this.boostOffset;

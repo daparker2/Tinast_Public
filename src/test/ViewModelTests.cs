@@ -21,6 +21,8 @@
     /// </summary>
     public class ViewModelTests : TestBase<ConfigTests>
     {
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewModelTests"/> class.
         /// </summary>
@@ -29,6 +31,8 @@
         /// Use the <see cref="!:CreateLogger&lt;TTest&gt;(LoggingConfiguration)" /> method to access a suitable logging context for the test. Don't use <see cref="F:DP.Tinast.Tests.TestBase`1.outputHelper" /> directly.
         /// </remarks>
         public ViewModelTests(ITestOutputHelper outputHelper) : base(outputHelper)
+#pragma warning restore CA1200 // Avoid using cref tags with a prefix
+#pragma warning restore CA1200 // Avoid using cref tags with a prefix
         {
         }
 
@@ -41,7 +45,11 @@
         [InlineData(1)]
         [InlineData(10)]
         [InlineData(20)]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable CA1822 // Mark members as static
         public async Task DisplayViewModel_Will_Connect_Driver_On_First_Tick_And_Stay_Connected(ulong numIterations)
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             MockDisplayDriver displayDriver = new MockDisplayDriver();
             Assert.False(displayDriver.Connected);
@@ -55,7 +63,9 @@
                 cts.Cancel();
                 try
                 {
+#pragma warning disable CA2007 // Do not directly await a Task
                     await updateTask;
+#pragma warning restore CA2007 // Do not directly await a Task
                 }
                 catch (OperationCanceledException)
                 {
@@ -78,7 +88,11 @@
         [InlineData("EngineAfr", "Afr", 14.7, 20)]
         [InlineData("EngineAfr", "Afr", 11, 20)]
         [InlineData("EngineLoad", "Load", 25, 20)]
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable CA1707 // Identifiers should not contain underscores
         public async Task DisplayViewModel_Will_Fire_Value_Type_Events(string viewModelPropertyName, string pidResultPropertyName, object pidResultValue, ulong numIterations)
+#pragma warning restore CA1707 // Identifiers should not contain underscores
+#pragma warning restore CA1822 // Mark members as static
         {
             MockDisplayDriver displayDriver = new MockDisplayDriver();
             DisplayViewModel viewModel = new DisplayViewModel(displayDriver, new DisplayConfiguration());
@@ -105,7 +119,9 @@
                 cts.Cancel();
                 try
                 {
+#pragma warning disable CA2007 // Do not directly await a Task
                     await updateTask;
+#pragma warning restore CA2007 // Do not directly await a Task
                 }
                 catch (OperationCanceledException)
                 {
@@ -145,7 +161,11 @@
         [InlineData("AfrTooRich", "Afr", 14.7, 20, false, "MaxIdleLoad", 25, null, null)]
         [InlineData("IdleLoad", "Load", 1, 20, true, "MaxIdleLoad", 25, null, null)]
         [InlineData("IdleLoad", "Load", 50, 20, false, "MaxIdleLoad", 25, null, null)]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable CA1822 // Mark members as static
         public async Task DisplayViewModel_Will_Set_Warning_Property_When_Value_Out_Of_Range(string viewModelPropertyName, string pidResultPropertyName, object pidResultValue, ulong numIterations, bool expectedState, string configProperty1, object configValue1, string configProperty2, object configValue2)
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             DisplayConfiguration config = new DisplayConfiguration();
             PropertyInfo configPropInfo = config.GetType().GetProperty(configProperty1);
@@ -183,7 +203,9 @@
                 cts.Cancel();
                 try
                 {
+#pragma warning disable CA2007 // Do not directly await a Task
                     await updateTask;
+#pragma warning restore CA2007 // Do not directly await a Task
                 }
                 catch (OperationCanceledException)
                 {
@@ -202,7 +224,11 @@
         /// Verifies the display view model reports a fault.
         /// </summary>
         [Fact]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable CA1822 // Mark members as static
         public void DisplayViewModel_Reports_Fault()
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             MockDisplayDriver displayDriver = new MockDisplayDriver();
             DisplayViewModel viewModel = new DisplayViewModel(displayDriver, new DisplayConfiguration());
@@ -233,10 +259,16 @@
         [InlineData(10)]
         [InlineData(100)]
         [InlineData(1000)]
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable CA1822 // Mark members as static
         public async Task DisplayView_Model_Ticks_Against_Obd2_Adapter(ulong numIterations)
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore CA1707 // Identifiers should not contain underscores
         {
             // Designed to work against the ScanTool.net ECUSIM 2000 simulator: https://www.scantool.net/scantool/downloads/101/ecusim_2000-ug.pdf
+#pragma warning disable CA2007 // Do not directly await a Task
             using (BluetoothElm327Connection connection = (await BluetoothElm327Connection.GetAvailableConnectionsAsync()).FirstOrDefault())
+#pragma warning restore CA2007 // Do not directly await a Task
             {
                 DisplayConfiguration config = new DisplayConfiguration();
                 Elm327Driver driver = new Elm327Driver(config, connection);
@@ -250,7 +282,9 @@
                     cts.Cancel();
                     try
                     {
+#pragma warning disable CA2007 // Do not directly await a Task
                         await updateTask;
+#pragma warning restore CA2007 // Do not directly await a Task
                     }
                     catch (OperationCanceledException)
                     {
